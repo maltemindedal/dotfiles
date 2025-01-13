@@ -1,0 +1,151 @@
+{
+  // Git Settings
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+
+  // Editor Settings
+  "editor.fontFamily": "Jetbrains Mono",
+  "editor.fontWeight": "300",
+  "editor.fontLigatures": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.lineHeight": 0,
+  "editor.codeLensFontFamily": "JetBrains Mono",
+  "editor.fontSize": 16,
+  "editor.fontVariations": false,
+  "editor.smoothScrolling": true,
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.linkedEditing": true,
+  "editor.guides.bracketPairs": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Language-Specific Settings
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[tailwindcss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  // Terminal Settings
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.fontWeightBold": "475",
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.cursorStyleInactive": "line",
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+  // Debug Settings
+  "debug.terminal.clearBeforeReusing": true,
+
+  // Chat & Notebook Settings
+  "chat.editor.fontFamily": "JetBrains Mono",
+  "notebook.output.fontFamily": "JetBrains Mono",
+
+  // Markdown Preview Settings
+  "markdown.preview.fontFamily": "JetBrains Mono",
+
+  // Workbench Settings
+  "workbench.iconTheme": "symbols",
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.startupEditor": "none",
+  "workbench.activityBar.location": "top",
+  "workbench.list.smoothScrolling": true,
+
+  // Material Icon Theme Settings
+  "material-icon-theme.folders.color": "#90a4ae",
+  "material-icon-theme.hidesExplorerArrows": false,
+  "material-icon-theme.activeIconPack": "react",
+  "material-icon-theme.saturation": 1,
+
+  // Copilot Settings
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false,
+    "yaml": false
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+
+  // Prettier Settings
+  "prettier.requireConfig": false,
+  "prettier.useEditorConfig": false,
+  "prettier.singleQuote": true,
+
+  // ESLint Settings
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // Python & Testing Settings
+  "python.createEnvironment.trigger": "off",
+  "isort.check": true,
+  "testExplorer.useNativeTesting": true,
+
+  // Live Server Settings
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.donotVerifyTags": true,
+
+  // Miscellaneous Settings
+  "explorer.confirmDelete": false,
+  "explorer.confirmPasteNative": false,
+  "files.autoSave": "afterDelay",
+  "window.titleBarStyle": "custom",
+  "redhat.telemetry.enabled": false,
+  "code-runner.enableAppInsights": false,
+  "code-runner.runInTerminal": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.allowedUNCHosts": ["wsl.localhost"],
+  "extensions.ignoreRecommendations": true,
+  "settingsSync.ignoredSettings": ["-pylint.lintOnChange"],
+  "catppuccin.boldKeywords": false,
+  "material-icon-theme.folders.theme": "specific",
+  "material-icon-theme.opacity": 1,
+  "workbench.editor.enablePreview": false,
+  "editor.tabSize": 4,
+  "github.copilot.chat.temporalContext.enabled": true
+}
