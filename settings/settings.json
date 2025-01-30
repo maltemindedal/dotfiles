@@ -1,26 +1,59 @@
 {
-  // Git Settings
+  // Core Editor Settings
+  "editor.fontFamily": "Jetbrains Mono",
+  "editor.fontSize": 16,
+  "editor.fontWeight": "300",
+  "editor.lineHeight": 1.6,
+  "editor.tabSize": 4,
+  "editor.fontLigatures": true,
+  "editor.fontVariations": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Editor Behavior
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.linkedEditing": true,
+  "editor.smoothScrolling": true,
+
+  // Editor Visual Settings
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.guides.bracketPairs": true,
+  "editor.codeLensFontFamily": "JetBrains Mono",
+  "editor.semanticHighlighting.enabled": true,
+  "editor.semanticTokenColorCustomizations": {
+    "enabled": true
+  },
+
+  // Workbench Settings
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.colorTheme": "Panda Syntax",
+  "workbench.startupEditor": "none",
+  "workbench.activityBar.location": "top",
+  "workbench.list.smoothScrolling": true,
+  "workbench.tree.indent": 20,
+  "workbench.editor.enablePreview": false,
+
+  // Git Integration
   "git.autofetch": true,
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
 
-  // Editor Settings
-  "editor.fontFamily": "Jetbrains Mono",
-  "editor.fontWeight": "300",
-  "editor.fontLigatures": true,
-  "editor.formatOnType": true,
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.lineHeight": 0,
-  "editor.codeLensFontFamily": "JetBrains Mono",
-  "editor.fontSize": 16,
-  "editor.fontVariations": false,
-  "editor.smoothScrolling": true,
-  "editor.cursorBlinking": "smooth",
-  "editor.cursorSmoothCaretAnimation": "on",
-  "editor.linkedEditing": true,
-  "editor.guides.bracketPairs": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // File Explorer
+  "explorer.confirmDelete": false,
+  "explorer.confirmPasteNative": false,
+
+  // Terminal Configuration
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.fontWeightBold": "475",
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.cursorStyleInactive": "line",
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
 
   // Language-Specific Settings
   "[python]": {
@@ -31,14 +64,16 @@
     }
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -73,56 +108,33 @@
     "editor.formatOnSave": true
   },
 
-  // Terminal Settings
-  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
-  "terminal.integrated.fontWeight": "normal",
-  "terminal.integrated.fontWeightBold": "475",
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.cursorStyleInactive": "line",
-  "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.smoothScrolling": true,
-  "terminal.integrated.fontSize": 15,
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
-
-  // Debug Settings
-  "debug.terminal.clearBeforeReusing": true,
-
-  // Chat & Notebook Settings
-  "chat.editor.fontFamily": "JetBrains Mono",
-  "notebook.output.fontFamily": "JetBrains Mono",
-
-  // Markdown Preview Settings
-  "markdown.preview.fontFamily": "JetBrains Mono",
-
-  // Workbench Settings
-  "workbench.iconTheme": "symbols",
-  "workbench.colorTheme": "Catppuccin Mocha",
-  "workbench.startupEditor": "none",
-  "workbench.activityBar.location": "top",
-  "workbench.list.smoothScrolling": true,
-
   // Material Icon Theme Settings
   "material-icon-theme.folders.color": "#90a4ae",
-  "material-icon-theme.hidesExplorerArrows": false,
+  "material-icon-theme.hidesExplorerArrows": true,
   "material-icon-theme.activeIconPack": "react",
-  "material-icon-theme.saturation": 1,
+  "material-icon-theme.saturation": 0.85,
+  "material-icon-theme.folders.theme": "specific",
+  "material-icon-theme.opacity": 1,
 
-  // Copilot Settings
+  // VS Icons Settings
+  "vsicons.presets.hideExplorerArrows": true,
+  "vsicons.dontShowNewVersionMessage": true,
+
+  // GitHub Copilot
+  "github.copilot.chat.temporalContext.enabled": true,
+  "github.copilot.editor.enableAutoCompletions": true,
   "github.copilot.enable": {
     "*": true,
     "plaintext": true,
     "markdown": true,
     "scminput": false,
-    "yaml": false
+    "yaml": true
   },
-  "github.copilot.editor.enableAutoCompletions": true,
 
-  // Prettier Settings
+  // Code Formatting & Linting
   "prettier.requireConfig": false,
   "prettier.useEditorConfig": false,
   "prettier.singleQuote": true,
-
-  // ESLint Settings
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -130,32 +142,33 @@
     "typescriptreact"
   ],
 
-  // Python & Testing Settings
+  // Python & Testing
   "python.createEnvironment.trigger": "off",
   "isort.check": true,
-  "testExplorer.useNativeTesting": true,
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": true,
 
-  // Live Server Settings
+  // Debug & Development
+  "debug.terminal.clearBeforeReusing": true,
   "liveServer.settings.donotShowInfoMsg": true,
   "liveServer.settings.donotVerifyTags": true,
 
-  // Miscellaneous Settings
-  "explorer.confirmDelete": false,
-  "explorer.confirmPasteNative": false,
+  // UI & Display Settings
+  "chat.editor.fontFamily": "JetBrains Mono",
+  "notebook.output.fontFamily": "JetBrains Mono",
+  "markdown.preview.fontFamily": "JetBrains Mono",
+
+  // Security & Trust
+  "security.workspace.trust.untrustedFiles": "open",
+  "security.allowedUNCHosts": ["wsl.localhost"],
+
+  // Miscellaneous
   "files.autoSave": "afterDelay",
   "window.titleBarStyle": "custom",
   "redhat.telemetry.enabled": false,
-  "code-runner.enableAppInsights": false,
-  "code-runner.runInTerminal": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "security.workspace.trust.untrustedFiles": "open",
-  "security.allowedUNCHosts": ["wsl.localhost"],
-  "extensions.ignoreRecommendations": true,
   "settingsSync.ignoredSettings": ["-pylint.lintOnChange"],
-  "catppuccin.boldKeywords": false,
-  "material-icon-theme.folders.theme": "specific",
-  "material-icon-theme.opacity": 1,
-  "workbench.editor.enablePreview": false,
-  "editor.tabSize": 4,
-  "github.copilot.chat.temporalContext.enabled": true
+  "extensions.ignoreRecommendations": true,
+  "code-runner.enableAppInsights": false,
+  "code-runner.runInTerminal": true
 }
