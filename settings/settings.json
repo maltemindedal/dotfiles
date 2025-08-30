@@ -235,8 +235,6 @@
   // ==========================================
 
   "extensions.ignoreRecommendations": true,
-  "vsicons.presets.hideExplorerArrows": true,
-  "vsicons.dontShowNewVersionMessage": true,
 
   // ==========================================
   // FONTS & DISPLAY
