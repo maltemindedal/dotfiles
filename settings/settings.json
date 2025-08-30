@@ -35,7 +35,7 @@
   // ==========================================
 
   // Theme & Appearance
-  "workbench.colorTheme": "Catppuccin Latte",
+  "workbench.colorTheme": "Catppuccin Macchiato",
   "workbench.preferredDarkColorTheme": "Catppuccin Macchiato",
   "workbench.preferredLightColorTheme": "Catppuccin Latte",
   "workbench.iconTheme": "material-icon-theme",
@@ -109,11 +109,15 @@
   // ==========================================
 
   "chat.agent.enabled": true,
+  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "chat.todoListTool.enabled": true,
   "chat.editor.fontFamily": "JetBrains Mono",
   "chat.mcp.discovery.enabled": true,
-  "chat.tools.autoApprove": true,
   "inlineChat.enableV2": true,
   "accessibility.voice.speechTimeout": 0,
+  "github.copilot.chat.enableRetryAfterFilteredResponse": true,
+  "github.copilot.chat.newWorkspace.useContext7": true,
+  "chat.agent.maxRequests": 50,
 
   // ==========================================
   // CODE FORMATTING & LINTING
@@ -257,5 +261,7 @@
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
   },
-  "terminal.integrated.defaultProfile.linux": "zsh"
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.suggest.enabled": true,
+  "chat.editing.confirmEditRequestRemoval": false
 }

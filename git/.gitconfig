@@ -1,0 +1,17 @@
+[user]
+        name = Malte Mindedal
+        email = 112257731+maltemindedal@users.noreply.github.com
+[core]
+        sshCommand = ssh.exe
+
+[user]
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFA3pXNX8+eytg4LDUun+1i1tXJ8e5LFNgbk+MSa+lHs
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "/mnt/c/Users/<user>/AppData/Local/1Password/app/8/op-ssh-sign-wsl"
+
+[commit]
+  gpgsign = true
