@@ -42,13 +42,13 @@ export PATH=$PATH:$GOPATH/bin
 
 # --- Aliases ---
 
-# System Update Aliases
-alias update="sudo dnf update"
-alias upgrade="sudo dnf upgrade"
-alias dnfup="sudo dnf update && sudo dnf upgrade"
+# --- Aliases for Arch Linux ---
+
+# System Update
+alias update="sudo pacman -Syu"
 alias flatup="flatpak update"
-alias sysup="sudo dnf update && sudo dnf upgrade && flatpak update"
-alias cleanup="sudo dnf autoremove && sudo dnf clean all"
+alias sysup="sudo pacman -Syu && flatpak update"
+alias cleanup="sudo pacman -Rns \$(pacman -Qtdq)"
 
 # Development Aliases
 # Node.js / JavaScript
@@ -138,20 +138,24 @@ alias gr="git rebase"
 alias glog="git log --oneline --graph --decorate"
 
 # General utilities
-alias ll="ls -alF"
-alias la="ls -A"
-alias l="ls -CF"
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias grep="grep --color=auto"
-alias fgrep="fgrep --color=auto"
-alias egrep="egrep --color=auto"
-alias h="history"
-alias c="clear"
-alias x="exit"
-alias reload="source ~/.zshrc"
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias h='history'
+alias c='clear'
+alias x='exit'
+alias reload='source ~/.zshrc'
 
+# SSH Aliaes
+alias ssh='ssh.exe'
+alias ssh-add='ssh-add.exe'
 
 # --- Shell Integrations ---
 
