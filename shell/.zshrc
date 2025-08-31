@@ -44,13 +44,21 @@ export PATH=$PATH:$GOPATH/bin
 
 # --- Aliases for Arch Linux ---
 
-# System Update
+# Pacman
 alias update="sudo pacman -Syu"
-alias flatup="flatpak update"
 alias sysup="sudo pacman -Syu && flatpak update"
 alias cleanup="sudo pacman -Rns \$(pacman -Qtdq)"
 
-# Development Aliases
+# Flatpak
+alias flatup="flatpak update"
+alias flatls="flatpak list"
+alias flatrun="flatpak run"
+alias flatse="flatpak search"
+alias flatclean="flatpak uninstall --unused"
+
+
+# --- Development Aliases ---
+
 # Node.js / JavaScript
 alias ni="npm install"
 alias nid="npm install --save-dev"
@@ -153,9 +161,10 @@ alias c='clear'
 alias x='exit'
 alias reload='source ~/.zshrc'
 
-# SSH Aliaes
+# SSH Aliases
 alias ssh='ssh.exe'
 alias ssh-add='ssh-add.exe'
+
 
 # --- Shell Integrations ---
 
@@ -163,4 +172,4 @@ alias ssh-add='ssh-add.exe'
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Starship Prompt (must be the last line)
-eval "$(starship init zsh)"%                                                                                            
+eval "$(starship init zsh)"
