@@ -161,10 +161,10 @@ alias c='clear'
 alias x='exit'
 alias reload='source ~/.zshrc'
 
-# SSH Aliases
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
-
+# Load a local, machine-specific configuration file if it exists
+if [ -f ~/.zshrc.local ]; then
+    source ~/.zshrc.local
+fi
 
 # --- Shell Integrations ---
 
