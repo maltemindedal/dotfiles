@@ -17,6 +17,9 @@ fi
 
 # --- Environment Variables & PATH ---
 
+# Load user-specific environment variables
+. "$HOME/.local/bin/env"
+
 # 1Password SSH Agent
 export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
 
