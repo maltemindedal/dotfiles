@@ -47,17 +47,17 @@ export PATH=$PATH:$GOPATH/bin
 
 # --- Aliases for Arch Linux ---
 
-# Pacman
-alias update="sudo pacman -Syu"
-alias sysup="sudo pacman -Syu && flatpak update"
+# Update official repository and AUR packages (the new standard)
+alias update="yay"
+
+# Full system upgrade (Official repos, AUR, and Flatpak)
+alias sysup="yay && flatpak update"
+
+# Remove orphaned packages (no change needed, this is already perfect)
 alias cleanup="sudo pacman -Rns \$(pacman -Qtdq)"
 
-# Flatpak
-alias flatup="flatpak update"
-alias flatls="flatpak list"
-alias flatrun="flatpak run"
-alias flatse="flatpak search"
-alias flatclean="flatpak uninstall --unused"
+# Clean all package caches (a useful addition)
+alias cleanall="yay -Scc"
 
 
 # --- Development Aliases ---
