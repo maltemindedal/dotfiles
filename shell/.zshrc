@@ -82,15 +82,22 @@ alias yd="yarn dev"
 alias yb="yarn build"
 alias yt="yarn test"
 
-# Python
+# --- Python (with uv) ---
 alias python="python3"
-alias pip="pip3"
-alias venv="python3 -m venv"
-alias act="source venv/bin/activate"
+alias pip="uv pip"              # <-- Always use uv for pip commands
+alias venv="uv venv"             # <-- Use uv to create virtual environments (faster)
+alias act="source .venv/bin/activate" # <-- Activate .venv (uv's default)
 alias deact="deactivate"
-alias pipi="pip install"
-alias pipr="pip install -r requirements.txt"
-alias pipf="pip freeze > requirements.txt"
+alias pipi="uv pip install"      # Now an explicit uv alias
+alias pipr="uv pip install -r requirements.txt" # Now an explicit uv alias
+alias pipf="uv pip freeze > requirements.txt"   # Now an explicit uv alias
+
+# New aliases for uv project management
+alias ua="uv add"
+alias ur="uv run"
+alias ul="uv lock"
+alias us="uv sync"
+alias ui="uv init"
 
 # C/C++
 alias gcc="gcc -Wall -Wextra -std=c11"
