@@ -17,6 +17,9 @@ fi
 
 # --- Environment Variables & PATH ---
 
+# 1Password SSH Agent
+export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
+
 # Bun configuration
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
