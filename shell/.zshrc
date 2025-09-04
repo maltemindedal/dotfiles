@@ -18,7 +18,9 @@ fi
 # --- Environment Variables & PATH ---
 
 # Load user-specific environment variables
-. "$HOME/.local/bin/env"
+if [ -f "$HOME/.local/bin/env" ]; then
+    . "$HOME/.local/bin/env"
+fi
 
 # 1Password SSH Agent
 export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
@@ -46,21 +48,36 @@ export PATH=$PATH:$GOPATH/bin
 # fi
 
 
-# --- Aliases ---
+# --- Aliases & Functions ---
 
 # --- Aliases for Arch Linux ---
 
-# Update official repository and AUR packages (the new standard)
+# Update official repository and AUR packages
 alias update="yay"
 
 # Full system upgrade (Official repos, AUR, and Flatpak)
 alias sysup="yay && flatpak update"
 
-# Remove orphaned packages (no change needed, this is already perfect)
-alias cleanup="sudo pacman -Rns \$(pacman -Qtdq)"
-
 # Clean all package caches (a useful addition)
 alias cleanall="yay -Scc"
+
+# A smarter function to remove orphaned packages.
+cleanup() {
+    # Get a list of orphaned packages.
+    orphans=$(pacman -Qtdq)
+
+    if [ -z "$orphans" ]; then
+        # If the list is empty, print a friendly message.
+        echo "✨ No orphaned packages to clean up. Your system is tidy!"
+    else
+        # If orphans were found, print them and then remove them.
+        echo "Found the following orphaned packages:"
+        echo "$orphans"
+        echo "-------------------------------------"
+        # The 'xargs' command helps pipe the list of packages correctly to pacman
+        echo "$orphans" | xargs sudo pacman -Rns
+    fi
+}
 
 
 # --- Development Aliases ---
@@ -88,10 +105,10 @@ alias yt="yarn test"
 # --- Python (with uv) ---
 alias python="python3"
 alias pip="uv pip"              # <-- Always use uv for pip commands
-alias venv="uv venv"             # <-- Use uv to create virtual environments (faster)
+alias venv="uv venv"            # <-- Use uv to create virtual environments (faster)
 alias act="source .venv/bin/activate" # <-- Activate .venv (uv's default)
 alias deact="deactivate"
-alias pipi="uv pip install"      # Now an explicit uv alias
+alias pipi="uv pip install"     # Now an explicit uv alias
 alias pipr="uv pip install -r requirements.txt" # Now an explicit uv alias
 alias pipf="uv pip freeze > requirements.txt"   # Now an explicit uv alias
 
@@ -182,7 +199,9 @@ fi
 # --- Shell Integrations ---
 
 # Homebrew
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 # Starship Prompt (must be the last line)
 eval "$(starship init zsh)"
