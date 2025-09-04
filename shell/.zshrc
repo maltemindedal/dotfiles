@@ -104,16 +104,14 @@ alias yt="yarn test"
 
 # --- Python (with uv) ---
 alias python="python3"
-alias pip="uv pip"              # <-- Always use uv for pip commands
-alias venv="uv venv"            # <-- Use uv to create virtual environments (faster)
-alias act="source .venv/bin/activate" # <-- Activate .venv (uv's default)
+alias pip="uv pip"
+alias venv="uv venv"
+alias act="source .venv/bin/activate"
 alias deact="deactivate"
-alias pipi="uv pip install"     # Now an explicit uv alias
-alias pipr="uv pip install -r requirements.txt" # Now an explicit uv alias
-alias pipf="uv pip freeze > requirements.txt"   # Now an explicit uv alias
+alias pipi="uv pip install"
+alias pipr="uv pip install -r requirements.txt"
+alias pipf="uv pip freeze > requirements.txt"
 
-# New aliases for uv project management
-alias ua="uv add"
 alias ur="uv run"
 alias ul="uv lock"
 alias us="uv sync"
