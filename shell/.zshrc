@@ -175,6 +175,9 @@ alias gm="git merge"
 alias gr="git rebase"
 alias glog="git log --oneline --graph --decorate"
 
+# Update dotfiles and reload zsh config
+alias update-zsh='(cd ~/dev/personal/dotfiles && git fetch && if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then git pull && source ~/.zshrc && echo "✨ Dotfiles updated and zsh config reloaded!"; else echo "📦 Dotfiles are already up-to-date!"; fi)'
+
 # General utilities
 alias ls='ls --color=auto'
 alias ll='ls -alF'
