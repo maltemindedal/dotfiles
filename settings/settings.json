@@ -3,23 +3,23 @@
   // CORE EDITOR SETTINGS
   // ==========================================
 
-  // Font Configuration
-  "editor.fontFamily": "JetBrains Mono",
-  "editor.fontSize": 16,
-  "editor.fontWeight": "300",
-  "editor.lineHeight": 1.6,
-  "editor.fontLigatures": true,
-  "editor.fontVariations": false,
-  "editor.codeLensFontFamily": "JetBrains Mono",
-
   // Editor Behavior
-  "editor.tabSize": 4,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnType": true,
-  "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
   "editor.linkedEditing": true,
   "editor.smoothScrolling": true,
+  "editor.tabSize": 4,
+
+  // Font Configuration
+  "editor.codeLensFontFamily": "Jetbrains Mono",
+  "editor.fontFamily": "Jetbrains Mono",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 16,
+  "editor.fontVariations": false,
+  "editor.fontWeight": "300",
+  "editor.lineHeight": 1.6,
 
   // Visual Settings
   "editor.cursorBlinking": "smooth",
@@ -34,18 +34,18 @@
   // WORKBENCH & UI SETTINGS
   // ==========================================
 
+  // Layout & Navigation
+  "workbench.activityBar.location": "top",
+  "workbench.editor.enablePreview": true,
+  "workbench.list.smoothScrolling": true,
+  "workbench.startupEditor": "none",
+  "workbench.tree.indent": 20,
+
   // Theme & Appearance
   "workbench.colorTheme": "Catppuccin Macchiato",
+  "workbench.iconTheme": "material-icon-theme",
   "workbench.preferredDarkColorTheme": "Catppuccin Macchiato",
   "workbench.preferredLightColorTheme": "Catppuccin Latte",
-  "workbench.iconTheme": "material-icon-theme",
-
-  // Layout & Navigation
-  "workbench.startupEditor": "none",
-  "workbench.activityBar.location": "top",
-  "workbench.list.smoothScrolling": true,
-  "workbench.tree.indent": 20,
-  "workbench.editor.enablePreview": true,
 
   // Window Settings
   "window.titleBarStyle": "custom",
@@ -54,78 +54,89 @@
   // FILE MANAGEMENT
   // ==========================================
 
-  "files.autoSave": "afterDelay",
   "explorer.confirmDelete": false,
-  "explorer.confirmPasteNative": false,
   "explorer.confirmDragAndDrop": false,
+  "explorer.confirmPasteNative": false,
+  "files.autoSave": "afterDelay",
 
   // ==========================================
   // TERMINAL CONFIGURATION
   // ==========================================
 
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.cursorStyleInactive": "line",
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
   "terminal.integrated.fontSize": 15,
   "terminal.integrated.fontWeight": "normal",
-  "terminal.integrated.fontWeightBold": "475",
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.cursorStyleInactive": "line",
-  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.fontWeightBold": "500",
   "terminal.integrated.smoothScrolling": true,
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.suggest.enabled": true,
 
   // ==========================================
   // GIT INTEGRATION
   // ==========================================
 
   "git.autofetch": true,
-  "git.enableSmartCommit": true,
   "git.confirmSync": false,
+  "git.enableSmartCommit": true,
 
   // ==========================================
   // GITHUB COPILOT SETTINGS
   // ==========================================
 
-  "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
-  "github.copilot.nextEditSuggestions.enabled": true,
-  "github.copilot.nextEditSuggestions.fixes": true,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "github.copilot.chat.codesearch.enabled": true,
   "github.copilot.chat.editor.temporalContext.enabled": true,
   "github.copilot.chat.edits.temporalContext.enabled": true,
-  "github.copilot.chat.codesearch.enabled": true,
-  "github.copilot.chat.newWorkspaceCreation.enabled": true,
-  "github.copilot.chat.agent.thinkingTool": true,
   "github.copilot.chat.languageContext.fix.typescript.enabled": true,
   "github.copilot.chat.languageContext.inline.typescript.enabled": true,
   "github.copilot.chat.languageContext.typescript.enabled": true,
+  "github.copilot.chat.newWorkspace.useContext7": true,
+  "github.copilot.chat.newWorkspaceCreation.enabled": true,
   "github.copilot.enable": {
     "*": true,
-    "plaintext": true,
     "markdown": true,
+    "plaintext": true,
     "scminput": false,
     "yaml": true
   },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.nextEditSuggestions.fixes": true,
+  "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
 
   // ==========================================
   // CHAT & AI SETTINGS
   // ==========================================
 
   "chat.agent.enabled": true,
-  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "chat.agent.maxRequests": 50,
+  "chat.editing.confirmEditRequestRemoval": false,
+  "chat.editor.fontFamily": "Jetbrains Mono",
+  "chat.mcp.discovery.enabled": {
+    "claude-desktop": true,
+    "cursor-global": true,
+    "cursor-workspace": true,
+    "windsurf": true
+  },
   "chat.todoListTool.enabled": true,
-  "chat.editor.fontFamily": "JetBrains Mono",
-  "chat.mcp.discovery.enabled": true,
   "inlineChat.enableV2": true,
   "accessibility.voice.speechTimeout": 0,
-  "github.copilot.chat.enableRetryAfterFilteredResponse": true,
-  "github.copilot.chat.newWorkspace.useContext7": true,
-  "chat.agent.maxRequests": 50,
 
   // ==========================================
   // CODE FORMATTING & LINTING
   // ==========================================
 
-  "prettier.requireConfig": false,
-  "prettier.useEditorConfig": false,
-  "prettier.singleQuote": true,
+  // C/C++ Clang-Format Configuration
+  "C_Cpp.clang_format_style": "Google",
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "clang-format.fallbackStyle": "Google",
+  "clang-format.style": "Google",
+
+  // ESLint
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -133,9 +144,10 @@
     "typescriptreact"
   ],
 
-  // C/C++ Clang-Format Configuration
-  "clang-format.style": "Google",
-  "clang-format.fallbackStyle": "Google",
+  // Prettier
+  "prettier.requireConfig": false,
+  "prettier.singleQuote": true,
+  "prettier.useEditorConfig": false,
 
   // ==========================================
   // LANGUAGE-SPECIFIC SETTINGS
@@ -187,13 +199,17 @@
     "editor.tabSize": 2
   },
   "[python]": {
+    // MODIFIED: Made the code actions specific to Ruff to avoid conflicts.
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    },
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit",
-      "source.fixAll": "explicit"
-    },
     "editor.tabSize": 4
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
   },
   "[tailwindcss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -201,7 +217,7 @@
     "editor.tabSize": 2
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
@@ -215,20 +231,17 @@
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
-  "python.createEnvironment.trigger": "off",
-  "python.testing.unittestEnabled": true,
-  "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "test_*.py"],
-  "python.analysis.autoFormatStrings": true,
 
   // ==========================================
   // DEBUGGING & DEVELOPMENT
   // ==========================================
 
-  "debug.terminal.clearBeforeReusing": true,
   "code-runner.enableAppInsights": false,
   "code-runner.runInTerminal": true,
+  "debug.terminal.clearBeforeReusing": true,
   "liveServer.settings.donotShowInfoMsg": true,
   "liveServer.settings.donotVerifyTags": true,
+  "cmake.showNotAllDocumentsSavedQuestion": false,
 
   // ==========================================
   // EXTENSIONS & THEMES
@@ -240,8 +253,8 @@
   // FONTS & DISPLAY
   // ==========================================
 
-  "notebook.output.fontFamily": "JetBrains Mono",
-  "markdown.preview.fontFamily": "JetBrains Mono",
+  "markdown.preview.fontFamily": "Jetbrains Mono",
+  "notebook.output.fontFamily": "Jetbrains Mono",
 
   // ==========================================
   // JAVASCRIPT & TYPESCRIPT
@@ -250,16 +263,20 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
 
   // ==========================================
+  // PYTHON
+  // ==========================================
+
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.typeCheckingMode": "standard",
+  "python.createEnvironment.trigger": "off",
+  "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "test_*.py"],
+  "python.testing.unittestEnabled": true,
+
+  // ==========================================
   // SECURITY & PRIVACY
   // ==========================================
 
-  "security.workspace.trust.untrustedFiles": "open",
   "redhat.telemetry.enabled": false,
-  "cmake.showNotAllDocumentsSavedQuestion": false,
-  "[sql]": {
-    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
-  },
-  "terminal.integrated.defaultProfile.linux": "zsh",
-  "terminal.integrated.suggest.enabled": true,
-  "chat.editing.confirmEditRequestRemoval": false
+  "security.workspace.trust.untrustedFiles": "open",
+  "clangd.checkUpdates": true
 }
