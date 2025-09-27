@@ -30,9 +30,9 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Go Development
-export GOPATH="/opt/go-workspace"
-export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:$GOPATH/bin"
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
 
 # --- User Configuration ---
@@ -173,39 +173,6 @@ alias gm="git merge"
 alias gr="git rebase"
 alias glog="git log --oneline --graph --decorate"
 
-# Update dotfiles and reload zsh config
-update-zsh() {
-    # Find the git repository containing the actual .zshrc file
-    local zshrc_path="$HOME/.zshrc"
-    local dotfiles_repo
-    
-    # If .zshrc is a symlink, follow it to find the actual file
-    if [ -L "$zshrc_path" ]; then
-        zshrc_path=$(readlink -f "$zshrc_path")
-    fi
-    
-    # Get the directory containing the .zshrc file and find the git repo
-    dotfiles_repo=$(cd "$(dirname "$zshrc_path")" && git rev-parse --show-toplevel 2>/dev/null)
-    
-    if [ -z "$dotfiles_repo" ]; then
-        echo "❌ Could not find dotfiles git repository!"
-        echo "💡 Make sure your .zshrc is in a git repository or is symlinked to one."
-        return 1
-    fi
-    
-    echo "📂 Found dotfiles repo at: $dotfiles_repo"
-    
-    (cd "$dotfiles_repo" && 
-     git fetch && 
-     if [ $(git rev-parse HEAD 2>/dev/null) != $(git rev-parse @{u} 2>/dev/null) ]; then 
-         git pull && 
-         source ~/.zshrc && 
-         echo "✨ Dotfiles updated and zsh config reloaded!"
-     else 
-         echo "📦 Dotfiles are already up-to-date!"
-     fi
-    )
-}
 
 # General utilities
 alias ls='ls --color=auto'
