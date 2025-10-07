@@ -50,21 +50,21 @@ export PATH=$PATH:$GOPATH/bin
 
 # --- Aliases & Functions ---
 
-# --- Aliases for Arch Linux ---
+# --- Aliases for Ubuntu/Debian ---
 
-# Update official repository and AUR packages
-alias update="yay"
+# Update package lists and upgrade all packages
+alias update="sudo apt update && sudo apt upgrade"
 
-# Full system upgrade (Official repos, AUR, and Flatpak)
-alias sysup="yay && flatpak update"
+# Full system upgrade (includes handling dependencies and Flatpak)
+alias sysup="sudo apt update && sudo apt full-upgrade && flatpak update"
 
-# Clean all package caches (a useful addition)
-alias cleanall="yay -Scc"
+# Clean package cache
+alias clean="sudo apt clean"
 
 # A smarter function to remove orphaned packages.
 cleanup() {
-    # Get a list of orphaned packages.
-    orphans=$(pacman -Qtdq)
+    # Check for packages that can be autoremoved.
+    orphans=$(apt-get --just-print autoremove | awk '/^Remv / {print $2}')
 
     if [ -z "$orphans" ]; then
         # If the list is empty, print a friendly message.
@@ -74,8 +74,7 @@ cleanup() {
         echo "Found the following orphaned packages:"
         echo "$orphans"
         echo "-------------------------------------"
-        # The 'xargs' command helps pipe the list of packages correctly to pacman
-        echo "$orphans" | xargs sudo pacman -Rns
+        sudo apt autoremove --purge
     fi
 }
 
@@ -146,7 +145,6 @@ alias gom="go mod"
 alias gomi="go mod init"
 alias gomt="go mod tidy"
 alias gof="go fmt"
-alias gov="go version"
 
 # Rust
 alias cb="cargo build"
