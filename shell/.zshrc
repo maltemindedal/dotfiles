@@ -29,12 +29,6 @@ export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Go Development
-export PATH=$PATH:/usr/local/go/bin
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-
-
 # --- User Configuration ---
 
 # You may need to manually set your language environment
@@ -78,6 +72,11 @@ cleanup() {
     fi
 }
 
+# Force usage of Windows 1Password/SSH integration
+alias ssh='ssh.exe'
+alias ssh-add='ssh-add.exe'
+alias ssh-keygen='ssh-keygen.exe'
+
 # Git shortcuts
 alias gs="git status"
 alias ga="git add"
@@ -109,6 +108,12 @@ alias c='clear'
 alias x='exit'
 alias reload='source ~/.zshrc'
 
+# uv / Python aliases
+alias py='uv run python'
+alias python='uv run python'
+alias python3='uv run python3'
+
+
 # Load a local, machine-specific configuration file if it exists
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
@@ -123,3 +128,6 @@ fi
 
 # Starship Prompt (must be the last line)
 eval "$(starship init zsh)"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
