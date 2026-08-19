@@ -1,81 +1,84 @@
 # ~/.zshrc
-# A clean Zsh configuration using Starship and manually loaded plugins.
+# A clean, macOS-optimized Zsh configuration using Starship and manual plugins.
+# Homebrew shellenv lives in ~/.zprofile (login shell) — not repeated here.
 
-# --- Zsh Plugin Loading ---
-# Safely loads plugins from a custom directory.
-
-# Load zsh-autosuggestions
-if [ -f ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
-
-# Load zsh-syntax-highlighting
-if [ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
+# Deduplicate PATH/FPATH automatically (safe to `reload` repeatedly)
+typeset -U path PATH fpath FPATH
 
 # --- Environment Variables & PATH ---
-
-# Load user-specific environment variables
-if [ -f "$HOME/.local/bin/env" ]; then
-    . "$HOME/.local/bin/env"
-fi
-
-# 1Password SSH Agent
-export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
-
-# Bun configuration
 export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+export PNPM_HOME="$HOME/Library/pnpm"
+path=("$HOME/.local/bin" "$BUN_INSTALL/bin" "$PNPM_HOME" $path)
 
-# --- User Configuration ---
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+# SSH: use the macOS system ssh-agent (launchd sets SSH_AUTH_SOCK).
+# Previously overridden to the 1Password agent; retired in favour of the
+# on-disk key at ~/.ssh/id_ed25519_git (passphrase held in the login keychain).
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
+# --- History ---
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY          # share across open terminals
+setopt INC_APPEND_HISTORY     # write immediately, not on exit
+setopt EXTENDED_HISTORY       # timestamps
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE      # leading space = don't record
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY            # show expanded !! before running
 
+# --- Shell Options ---
+setopt AUTO_CD                # `dir` == `cd dir`
+setopt AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
+setopt CORRECT                # suggest corrections for mistyped commands
+setopt INTERACTIVE_COMMENTS
+setopt NO_BEEP
+
+# --- Completion ---
+fpath=("$HOME/.zsh/completions" "$HOME/.docker/completions" /opt/homebrew/share/zsh-completions /opt/homebrew/share/zsh/site-functions $fpath)
+autoload -Uz compinit
+# Only rebuild the completion dump once a day (big startup win)
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'   # case-insensitive + partial
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# --- Keybindings ---
+bindkey -e                                   # emacs mode
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search   # ↑ prefix history search
+bindkey '^[[B' down-line-or-beginning-search # ↓
+bindkey '^[[1;3C' forward-word               # ⌥→
+bindkey '^[[1;3D' backward-word              # ⌥←
+bindkey '^[[H' beginning-of-line             # Home
+bindkey '^[[F' end-of-line                   # End
+bindkey '^[[3~' delete-char                  # Fn+Delete
+
+# --- Zsh Plugins (autosuggestions before syntax-highlighting; both after compinit) ---
+[ -f ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+  source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+[ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+  source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # --- Aliases & Functions ---
 
-# --- Aliases for Ubuntu/Debian ---
-
-# Update package lists and upgrade all packages
-alias update="sudo apt update && sudo apt upgrade"
-
-# Full system upgrade (includes handling dependencies and Flatpak)
-alias sysup="sudo apt update && sudo apt full-upgrade && flatpak update"
-
-# Clean package cache
-alias clean="sudo apt clean"
-
-# A smarter function to remove orphaned packages.
-cleanup() {
-    # Check for packages that can be autoremoved.
-    orphans=$(apt-get --just-print autoremove | awk '/^Remv / {print $2}')
-
-    if [ -z "$orphans" ]; then
-        # If the list is empty, print a friendly message.
-        echo "✨ No orphaned packages to clean up. Your system is tidy!"
-    else
-        # If orphans were found, print them and then remove them.
-        echo "Found the following orphaned packages:"
-        echo "$orphans"
-        echo "-------------------------------------"
-        sudo apt autoremove --purge
-    fi
-}
-
-# Force usage of Windows 1Password/SSH integration
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
-alias ssh-keygen='ssh-keygen.exe'
+# Homebrew maintenance
+alias update="brew update && brew upgrade"
+alias sysup="brew update && brew upgrade && brew cleanup --prune=all"
+alias clean="brew cleanup --prune=all"
 
 # Git shortcuts
 alias gs="git status"
@@ -86,48 +89,64 @@ alias gl="git pull"
 alias gd="git diff"
 alias gb="git branch"
 alias gco="git checkout"
-alias gcb="git checkout -b"
+alias gcb="git switch -c"
+alias gsw="git switch"
 alias gm="git merge"
 alias gr="git rebase"
 alias glog="git log --oneline --graph --decorate"
 
+# Modern replacements (eza / bat / fd / rg)
+if command -v eza >/dev/null; then
+  alias ls='eza --group-directories-first'
+  alias ll='eza -la --group-directories-first --git'
+  alias la='eza -a --group-directories-first'
+  alias l='eza -l --group-directories-first'
+  alias lt='eza --tree --level=2 --group-directories-first'
+else
+  alias ls='ls -G'
+  alias ll='ls -alFG'
+  alias la='ls -A'
+  alias l='ls -CF'
+fi
+command -v bat >/dev/null && alias cat='bat --paging=never --style=plain'
 
 # General utilities
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 alias h='history'
 alias c='clear'
 alias x='exit'
-alias reload='source ~/.zshrc'
+alias reload='exec zsh'
+alias path='echo $PATH | tr ":" "\n"'
 
-# uv / Python aliases
+# uv / Python: `py` runs inside the project venv. (Global `python` is deliberately
+# NOT shadowed — scripts/tools that call `python` should get the real one.)
 alias py='uv run python'
-alias python='uv run python'
-alias python3='uv run python3'
 
+# --- NVM (lazy-loaded: only sources nvm on first use, saves ~0.5s per shell) ---
+export NVM_DIR="$HOME/.nvm"
+if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
+  _nvm_load() {
+    unset -f nvm node npm npx 2>/dev/null
+    \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+  }
+  for _cmd in nvm node npm npx; do
+    eval "${_cmd}() { _nvm_load; ${_cmd} \"\$@\"; }"
+  done
+  unset _cmd
+fi
+
+# --- Tool Initializations ---
+command -v fzf    >/dev/null && source <(fzf --zsh)          # Ctrl-R history, Ctrl-T files, Alt-C cd
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"    # `z <dir>` smart cd
+command -v fd     >/dev/null && export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Load a local, machine-specific configuration file if it exists
-if [ -f ~/.zshrc.local ]; then
-    source ~/.zshrc.local
-fi
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
-# --- Shell Integrations ---
-
-# Homebrew
-if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
-# Starship Prompt (must be the last line)
-eval "$(starship init zsh)"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Starship prompt (keep last)
+command -v starship >/dev/null && eval "$(starship init zsh)"
