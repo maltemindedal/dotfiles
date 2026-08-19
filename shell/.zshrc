@@ -10,8 +10,6 @@ export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="$HOME/Library/pnpm"
 path=("$HOME/.local/bin" "$BUN_INSTALL/bin" "$PNPM_HOME" $path)
 
-[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
-
 # SSH: use the macOS system ssh-agent (launchd sets SSH_AUTH_SOCK).
 # Previously overridden to the 1Password agent; retired in favour of the
 # on-disk key at ~/.ssh/id_ed25519_git (passphrase held in the login keychain).
@@ -65,14 +63,6 @@ bindkey '^[[H' beginning-of-line             # Home
 bindkey '^[[F' end-of-line                   # End
 bindkey '^[[3~' delete-char                  # Fn+Delete
 
-# --- Zsh Plugins (autosuggestions before syntax-highlighting; both after compinit) ---
-[ -f ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
-  source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
-[ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
-  source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # --- Aliases & Functions ---
 
 # Homebrew maintenance
@@ -119,7 +109,7 @@ alias h='history'
 alias c='clear'
 alias x='exit'
 alias reload='exec zsh'
-alias path='echo $PATH | tr ":" "\n"'
+alias path='print -l $path'
 
 # uv / Python: `py` runs inside the project venv. (Global `python` is deliberately
 # NOT shadowed — scripts/tools that call `python` should get the real one.)
@@ -142,11 +132,24 @@ fi
 # --- Tool Initializations ---
 command -v fzf    >/dev/null && source <(fzf --zsh)          # Ctrl-R history, Ctrl-T files, Alt-C cd
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"    # `z <dir>` smart cd
-command -v fd     >/dev/null && export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+if command -v fd >/dev/null; then
+  # Note: fzf disables Ctrl-T/Alt-C if these are set to an empty string, so only set them when fd exists.
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git'
+fi
 
 # Load a local, machine-specific configuration file if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# --- Zsh Plugins (keep near the end: they wrap ZLE widgets, so source after compinit, fzf and zoxide;
+#     autosuggestions before syntax-highlighting) ---
+[ -f ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
+  source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+[ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
+  source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Starship prompt (keep last)
 command -v starship >/dev/null && eval "$(starship init zsh)"

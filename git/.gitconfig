@@ -1,16 +1,35 @@
 [user]
     name = Malte Mindedal
     email = 112257731+maltemindedal@users.noreply.github.com
+    # Literal public key (not a file path) so the same config works on every machine.
     signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFA3pXNX8+eytg4LDUun+1i1tXJ8e5LFNgbk+MSa+lHs
-
-[core]
-    sshCommand = ssh.exe
 
 [gpg]
     format = ssh
 
-[gpg "ssh"]
-    program = ssh-keygen.exe
-
 [commit]
     gpgsign = true
+
+[tag]
+    gpgsign = true
+
+[init]
+    defaultBranch = main
+
+[push]
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[credential "https://github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+# Machine-specific overrides (allowedSignersFile, Windows ssh.exe paths, etc.)
+[include]
+    path = ~/.gitconfig.local

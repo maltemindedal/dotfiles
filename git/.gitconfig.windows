@@ -1,0 +1,6 @@
+# Windows-only settings. Copy to ~/.gitconfig.local on Windows machines.
+[core]
+    sshCommand = ssh.exe
+
+[gpg "ssh"]
+    program = ssh-keygen.exe
