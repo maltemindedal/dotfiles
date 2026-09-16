@@ -19,7 +19,7 @@ Source of truth: [`git/.gitconfig`](../../git/.gitconfig), [`git/.gitconfig.wind
 | `credential "https://gist.github.com".helper` | `` (reset) then `!gh auth git-credential` | Same, for gists |
 | `include.path` | `~/.gitconfig.local` | Machine-specific overrides (see below) |
 
-Not set here but required for signing to verify locally: `gpg.ssh.allowedSignersFile` — put it in `~/.gitconfig.local`.
+This file does not set `gpg.ssh.allowedSignersFile`, which is required for local signature verification. Put it in `~/.gitconfig.local`.
 
 ## `.gitconfig.windows` (copied to `~/.gitconfig.local` on Windows)
 
@@ -30,7 +30,7 @@ Not set here but required for signing to verify locally: `gpg.ssh.allowedSigners
 
 ## `.gitignore_global` (installed as `~/.gitignore_global`)
 
-Activate with `git config --global core.excludesfile ~/.gitignore_global` (or set `core.excludesfile` in `~/.gitconfig.local`). Scope is OS and editor junk only; project artifacts belong in per-project `.gitignore` files.
+Activate it with `git config --global core.excludesfile ~/.gitignore_global`, or set `core.excludesfile` in `~/.gitconfig.local`. The file contains only operating system and editor files. Put project artifacts in each project's `.gitignore` file.
 
 | Group | Patterns |
 |-------|----------|

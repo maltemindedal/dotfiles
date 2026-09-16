@@ -16,9 +16,9 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 | `FZF_ALT_C_COMMAND` | `fd --type d --hidden --exclude .git` | Only set when `fd` is installed |
 | `ZSH_AUTOSUGGEST_STRATEGY` | `(history completion)` | Autosuggestion sources |
 
-`PATH` additions, in order: `$HOME/.local/bin`, `$BUN_INSTALL/bin`, `$PNPM_HOME`. `path`/`fpath` are declared `typeset -U` so duplicates are removed on reload. Homebrew's `shellenv` is **not** run here — it is expected in `~/.zprofile`.
+`shell/.zshrc` prepends `$HOME/.local/bin`, `$BUN_INSTALL/bin`, and `$PNPM_HOME` to `PATH` in that order. It declares `path` and `fpath` with `typeset -U`, which removes duplicates on reload. It expects Homebrew's `shellenv` command in `~/.zprofile` and does not run it here.
 
-`fpath` additions: `$HOME/.zsh/completions`, `$HOME/.docker/completions`, `/opt/homebrew/share/zsh-completions`, `/opt/homebrew/share/zsh/site-functions`.
+It adds `$HOME/.zsh/completions`, `$HOME/.docker/completions`, `/opt/homebrew/share/zsh-completions`, and `/opt/homebrew/share/zsh/site-functions` to `fpath`.
 
 ## Shell options
 
@@ -39,11 +39,11 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 
 ## Completion
 
-`compinit` runs fully at most once per 24 hours (checked against `~/.zcompdump` age); otherwise `compinit -C` skips the security check for faster startup. Styles: menu selection, case-insensitive and partial-word matching, `LS_COLORS` in listings, grouped results with yellow headings, cache in `~/.zsh/cache`.
+`compinit` performs its security check at most once every 24 hours, based on the age of `~/.zcompdump`. During other shell starts, `compinit -C` skips that check. Completion uses menu selection, case-insensitive and partial-word matching, `LS_COLORS` in listings, grouped results with yellow headings, and a cache in `~/.zsh/cache`.
 
 ## Keybindings
 
-Emacs mode (`bindkey -e`) plus:
+The configuration enables Emacs mode with `bindkey -e` and defines these keybindings:
 
 | Key | Action |
 |-----|--------|
@@ -118,7 +118,7 @@ Without `eza`:
 
 ## Optional tools
 
-Each is detected with `command -v` at startup; missing tools are skipped.
+Missing tools do not prevent shell startup. `.zshrc` checks before it runs tool setup code or replaces a standard command. Aliases such as `py` still require the tool listed in the table when invoked.
 
 | Tool | What it enables |
 |------|-----------------|
@@ -134,15 +134,15 @@ Each is detected with `command -v` at startup; missing tools are skipped.
 
 ### Plugins
 
-Sourced from `~/.zsh/plugins/` if present, near the end of the file (they wrap ZLE widgets, so they must load after `compinit`, fzf and zoxide):
+Near the end of the file, `.zshrc` sources these plugins from `~/.zsh/plugins/` when they exist. They wrap ZLE widgets, so they load after `compinit`, fzf, and zoxide:
 
 1. `zsh-autosuggestions/zsh-autosuggestions.zsh`
 2. `zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
 
 ## Local override
 
-`~/.zshrc.local` is sourced if it exists — see [Machine-specific overrides](../guides/machine-specific-overrides.md).
+`.zshrc` sources `~/.zshrc.local` if the file exists. See [Machine-specific overrides](../guides/machine-specific-overrides.md).
 
 ## Starship configuration
 
-`shell/starship.toml` only overrides module symbols so the prompt works without a Nerd Font: `azure`, `battery`, `erlang`, `nodejs` and `pulumi`. Everything else is Starship's default.
+`shell/starship.toml` overrides five module symbols so the prompt works without a Nerd Font: `azure`, `battery`, `erlang`, `nodejs` and `pulumi`. Everything else uses Starship's default.

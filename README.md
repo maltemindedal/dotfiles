@@ -4,7 +4,7 @@ Shell and Git configuration for macOS (zsh) and Windows (PowerShell).
 
 ## Overview
 
-This repository contains plain configuration files that are symlinked (macOS) or copied (Windows) into the home directory. The zsh configuration detects optional tools at startup and works without them. Machine-specific settings, such as secrets and host-specific paths, are kept in local override files that are not tracked by the repository.
+This repository contains plain configuration files for macOS and Windows. On macOS, `install.sh` symlinks the applicable files into the home directory. The Windows setup copies its configuration files instead. The zsh configuration starts without the optional tools and enables their integrations when available. Untracked local override files hold machine-specific settings such as secrets and host-specific paths.
 
 ## Requirements
 
@@ -32,7 +32,7 @@ See [Windows setup](docs/guides/windows-setup.md).
 
 ## Usage
 
-After installation the shell provides, among others:
+After installation, these commands are available:
 
 ```sh
 gs          # git status
@@ -41,7 +41,7 @@ z <dir>     # zoxide directory jump
 reload      # exec zsh
 ```
 
-The complete list of aliases, keybindings and options is in the [zsh reference](docs/reference/zsh.md). Git settings are documented in the [Git reference](docs/reference/git.md).
+The complete list of aliases, keybindings and options is in the [zsh reference](docs/reference/zsh.md). The [Git reference](docs/reference/git.md) documents the Git settings.
 
 ## Documentation
 
@@ -71,7 +71,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 
 ## Contributing
 
-Conventions and verification steps are described in [docs/contributing.md](docs/contributing.md).
+See [docs/contributing.md](docs/contributing.md) for conventions and verification steps.
 
 ## License
 

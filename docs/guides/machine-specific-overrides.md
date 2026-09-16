@@ -1,12 +1,12 @@
 # Machine-specific overrides
 
-Goal: add settings that apply to one machine only (secrets, absolute paths, work-specific aliases) without modifying tracked files.
+Use local override files to add settings for one machine, such as secrets, absolute paths, and work-specific aliases, without modifying tracked files.
 
 Both config files in this repository load an optional local file that is not tracked in git.
 
 ## zsh: `~/.zshrc.local`
 
-`shell/.zshrc` sources `~/.zshrc.local` if it exists. It is sourced after the aliases, nvm, fzf and zoxide setup but **before** the zsh plugins and Starship, so it can override any alias or variable defined in `.zshrc`.
+`shell/.zshrc` sources `~/.zshrc.local` if it exists. The local file loads after the aliases, nvm, fzf, and zoxide setup but before the zsh plugins and Starship. It can override any alias or variable defined in `.zshrc`.
 
 ```sh
 # ~/.zshrc.local
@@ -14,7 +14,7 @@ export OPENAI_API_KEY="..."
 alias work='cd ~/Developer/work'
 ```
 
-Apply with `reload` (alias for `exec zsh`).
+Run `reload`, an alias for `exec zsh`, to apply the changes.
 
 ## Git: `~/.gitconfig.local`
 

@@ -2,7 +2,7 @@
 
 ## What this is
 
-A small set of configuration files, one per tool, installed into the home directory. There is no build step or package manager; the "deployment" is a handful of `ln -sfn` (macOS, wrapped in `install.sh`) or `Copy-Item` (Windows) commands documented in [Getting started](../getting-started.md) and [Windows setup](../guides/windows-setup.md).
+The repository stores configuration files for zsh, PowerShell, Starship, and Git. It has no build step or package manager. [`install.sh`](../../install.sh) wraps the macOS `ln -sfn` commands, while the [Windows setup](../guides/windows-setup.md) uses `Copy-Item`. [Getting started](../getting-started.md) documents the macOS setup.
 
 ## Layout
 
@@ -20,21 +20,21 @@ AGENTS.md                             guidelines for AI coding agents, not a dot
 
 ## Design decisions
 
-The two load-bearing ones have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md) and [0002 symlinks vs copies](decisions/0002-symlinks-on-macos-copies-on-windows.md). Summary of all of them:
+Two decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md) and [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md). The sections below summarize those ADRs and the remaining design choices.
 
-**Symlinks on macOS, copies on Windows.** Symlinks make `git pull` the update mechanism. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there.
+**Symlinks on macOS, copies on Windows.** `git pull` updates symlinked files. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there.
 
-**Two layers: tracked config + untracked local file.** Both `.zshrc` and `.gitconfig` end by loading `~/.zshrc.local` / `~/.gitconfig.local`. Secrets, absolute paths and host-specific keys (`allowedSignersFile`, Windows `ssh.exe` paths) go in the local file so the tracked file is identical on every machine. The signing key is stored as a literal public key for the same reason.
+**Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
 
-**Graceful degradation.** Every optional tool in `.zshrc` is guarded by `command -v`; plugins are guarded by `[ -f … ]`. A bare macOS with only zsh still gets a working shell. The `FZF_*_COMMAND` variables are only exported when `fd` exists because fzf disables its widgets if they are set to an empty string.
+**Optional dependencies.** `.zshrc` checks for optional tools before it runs their setup code, and it checks for plugin files with `[ -f … ]`. The shell works on macOS without those tools. It exports the `FZF_*_COMMAND` variables only when `fd` exists because empty values disable the fzf widgets.
 
-**Startup time.** Three deliberate choices: `compinit` does the full (slow) security scan at most once a day; nvm is lazy-loaded through wrapper functions that replace themselves on first use (~0.5 s saved per shell); Homebrew's `shellenv` lives in `~/.zprofile` (login shell) rather than `.zshrc`, so it runs once instead of per interactive shell.
+**Startup time.** `compinit` performs its security check at most once a day. Wrapper functions load nvm on first use, which saves about 0.5 seconds per shell start. Homebrew's `shellenv` command runs from `~/.zprofile` once per login instead of from `.zshrc` for every interactive shell.
 
-**Load order matters at the end of `.zshrc`.** Plugins wrap ZLE widgets, so they load after `compinit`, fzf and zoxide; autosuggestions before syntax-highlighting; Starship last. `~/.zshrc.local` loads before the plugins.
+**Load order.** Plugins wrap ZLE widgets, so they load after `compinit`, fzf, and zoxide. Autosuggestions load before syntax highlighting, and Starship loads last. `~/.zshrc.local` loads before the plugins.
 
-**Starship without a Nerd Font.** `starship.toml` is the "no-nerd-font" preset reduced to the handful of symbol overrides needed, so the prompt renders with any monospace font.
+**Starship without a Nerd Font.** `starship.toml` contains five symbol overrides from the "no-nerd-font" preset, so the prompt renders with any monospace font.
 
-**Global gitignore is narrow on purpose.** It lists OS and editor noise only. Build artifacts and logs are excluded per project so legitimately tracked files (e.g. `*.sql` migrations) are never silently hidden.
+**Global Git ignore rules.** The global ignore file lists only operating system and editor files. Each project excludes its own build artifacts and logs, which prevents the global file from hiding tracked files such as `*.sql` migrations.
 
 ## Git identity and signing flow
 
