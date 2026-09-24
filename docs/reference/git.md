@@ -8,7 +8,8 @@ Source of truth: [`git/.gitconfig`](../../git/.gitconfig), [`git/.gitconfig.wind
 |-----|-------|--------|
 | `user.name` | `Malte Mindedal` | Commit author |
 | `user.email` | `112257731+maltemindedal@users.noreply.github.com` | GitHub no-reply address |
-| `user.signingkey` | `ssh-ed25519 AAAA…` (literal public key) | Signing key; a literal key rather than a path so the file is portable |
+| `user.signingkey` | `key::ssh-ed25519 AAAA…` (literal public key) | Signing key; a literal key rather than a path so the file is portable. The private key must be in ssh-agent |
+| `core.excludesfile` | `~/.gitignore_global` | Activates the global ignore file (see below) |
 | `gpg.format` | `ssh` | Sign with SSH instead of GPG |
 | `commit.gpgsign` | `true` | Sign every commit |
 | `tag.gpgsign` | `true` | Sign every tag |
@@ -30,7 +31,7 @@ This file does not set `gpg.ssh.allowedSignersFile`, which is required for local
 
 ## `.gitignore_global` (installed as `~/.gitignore_global`)
 
-Activate it with `git config --global core.excludesfile ~/.gitignore_global`, or set `core.excludesfile` in `~/.gitconfig.local`. The file contains only operating system and editor files. Put project artifacts in each project's `.gitignore` file.
+`core.excludesfile` in `.gitconfig` activates it. The file contains only operating system and editor files. Put project artifacts in each project's `.gitignore` file.
 
 | Group | Patterns |
 |-------|----------|

@@ -40,5 +40,5 @@ To use a different identity for a work machine:
 ```ini
 [user]
     email = you@work.example
-    signingkey = ssh-ed25519 AAAA...
+    signingkey = key::ssh-ed25519 AAAA...
 ```

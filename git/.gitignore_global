@@ -1,5 +1,5 @@
 # Global gitignore — OS and editor junk only.
-# Install: git config --global core.excludesfile ~/.gitignore_global
+# Activated by core.excludesfile in .gitconfig.
 # Keep build artifacts, logs, archives, etc. in per-project .gitignore files so
 # legitimately tracked files (*.sql migrations, *.jar, *.log fixtures) aren't hidden.
 

@@ -2,7 +2,11 @@
     name = Malte Mindedal
     email = 112257731+maltemindedal@users.noreply.github.com
     # Literal public key (not a file path) so the same config works on every machine.
-    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFA3pXNX8+eytg4LDUun+1i1tXJ8e5LFNgbk+MSa+lHs
+    # key:: marks it as a literal key; git has deprecated the bare "ssh-ed25519 ..." form.
+    signingkey = key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFA3pXNX8+eytg4LDUun+1i1tXJ8e5LFNgbk+MSa+lHs
+
+[core]
+    excludesfile = ~/.gitignore_global
 
 [gpg]
     format = ssh
