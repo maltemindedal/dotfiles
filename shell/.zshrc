@@ -91,20 +91,24 @@ alias gm="git merge"
 alias gr="git rebase"
 alias glog="git log --oneline --graph --decorate"
 
-# Modern replacements (eza / bat / fd / rg)
-if command -v eza >/dev/null; then
-  alias ls='eza --group-directories-first'
-  alias ll='eza -la --group-directories-first --git'
-  alias la='eza -a --group-directories-first'
-  alias l='eza -l --group-directories-first'
-  alias lt='eza --tree --level=2 --group-directories-first'
-else
-  alias ls='ls -G'
-  alias ll='ls -alFG'
-  alias la='ls -A'
-  alias l='ls -CF'
+# Modern replacements (eza / bat / fd / rg), interactive shells only. Claude Code sources
+# this file in a non-interactive shell and copies its aliases into the agent's shell,
+# where eza rejects `ls -lt` and bat rejects `cat -e`.
+if [[ -o interactive ]]; then
+  if command -v eza >/dev/null; then
+    alias ls='eza --group-directories-first'
+    alias ll='eza -la --group-directories-first --git'
+    alias la='eza -a --group-directories-first'
+    alias l='eza -l --group-directories-first'
+    alias lt='eza --tree --level=2 --group-directories-first'
+  else
+    alias ls='ls -G'
+    alias ll='ls -alFG'
+    alias la='ls -A'
+    alias l='ls -CF'
+  fi
+  command -v bat >/dev/null && alias cat='bat --paging=never --style=plain'
 fi
-command -v bat >/dev/null && alias cat='bat --paging=never --style=plain'
 
 # General utilities
 alias ..='cd ..'
