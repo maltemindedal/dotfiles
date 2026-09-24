@@ -7,7 +7,7 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 | Variable | Value | Purpose |
 |----------|-------|---------|
 | `BUN_INSTALL` | `$HOME/.bun` | Bun install root; `$BUN_INSTALL/bin` is prepended to `PATH` |
-| `PNPM_HOME` | `$HOME/Library/pnpm` | pnpm global bin dir; prepended to `PATH` |
+| `PNPM_HOME` | `$HOME/Library/pnpm` | pnpm home; `$PNPM_HOME/bin` (global binaries) is prepended to `PATH` |
 | `NVM_DIR` | `$HOME/.nvm` | nvm data dir |
 | `HISTFILE` | `~/.zsh_history` | History file |
 | `HISTSIZE` / `SAVEHIST` | `100000` | History size in memory / on disk |
@@ -16,16 +16,19 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 | `FZF_ALT_C_COMMAND` | `fd --type d --hidden --exclude .git` | Only set when `fd` is installed |
 | `ZSH_AUTOSUGGEST_STRATEGY` | `(history completion)` | Autosuggestion sources |
 
-`shell/.zshrc` prepends `$HOME/.local/bin`, `$BUN_INSTALL/bin`, and `$PNPM_HOME` to `PATH` in that order. It declares `path` and `fpath` with `typeset -U`, which removes duplicates on reload. It expects Homebrew's `shellenv` command in `~/.zprofile` and does not run it here.
+`shell/.zshrc` prepends `$HOME/.local/bin`, `$BUN_INSTALL/bin`, and `$PNPM_HOME/bin` to `PATH` in that order. It declares `path` and `fpath` with `typeset -U`, which removes duplicates on reload. It expects Homebrew's `shellenv` command in `~/.zprofile` and does not run it here.
 
 It adds `$HOME/.zsh/completions`, `$HOME/.docker/completions`, `/opt/homebrew/share/zsh-completions`, and `/opt/homebrew/share/zsh/site-functions` to `fpath`.
+
+## SSH agent
+
+The macOS ssh-agent starts empty after a reboot, and commit signing fails until it holds the key. If the agent has no keys, `.zshrc` runs `/usr/bin/ssh-add --apple-load-keychain`, which loads keys whose passphrases are stored in the login keychain without prompting.
 
 ## Shell options
 
 | Option | Effect |
 |--------|--------|
-| `SHARE_HISTORY` | Share history across open terminals |
-| `INC_APPEND_HISTORY` | Write history immediately, not on exit |
+| `SHARE_HISTORY` | Share history across open terminals; each command is written immediately, not on exit |
 | `EXTENDED_HISTORY` | Store timestamps |
 | `HIST_IGNORE_ALL_DUPS` | Drop older duplicates |
 | `HIST_IGNORE_SPACE` | Commands starting with a space are not recorded |
@@ -129,7 +132,7 @@ Missing tools do not prevent shell startup. `.zshrc` checks before it runs tool 
 | `eza` | Replaces `ls` family aliases |
 | `bat` | Replaces `cat` |
 | `zsh-completions` | Extra completions via `/opt/homebrew/share/zsh-completions` |
-| `nvm` | Lazy-loaded: `nvm`, `node`, `npm`, `npx` are shell functions that source `/opt/homebrew/opt/nvm/nvm.sh` on first call, then replace themselves |
+| `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` to the newest installed LTS) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself |
 | `uv` | Backs the `py` alias |
 
 ### Plugins

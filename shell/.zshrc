@@ -8,18 +8,20 @@ typeset -U path PATH fpath FPATH
 # --- Environment Variables & PATH ---
 export BUN_INSTALL="$HOME/.bun"
 export PNPM_HOME="$HOME/Library/pnpm"
-path=("$HOME/.local/bin" "$BUN_INSTALL/bin" "$PNPM_HOME" $path)
+path=("$HOME/.local/bin" "$BUN_INSTALL/bin" "$PNPM_HOME/bin" $path)
 
 # SSH: use the macOS system ssh-agent (launchd sets SSH_AUTH_SOCK).
 # Previously overridden to the 1Password agent; retired in favour of the
 # on-disk key at ~/.ssh/id_ed25519_git (passphrase held in the login keychain).
+# The agent starts empty after a reboot and commit signing needs the key in it, so load
+# keychain-held keys now. Absolute path: Homebrew's ssh-add lacks --apple-load-keychain.
+/usr/bin/ssh-add -l >/dev/null 2>&1 || /usr/bin/ssh-add --apple-load-keychain -q 2>/dev/null
 
 # --- History ---
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
-setopt SHARE_HISTORY          # share across open terminals
-setopt INC_APPEND_HISTORY     # write immediately, not on exit
+setopt SHARE_HISTORY          # share across open terminals; also writes immediately
 setopt EXTENDED_HISTORY       # timestamps
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE      # leading space = don't record
@@ -36,12 +38,16 @@ setopt NO_BEEP
 # --- Completion ---
 fpath=("$HOME/.zsh/completions" "$HOME/.docker/completions" /opt/homebrew/share/zsh-completions /opt/homebrew/share/zsh/site-functions $fpath)
 autoload -Uz compinit
-# Only rebuild the completion dump once a day (big startup win)
-if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
+# Full compinit (with its security check) at most once a day; otherwise trust the dump.
+# The glob matches only a dump older than 24h. compinit leaves an up-to-date dump
+# untouched, so touch it to restart the clock.
+() {
+  if (( $# )) || [[ ! -e ~/.zcompdump ]]; then
+    compinit && touch ~/.zcompdump
+  else
+    compinit -C
+  fi
+} ~/.zcompdump(N.mh+24)
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'   # case-insensitive + partial
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -115,22 +121,31 @@ alias path='print -l $path'
 # NOT shadowed — scripts/tools that call `python` should get the real one.)
 alias py='uv run python'
 
-# --- NVM (lazy-loaded: only sources nvm on first use, saves ~0.5s per shell) ---
-# Each wrapper loads nvm itself instead of calling a shared helper, so it still works
-# when copied on its own, such as into a Claude Code shell snapshot. It unsets all four
-# wrappers before re-running the command, so a failed load ends in "command not found"
-# instead of recursing.
+# --- NVM ---
+# nvm's default Node goes on PATH directly, so node, npm, npx and global npm tools work in
+# every shell and in scripts. Loading nvm itself costs ~0.5s, so the `nvm` function loads it
+# on first use. That function is self-contained so it still works when copied on its own,
+# such as into a Claude Code shell snapshot, and it unsets itself first so a failed load
+# ends in "command not found" instead of recursing.
 export NVM_DIR="$HOME/.nvm"
-if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
-  for _cmd in nvm node npm npx; do
-    eval "${_cmd}() {
-      unset -f nvm node npm npx 2>/dev/null
-      \. /opt/homebrew/opt/nvm/nvm.sh
-      [ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
-      ${_cmd} \"\$@\"
-    }"
-  done
-  unset _cmd
+() {
+  # Follow the alias chain (default -> lts/* -> lts/krypton -> v24.21.0; capped in case of a
+  # loop), then take the newest installed match, as nvm does for partial versions like "24".
+  local v=default i
+  for i in {1..10}; do [[ -r $NVM_DIR/alias/$v ]] && v=$(<$NVM_DIR/alias/$v) || break; done
+  v=${v#v}
+  local pat='*'
+  [[ $v == (node|stable) ]] || pat="$v(|.*)"
+  local -a nodes=($NVM_DIR/versions/node/v${~pat}/bin/node(N-*nOn))
+  (( $#nodes )) && path=(${nodes[1]:h} $path)
+}
+if [ -s /opt/homebrew/opt/nvm/nvm.sh ]; then
+  nvm() {
+    unset -f nvm
+    \. /opt/homebrew/opt/nvm/nvm.sh --no-use   # the default is already on PATH
+    [ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
+    nvm "$@"
+  }
 fi
 
 # --- Tool Initializations ---
@@ -143,6 +158,9 @@ if command -v fd >/dev/null; then
   export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git'
 fi
 
+# Plugin settings go before ~/.zshrc.local so the local file can override them.
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
 # Load a local, machine-specific configuration file if it exists
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
@@ -150,7 +168,6 @@ fi
 #     autosuggestions before syntax-highlighting) ---
 [ -f ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
   source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 [ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
