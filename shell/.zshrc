@@ -116,15 +116,19 @@ alias path='print -l $path'
 alias py='uv run python'
 
 # --- NVM (lazy-loaded: only sources nvm on first use, saves ~0.5s per shell) ---
+# Each wrapper loads nvm itself instead of calling a shared helper, so it still works
+# when copied on its own, such as into a Claude Code shell snapshot. It unsets all four
+# wrappers before re-running the command, so a failed load ends in "command not found"
+# instead of recursing.
 export NVM_DIR="$HOME/.nvm"
 if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
-  _nvm_load() {
-    unset -f nvm node npm npx 2>/dev/null
-    \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-  }
   for _cmd in nvm node npm npx; do
-    eval "${_cmd}() { _nvm_load; ${_cmd} \"\$@\"; }"
+    eval "${_cmd}() {
+      unset -f nvm node npm npx 2>/dev/null
+      \. /opt/homebrew/opt/nvm/nvm.sh
+      [ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
+      ${_cmd} \"\$@\"
+    }"
   done
   unset _cmd
 fi
