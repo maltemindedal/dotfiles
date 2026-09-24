@@ -14,6 +14,8 @@ export OPENAI_API_KEY="..."
 alias work='cd ~/Developer/work'
 ```
 
+Claude Code copies aliases from this file into the agent's shell. To keep an alias out of agent shells, define it inside `if [[ -o interactive ]]; then ... fi`, as `.zshrc` does.
+
 Run `reload`, an alias for `exec zsh`, to apply the changes.
 
 ## Git: `~/.gitconfig.local`

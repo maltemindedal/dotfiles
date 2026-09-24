@@ -70,31 +70,31 @@ bindkey '^[[F' end-of-line                   # End
 bindkey '^[[3~' delete-char                  # Fn+Delete
 
 # --- Aliases & Functions ---
-
-# Homebrew maintenance
-alias update="brew update && brew upgrade"
-alias sysup="brew update && brew upgrade && brew cleanup --prune=all"
-alias clean="brew cleanup --prune=all"
-
-# Git shortcuts
-alias gs="git status"
-alias ga="git add"
-alias gc="git commit"
-alias gp="git push"
-alias gl="git pull"
-alias gd="git diff"
-alias gb="git branch"
-alias gco="git checkout"
-alias gcb="git switch -c"
-alias gsw="git switch"
-alias gm="git merge"
-alias gr="git rebase"
-alias glog="git log --oneline --graph --decorate"
-
-# Modern replacements (eza / bat / fd / rg), interactive shells only. Claude Code sources
-# this file in a non-interactive shell and copies its aliases into the agent's shell,
-# where eza rejects `ls -lt` and bat rejects `cat -e`.
+# Aliases are for interactive shells only. Claude Code sources this file in a non-interactive
+# shell and copies its aliases into the agent's shell, where eza rejects `ls -lt`, bat rejects
+# `cat -e`, and `gs` would shadow Ghostscript.
 if [[ -o interactive ]]; then
+  # Homebrew maintenance
+  alias update="brew update && brew upgrade"
+  alias sysup="brew update && brew upgrade && brew cleanup --prune=all"
+  alias clean="brew cleanup --prune=all"
+
+  # Git shortcuts
+  alias gs="git status"
+  alias ga="git add"
+  alias gc="git commit"
+  alias gp="git push"
+  alias gl="git pull"
+  alias gd="git diff"
+  alias gb="git branch"
+  alias gco="git checkout"
+  alias gcb="git switch -c"
+  alias gsw="git switch"
+  alias gm="git merge"
+  alias gr="git rebase"
+  alias glog="git log --oneline --graph --decorate"
+
+  # Modern replacements (eza / bat / fd / rg)
   if command -v eza >/dev/null; then
     alias ls='eza --group-directories-first'
     alias ll='eza -la --group-directories-first --git'
@@ -108,29 +108,30 @@ if [[ -o interactive ]]; then
     alias l='ls -CF'
   fi
   command -v bat >/dev/null && alias cat='bat --paging=never --style=plain'
+
+  # General utilities
+  alias ..='cd ..'
+  alias ...='cd ../..'
+  alias ....='cd ../../..'
+  alias grep='grep --color=auto'
+  alias h='history'
+  alias c='clear'
+  alias x='exit'
+  alias reload='exec zsh'
+  alias path='print -l $path'
+
+  # uv / Python: `py` runs inside the project venv. (Global `python` is deliberately
+  # NOT shadowed — scripts/tools that call `python` should get the real one.)
+  alias py='uv run python'
 fi
-
-# General utilities
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias grep='grep --color=auto'
-alias h='history'
-alias c='clear'
-alias x='exit'
-alias reload='exec zsh'
-alias path='print -l $path'
-
-# uv / Python: `py` runs inside the project venv. (Global `python` is deliberately
-# NOT shadowed — scripts/tools that call `python` should get the real one.)
-alias py='uv run python'
 
 # --- NVM ---
 # nvm's default Node goes on PATH directly, so node, npm, npx and global npm tools work in
 # every shell and in scripts. Loading nvm itself costs ~0.5s, so the `nvm` function loads it
 # on first use. That function is self-contained so it still works when copied on its own,
 # such as into a Claude Code shell snapshot, and it unsets itself first so a failed load
-# ends in "command not found" instead of recursing.
+# ends in "command not found" instead of recursing. It loads nvm's completion only in
+# interactive shells: the snapshot copies `compdef` without its data, so it errors there.
 export NVM_DIR="$HOME/.nvm"
 () {
   # Follow the alias chain (default -> lts/* -> lts/krypton -> v24.21.0; capped in case of a
@@ -147,7 +148,7 @@ if [ -s /opt/homebrew/opt/nvm/nvm.sh ]; then
   nvm() {
     unset -f nvm
     \. /opt/homebrew/opt/nvm/nvm.sh --no-use   # the default is already on PATH
-    [ -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ] && \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
+    [[ -o interactive && -s /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm ]] && \. /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm
     nvm "$@"
   }
 fi

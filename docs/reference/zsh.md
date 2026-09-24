@@ -58,6 +58,8 @@ The configuration enables Emacs mode with `bindkey -e` and defines these keybind
 
 ## Aliases
 
+`.zshrc` defines aliases only in interactive shells. Claude Code sources `.zshrc` in a non-interactive shell and copies its aliases into the agent's shell. There `eza` would reject `ls -lt`, `bat` would reject `cat -e`, and `gs` would shadow Ghostscript. Agents get the system commands instead.
+
 ### Homebrew
 
 | Alias | Command |
@@ -86,8 +88,6 @@ The configuration enables Emacs mode with `bindkey -e` and defines these keybind
 
 ### Listing files
 
-`.zshrc` defines these aliases and the `cat` alias only in interactive shells. Claude Code sources `.zshrc` in a non-interactive shell and copies its aliases into the agent's shell, where `eza` rejects `ls -lt` and `bat` rejects `cat -e`. Agents get the system `ls` and `cat`.
-
 With `eza` installed:
 
 | Alias | Command |
@@ -111,7 +111,7 @@ Without `eza`:
 
 | Alias | Command | Note |
 |-------|---------|------|
-| `cat` | `bat --paging=never --style=plain` | Only when `bat` is installed, and only in interactive shells |
+| `cat` | `bat --paging=never --style=plain` | Only when `bat` is installed |
 | `..`, `...`, `....` | `cd ..`, `cd ../..`, `cd ../../..` | |
 | `grep` | `grep --color=auto` | |
 | `h` | `history` | |
@@ -131,10 +131,10 @@ Missing tools do not prevent shell startup. `.zshrc` checks before it runs tool 
 | `fzf` | Ctrl-R / Ctrl-T / Alt-C widgets via `fzf --zsh` |
 | `zoxide` | `z <dir>` smart cd |
 | `fd` | Sets the `FZF_*_COMMAND` variables above |
-| `eza` | Replaces `ls` family aliases in interactive shells |
-| `bat` | Replaces `cat` in interactive shells |
+| `eza` | Replaces `ls` family aliases |
+| `bat` | Replaces `cat` |
 | `zsh-completions` | Extra completions via `/opt/homebrew/share/zsh-completions` |
-| `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` to the newest installed LTS) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself |
+| `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` to the newest installed LTS) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself. It loads nvm's completion only in interactive shells |
 | `uv` | Backs the `py` alias |
 
 ### Plugins
