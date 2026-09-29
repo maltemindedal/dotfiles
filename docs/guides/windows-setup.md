@@ -6,8 +6,13 @@ Follow this guide to install the PowerShell profile and Git configuration from t
 
 `shell/Microsoft.PowerShell_profile.ps1` configures PSReadLine inline predictions and initialises Starship. Requirements:
 
-- PowerShell 7.2 or later. On older versions, PSReadLine falls back to history-only predictions because `HistoryAndPlugin` only supports plugins on 7.2 and later. See the [PSReadLine 2.2.6 release notes](https://devblogs.microsoft.com/powershell/psreadline-2-2-6-enables-predictive-intellisense-by-default/).
-- PSReadLine 2.2 or later (bundled with PowerShell 7.2+).
+- PowerShell 7.2 or later.
+- PSReadLine 2.2 or later, which PowerShell 7.3 and later bundle. See the [PSReadLine 2.2.6 release notes](https://devblogs.microsoft.com/powershell/psreadline-2-2-6-enables-predictive-intellisense-by-default/). PowerShell 7.2 bundles PSReadLine 2.1, which lacks both prediction options, so the profile prints two errors at every start. On 7.2, install a current PSReadLine once:
+
+  ```powershell
+  Install-Module PSReadLine -Scope CurrentUser -Force
+  ```
+
 - [Starship](https://starship.rs) on `PATH`.
 
 Copy it to the path PowerShell stores in `$PROFILE`:
