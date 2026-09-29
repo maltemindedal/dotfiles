@@ -7,6 +7,16 @@
 #   ./install.sh --tools  additionally `brew install` the optional CLI tools
 set -eu
 
+# Check the arguments before changing anything.
+usage() { echo "usage: $0 [--tools]"; }
+TOOLS=
+case "$#:${1:-}" in
+  0:) ;;
+  1:--tools) TOOLS=1 ;;
+  1:-h | 1:--help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
 REPO="$(CDPATH='' cd "$(dirname "$0")" && pwd)"
 STAMP="$(date +%Y%m%d%H%M%S)"
 
@@ -37,7 +47,7 @@ for p in zsh-autosuggestions zsh-syntax-highlighting; do
   fi
 done
 
-if [ "${1:-}" = "--tools" ]; then
+if [ -n "$TOOLS" ]; then
   if command -v brew >/dev/null; then
     brew install starship fzf zoxide fd eza bat zsh-completions nvm uv gh
   else

@@ -54,6 +54,12 @@ links_ok() { # links_ok <home>: every target is a symlink into the repo
     [ "$(readlink "$1/.gitignore_global")" = "$REPO/git/.gitignore_global" ]
 }
 count() { grep -c "$1" "$2" || true; }
+status_is() { # status_is <status> <command...>
+  want=$1; shift
+  "$@" && got=0 || got=$?
+  [ "$got" -eq "$want" ]
+}
+empty_dir() { [ -z "$(ls -A "$1")" ]; }
 
 # --- Fresh install ---
 H=$(new_home fresh)
@@ -108,6 +114,21 @@ cdpath_install() {
 }
 check "cdpath: exits 0" cdpath_install
 check "cdpath: links point into the repo" links_ok "$H"
+
+# --- Arguments are checked before anything changes ---
+for arg in --tool foo; do
+  H=$(new_home "badarg$arg")
+  check "bad argument $arg: exits 2" status_is 2 run_install "$H" "$arg"
+  check "bad argument $arg: prints usage on stderr" grep -q '^usage:' "$H.err"
+  check "bad argument $arg: leaves \$HOME untouched" empty_dir "$H"
+done
+H=$(new_home badarg-extra)
+check "extra argument after --tools: exits 2" status_is 2 run_install "$H" --tools extra
+check "extra argument after --tools: leaves \$HOME untouched" empty_dir "$H"
+H=$(new_home help)
+check "--help: exits 0" run_install "$H" --help
+check "--help: prints usage" grep -q '^usage:' "$H.out"
+check "--help: leaves \$HOME untouched" empty_dir "$H"
 
 # --- --tools ---
 H=$(new_home tools)
