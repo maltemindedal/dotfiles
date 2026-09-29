@@ -140,7 +140,7 @@ export NVM_DIR="$HOME/.nvm"
   for i in {1..10}; do [[ -r $NVM_DIR/alias/$v ]] && v=$(<$NVM_DIR/alias/$v) || break; done
   v=${v#v}
   local pat='*'
-  [[ $v == (node|stable) ]] || pat="$v(|.*)"
+  [[ $v == (node|stable) ]] || pat="${(b)v}(|.*)"   # (b): alias text is literal, not a pattern
   local -a nodes=($NVM_DIR/versions/node/v${~pat}/bin/node(N-*nOn))
   (( $#nodes )) && path=(${nodes[1]:h} $path)
 }

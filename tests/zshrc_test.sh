@@ -101,5 +101,13 @@ nvm_alias "$H" default a
 nvm_alias "$H" a default
 check "nvm: an alias loop terminates and adds nothing" test "$(first_path "$H")" = "$H/.local/bin"
 
+H=$(new_home nvm_bad_pattern)
+fake_node "$H" v24.10.0
+nvm_alias "$H" default '24('
+printf 'LOCAL_MARK=loaded\n' > "$H/.zshrc.local"
+check "nvm: a malformed alias does not abort the rest of .zshrc" \
+  test "$(zi "$H" 'print -r -- $LOCAL_MARK' 2>/dev/null)" = loaded
+check "nvm: a malformed alias prints no error" no_stderr zi "$H" true
+
 echo
 if [ "$fails" -eq 0 ]; then echo "all .zshrc tests passed"; else echo "$fails .zshrc test(s) failed"; exit 1; fi
