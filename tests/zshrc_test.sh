@@ -46,6 +46,8 @@ first_path() { zi "$1" 'print -r -- $path[1]'; }
 # --- Startup, aliases, PATH ---
 H=$(new_home basic)
 check "startup: writes nothing to stderr" no_stderr zi "$H" true
+check "startup: sourcing ~/.zshrc returns 0" env -i HOME="$H" PATH=/usr/bin:/bin zsh -c 'source ~/.zshrc'
+check "startup: an interactive shell's first status is 0" zi "$H" exit
 check "aliases: defined in interactive shells" test "$(zi "$H" 'alias gs')" = "gs='git status'"
 check "aliases: not defined in non-interactive shells" test "$(zn "$H" 'alias gs || echo none')" = none
 check "aliases: ls falls back to ls -G without eza" test "$(zi "$H" 'alias ls')" = "ls='ls -G'"

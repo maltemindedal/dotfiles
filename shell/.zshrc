@@ -177,5 +177,5 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 [ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Starship prompt (keep last)
-command -v starship >/dev/null && eval "$(starship init zsh)"
+# Starship prompt (keep last). An if, not &&, so .zshrc returns 0 without starship.
+if command -v starship >/dev/null; then eval "$(starship init zsh)"; fi
