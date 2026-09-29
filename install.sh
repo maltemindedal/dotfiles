@@ -1,16 +1,23 @@
 #!/bin/sh
 # Symlink the macOS dotfiles into $HOME and install the zsh plugins.
-# Idempotent: safe to re-run after `git pull`.
+# Idempotent: safe to re-run after `git pull`. A real file or directory already at a
+# link's location is moved aside to <name>.<timestamp>.bak rather than deleted.
 #
 #   ./install.sh          symlinks + plugins
 #   ./install.sh --tools  additionally `brew install` the optional CLI tools
 set -eu
 
 REPO="$(CDPATH='' cd "$(dirname "$0")" && pwd)"
+STAMP="$(date +%Y%m%d%H%M%S)"
 
 link() {
   # link <source-in-repo> <target-in-home>
   mkdir -p "$(dirname "$2")"
+  if [ -e "$2" ] && [ ! -L "$2" ]; then
+    # ln -sfn would delete a file here, or create the link inside a directory.
+    mv "$2" "$2.$STAMP.bak"
+    echo "backed up $2 to $2.$STAMP.bak"
+  fi
   ln -sfn "$REPO/$1" "$2"
   printf '%-45s -> %s\n' "$2" "$1"
 }

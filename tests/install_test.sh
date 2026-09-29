@@ -81,6 +81,22 @@ ln -s /nonexistent "$H/.config/starship.toml"
 check "relink: exits 0" run_install "$H"
 check "relink: replaces stale symlinks" links_ok "$H"
 
+# --- Existing files and directories are moved aside, not lost ---
+H=$(new_home existing)
+mkdir -p "$H/.config"
+echo 'my zshrc' > "$H/.zshrc"
+echo 'my gitconfig' > "$H/.gitconfig"
+mkdir "$H/.gitignore_global"
+echo 'my file' > "$H/.gitignore_global/inside"
+check "existing: exits 0" run_install "$H"
+check "existing: links all four files into the repo" links_ok "$H"
+check "existing: keeps the old ~/.zshrc as a backup" grep -qsx 'my zshrc' "$H"/.zshrc.*.bak
+check "existing: keeps the old ~/.gitconfig as a backup" grep -qsx 'my gitconfig' "$H"/.gitconfig.*.bak
+check "existing: moves a directory out of the way intact" test -f "$H"/.gitignore_global.*.bak/inside
+check "existing: reports each backup" [ "$(count 'backed up' "$H.out")" -eq 3 ]
+check "existing: rerun makes no further backups" run_install "$H"
+check "existing: rerun reports no backups" [ "$(count 'backed up' "$H.out")" -eq 0 ]
+
 # --- A relative invocation ignores CDPATH ---
 # With CDPATH exported, `cd dotfiles` can land in another directory of the same name
 # and print it, which would corrupt every link target.

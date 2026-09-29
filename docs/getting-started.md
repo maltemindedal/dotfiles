@@ -28,6 +28,8 @@ ln -sf "$PWD/git/.gitconfig" ~/.gitconfig
 ln -sf "$PWD/git/.gitignore_global" ~/.gitignore_global
 ```
 
+`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc` or `~/.gitconfig` you want to keep aside first. `install.sh` does this for you.
+
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
 ## 3. Install the zsh plugins
