@@ -6,7 +6,7 @@
 #   ./install.sh --tools  additionally `brew install` the optional CLI tools
 set -eu
 
-REPO="$(cd "$(dirname "$0")" && pwd)"
+REPO="$(CDPATH='' cd "$(dirname "$0")" && pwd)"
 
 link() {
   # link <source-in-repo> <target-in-home>

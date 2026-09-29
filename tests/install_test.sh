@@ -81,6 +81,18 @@ ln -s /nonexistent "$H/.config/starship.toml"
 check "relink: exits 0" run_install "$H"
 check "relink: replaces stale symlinks" links_ok "$H"
 
+# --- A relative invocation ignores CDPATH ---
+# With CDPATH exported, `cd dotfiles` can land in another directory of the same name
+# and print it, which would corrupt every link target.
+H=$(new_home cdpath)
+mkdir -p "$TMP/decoy/$(basename "$REPO")"
+cdpath_install() {
+  (cd "$(dirname "$REPO")" && env -i HOME="$H" PATH="$BIN:/usr/bin:/bin" STUB_LOG="$H.log" \
+    CDPATH="$TMP/decoy" sh "$(basename "$REPO")/install.sh") > "$H.out" 2> "$H.err"
+}
+check "cdpath: exits 0" cdpath_install
+check "cdpath: links point into the repo" links_ok "$H"
+
 # --- --tools ---
 H=$(new_home tools)
 check "tools: exits 0" run_install "$H" --tools
