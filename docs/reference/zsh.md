@@ -7,7 +7,7 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 | Variable | Value | Purpose |
 |----------|-------|---------|
 | `BUN_INSTALL` | `$HOME/.bun` | Bun install root; `$BUN_INSTALL/bin` is prepended to `PATH` |
-| `PNPM_HOME` | `$HOME/Library/pnpm` | pnpm home; `$PNPM_HOME/bin` (global binaries) is prepended to `PATH` |
+| `PNPM_HOME` | `$HOME/Library/pnpm` | pnpm home; `$PNPM_HOME/bin` (global binaries, pnpm 11 and later) is prepended to `PATH` |
 | `NVM_DIR` | `$HOME/.nvm` | nvm data dir |
 | `HISTFILE` | `~/.zsh_history` | History file |
 | `HISTSIZE` / `SAVEHIST` | `100000` | History size in memory / on disk |
@@ -42,7 +42,7 @@ The macOS ssh-agent starts empty after a reboot, and commit signing fails until 
 
 ## Completion
 
-`compinit` performs its security check at most once every 24 hours, based on the age of `~/.zcompdump`. During other shell starts, `compinit -C` skips that check. Completion uses menu selection, case-insensitive and partial-word matching, `LS_COLORS` in listings, grouped results with yellow headings, and a cache in `~/.zsh/cache`.
+`compinit` performs its security check at most once every 24 hours, based on the age of `~/.zcompdump`. During other shell starts, `compinit -C` skips that check and also skips looking for new completion functions, so completions installed since the last full run (for example by `brew install`) appear within a day. To load them at once, delete `~/.zcompdump` and run `reload`. Completion uses menu selection, case-insensitive and partial-word matching, coloured listings (`LS_COLORS`, or zsh's default colours when it is unset, as on macOS), grouped results with yellow headings, and a cache in `~/.zsh/cache`.
 
 ## Keybindings
 
@@ -134,7 +134,7 @@ Missing tools do not prevent shell startup. `.zshrc` checks before it runs tool 
 | `eza` | Replaces `ls` family aliases |
 | `bat` | Replaces `cat` |
 | `zsh-completions` | Extra completions via `/opt/homebrew/share/zsh-completions` |
-| `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` to the newest installed LTS) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself. It loads nvm's completion only in interactive shells |
+| `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` → `lts/krypton` → the release nvm last recorded for that line; a partial version such as `24` → the newest installed match) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself. It loads nvm's completion only in interactive shells |
 | `uv` | Backs the `py` alias |
 
 ### Plugins

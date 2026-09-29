@@ -29,7 +29,7 @@ Two decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer
 
 **Optional dependencies.** `.zshrc` checks for optional tools before it runs their setup code, and it checks for plugin files with `[ -f … ]`. The shell works on macOS without those tools. It exports the `FZF_*_COMMAND` variables only when `fd` exists because empty values disable the fzf widgets.
 
-**Startup time.** `compinit` performs its security check at most once a day. The default Node version goes on `PATH` directly, and a wrapper function loads nvm itself on first use, which saves about 0.5 seconds per shell start. Homebrew's `shellenv` command runs from `~/.zprofile` once per login instead of from `.zshrc` for every interactive shell.
+**Startup time.** `compinit` performs its security check, and looks for new completion functions, at most once a day. The default Node version goes on `PATH` directly, and a wrapper function loads nvm itself on first use, which saves about 0.5 seconds per shell start. Homebrew's `shellenv` command runs from `~/.zprofile` once per login instead of from `.zshrc` for every interactive shell.
 
 **Load order.** Plugins wrap ZLE widgets, so they load after `compinit`, fzf, and zoxide. Autosuggestions load before syntax highlighting, and Starship loads last. `~/.zshrc.local` loads before the plugins.
 
