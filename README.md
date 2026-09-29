@@ -66,7 +66,8 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── install.sh    macOS installer (symlinks, plugins, optional tools)
 ├── docs/         Documentation
 ├── git/          .gitconfig, Windows overlay, global gitignore
-└── shell/        .zshrc, starship.toml, PowerShell profile
+├── shell/        .zshrc, starship.toml, PowerShell profile
+└── tests/        Tests for install.sh and .zshrc
 ```
 
 ## Contributing
