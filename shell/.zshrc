@@ -40,10 +40,14 @@ fpath=("$HOME/.zsh/completions" "$HOME/.docker/completions" /opt/homebrew/share/
 autoload -Uz compinit
 # Full compinit (with its security check) at most once a day; otherwise trust the dump.
 # The glob matches only a dump older than 24h. compinit leaves an up-to-date dump
-# untouched, so touch it to restart the clock.
+# untouched, so touch it to restart the clock. Then compile it: `compinit -C` loads
+# ~/.zcompdump.zwc instead whenever it is not older than the dump, which is faster.
+# zcompile rewrites its output in place, and a shell reading it mid-write can crash
+# (SIGBUS), so compile under a temporary name and rename.
 () {
   if (( $# )) || [[ ! -e ~/.zcompdump ]]; then
-    compinit && touch ~/.zcompdump
+    compinit && touch ~/.zcompdump &&
+      zcompile ~/.zcompdump.$$.zwc ~/.zcompdump && mv -f ~/.zcompdump.$$.zwc ~/.zcompdump.zwc
   else
     compinit -C
   fi

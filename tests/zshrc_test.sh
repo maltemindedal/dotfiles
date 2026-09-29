@@ -56,6 +56,15 @@ check "PATH: prepends ~/.local/bin, bun and pnpm in order" \
 check "PATH: reloading does not duplicate entries" \
   test "$(zi "$H" 'source ~/.zshrc; print -r -- ${#${(M)path:#$HOME/.local/bin}}')" = 1
 
+# --- Completion dump ---
+H=$(new_home completion)
+echo 'skip_global_compinit=1' > "$H/.zshenv"   # Debian/Ubuntu: skip /etc/zsh/zshrc's compinit, as on macOS
+zi "$H" true
+check "completion: first start writes ~/.zcompdump" test -s "$H/.zcompdump"
+check "completion: and compiles it to ~/.zcompdump.zwc" test -s "$H/.zcompdump.zwc"
+check "completion: leaves no temporary files" test "$(cd "$H" && echo .zcompdump*)" = ".zcompdump .zcompdump.zwc"
+check "completion: a later start loads completions" test "$(zi "$H" 'print -r -- ${+_comps[git]}')" = 1
+
 # --- ~/.zshrc.local ---
 H=$(new_home local)
 printf 'LOCAL_MARK=loaded\nalias gs=custom\n' > "$H/.zshrc.local"
