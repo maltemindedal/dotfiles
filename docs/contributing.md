@@ -10,11 +10,14 @@ This is a personal configuration, so there is no formal process. These conventio
    ```sh
    zsh -n shell/.zshrc             # syntax check
    git config -f git/.gitconfig -l # parse check; lists every key
+   sh tests/install_test.sh        # installer tests (temp $HOME, stub git and brew)
+   sh tests/zshrc_test.sh          # .zshrc tests (temp $HOME)
    reload                          # runs exec zsh to reload the live shell
    ```
 
 3. Re-run `./install.sh` if you added a new file that needs a symlink. Add the file to the script first.
-4. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](reference/zsh.md) or [`docs/reference/git.md`](reference/git.md). Also update [`docs/README.md`](README.md) if you added a document.
+4. When you change what `install.sh` or `.zshrc` does, add or update a case in `tests/`.
+5. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](reference/zsh.md) or [`docs/reference/git.md`](reference/git.md). Also update [`docs/README.md`](README.md) if you added a document.
 
 ## Conventions
 

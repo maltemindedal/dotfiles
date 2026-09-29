@@ -40,10 +40,14 @@ fpath=("$HOME/.zsh/completions" "$HOME/.docker/completions" /opt/homebrew/share/
 autoload -Uz compinit
 # Full compinit (with its security check) at most once a day; otherwise trust the dump.
 # The glob matches only a dump older than 24h. compinit leaves an up-to-date dump
-# untouched, so touch it to restart the clock.
+# untouched, so touch it to restart the clock. Then compile it: `compinit -C` loads
+# ~/.zcompdump.zwc instead whenever it is not older than the dump, which is faster.
+# zcompile rewrites its output in place, and a shell reading it mid-write can crash
+# (SIGBUS), so compile under a temporary name and rename.
 () {
   if (( $# )) || [[ ! -e ~/.zcompdump ]]; then
-    compinit && touch ~/.zcompdump
+    compinit && touch ~/.zcompdump &&
+      zcompile ~/.zcompdump.$$.zwc ~/.zcompdump && mv -f ~/.zcompdump.$$.zwc ~/.zcompdump.zwc
   else
     compinit -C
   fi
@@ -140,7 +144,7 @@ export NVM_DIR="$HOME/.nvm"
   for i in {1..10}; do [[ -r $NVM_DIR/alias/$v ]] && v=$(<$NVM_DIR/alias/$v) || break; done
   v=${v#v}
   local pat='*'
-  [[ $v == (node|stable) ]] || pat="$v(|.*)"
+  [[ $v == (node|stable) ]] || pat="${(b)v}(|.*)"   # (b): alias text is literal, not a pattern
   local -a nodes=($NVM_DIR/versions/node/v${~pat}/bin/node(N-*nOn))
   (( $#nodes )) && path=(${nodes[1]:h} $path)
 }
@@ -177,5 +181,5 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 [ -f ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Starship prompt (keep last)
-command -v starship >/dev/null && eval "$(starship init zsh)"
+# Starship prompt (keep last). An if, not &&, so .zshrc returns 0 without starship.
+if command -v starship >/dev/null; then eval "$(starship init zsh)"; fi

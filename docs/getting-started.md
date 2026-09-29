@@ -5,7 +5,7 @@ This tutorial sets up zsh, the Starship prompt, and Git on a fresh macOS machine
 ## Prerequisites
 
 - macOS with zsh as the login shell (the default since macOS Catalina).
-- [Homebrew](https://brew.sh) installed at `/opt/homebrew` (Apple Silicon default). `shell/.zshrc` hard-codes this prefix for completions and nvm. It expects Homebrew's `shellenv` command in `~/.zprofile`, which the Homebrew installer adds.
+- [Homebrew](https://brew.sh) installed at `/opt/homebrew` (Apple Silicon default). `shell/.zshrc` hard-codes this prefix for completions and nvm. It expects Homebrew's `shellenv` command in `~/.zprofile`. The Homebrew installer does not add it; it prints the commands under "Next steps". The line is `eval "$(/opt/homebrew/bin/brew shellenv zsh)"`.
 - `git` (ships with Xcode Command Line Tools).
 
 > Run `./install.sh --tools` to complete steps 2 through 4. The manual steps below show what it does.
@@ -27,6 +27,8 @@ mkdir -p ~/.config && ln -sf "$PWD/shell/starship.toml" ~/.config/starship.toml
 ln -sf "$PWD/git/.gitconfig" ~/.gitconfig
 ln -sf "$PWD/git/.gitignore_global" ~/.gitignore_global
 ```
+
+`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc` or `~/.gitconfig` you want to keep aside first. `install.sh` does this for you.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
