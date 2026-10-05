@@ -136,6 +136,7 @@ Missing tools do not prevent shell startup. `.zshrc` checks before it runs tool 
 | `zsh-completions` | Extra completions via `/opt/homebrew/share/zsh-completions` |
 | `nvm` | The only Node version manager. At startup `.zshrc` resolves nvm's `default` alias the way nvm does (for example `lts/*` → `lts/krypton` → the release nvm last recorded for that line; a partial version such as `24` → the newest installed match) and prepends that version's `bin` to `PATH`, so `node`, `npm`, `npx` and global npm tools work in every shell and script. `nvm` itself is a shell function that sources `/opt/homebrew/opt/nvm/nvm.sh --no-use` on first call, then replaces itself. It loads nvm's completion only in interactive shells |
 | `uv` | Backs the `py` alias |
+| `bun` | Completions from `$BUN_INSTALL/_bun`, which the bun installer writes. Loaded only in interactive shells |
 
 ### Plugins
 

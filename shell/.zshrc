@@ -160,6 +160,7 @@ fi
 # --- Tool Initializations ---
 command -v fzf    >/dev/null && source <(fzf --zsh)          # Ctrl-R history, Ctrl-T files, Alt-C cd
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"    # `z <dir>` smart cd
+[[ -o interactive && -s $BUN_INSTALL/_bun ]] && source "$BUN_INSTALL/_bun"   # bun completions (from the bun installer)
 if command -v fd >/dev/null; then
   # Note: fzf disables Ctrl-T/Alt-C if these are set to an empty string, so only set them when fd exists.
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'

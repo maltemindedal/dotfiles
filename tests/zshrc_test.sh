@@ -120,5 +120,12 @@ check "nvm: a malformed alias does not abort the rest of .zshrc" \
   test "$(zi "$H" 'print -r -- $LOCAL_MARK' 2>/dev/null)" = loaded
 check "nvm: a malformed alias prints no error" no_stderr zi "$H" true
 
+# --- bun completions ---
+H=$(new_home bun)
+mkdir -p "$H/.bun" && printf 'BUN_COMP_MARK=loaded\n' > "$H/.bun/_bun"
+check "bun: completions load in interactive shells" test "$(zi "$H" 'print -r -- $BUN_COMP_MARK')" = loaded
+check "bun: completions are skipped in non-interactive shells" \
+  test "$(zn "$H" 'print -r -- ${BUN_COMP_MARK:-none}')" = none
+
 echo
 if [ "$fails" -eq 0 ]; then echo "all .zshrc tests passed"; else echo "$fails .zshrc test(s) failed"; exit 1; fi
