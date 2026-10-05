@@ -51,7 +51,10 @@ Every tool below is optional. Missing tools do not prevent the shell from starti
 
 ```sh
 brew install starship fzf zoxide fd eza bat zsh-completions nvm uv gh
+chmod go-w "$(brew --prefix)/share"
 ```
+
+Homebrew leaves its `share` directory group-writable. `compinit` treats that as insecure and aborts, because `zsh-completions` lives inside it, so the `chmod` removes the write permission.
 
 See the [zsh reference](reference/zsh.md#optional-tools) for what each tool enables. `.gitconfig` uses `gh` as the GitHub credential helper; run `gh auth login` once after installing it.
 
