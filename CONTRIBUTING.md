@@ -17,12 +17,12 @@ This is a personal configuration, so there is no formal process. These conventio
 
 3. Re-run `./install.sh` if you added a new file that needs a symlink. Add the file to the script first.
 4. When you change what `install.sh` or `.zshrc` does, add or update a case in `tests/`.
-5. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](reference/zsh.md) or [`docs/reference/git.md`](reference/git.md). Also update [`docs/README.md`](README.md) if you added a document.
+5. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](docs/reference/zsh.md) or [`docs/reference/git.md`](docs/reference/git.md). Also update [`docs/README.md`](docs/README.md) if you added a document.
 
 ## Conventions
 
-- Anything machine-specific (secrets, absolute paths, host-specific keys) goes in `~/.zshrc.local` / `~/.gitconfig.local`, never in tracked files. See [Machine-specific overrides](guides/machine-specific-overrides.md).
+- Anything machine-specific (secrets, absolute paths, host-specific keys) goes in `~/.zshrc.local` / `~/.gitconfig.local`, never in tracked files. See [Machine-specific overrides](docs/guides/machine-specific-overrides.md).
 - Guard optional tools in `.zshrc` with `command -v …` or a file-existence check so the shell works without them.
 - Commit messages use an imperative subject, optionally prefixed with the area (`shell:`, `git:`, `docs:`). Include a body explaining *why* when it isn't obvious. See `git log` for examples.
 - `.gitconfig` enables SSH signing for commits.
-- Record non-obvious design choices as an architecture decision record (ADR) in [`docs/architecture/decisions/`](architecture/decisions/).
+- Record non-obvious design choices as an architecture decision record (ADR) in [`docs/architecture/decisions/`](docs/architecture/decisions/).

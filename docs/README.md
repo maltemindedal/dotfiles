@@ -34,4 +34,5 @@ All documentation for the dotfiles repository, grouped by purpose.
 
 | Document | Description | Audience |
 |----------|-------------|----------|
-| [contributing.md](contributing.md) | How to change, check and document the config; commit conventions. | Anyone editing the repo |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | How to change, check and document the config; commit conventions. | Anyone editing the repo |
+| [SECURITY.md](../SECURITY.md) | Supported versions, how to report a vulnerability, and what is in scope. | Anyone who finds a security problem |
