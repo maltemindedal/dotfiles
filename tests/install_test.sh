@@ -18,7 +18,8 @@ check() { # check <description> <command...>
   if "$@"; then pass "$desc"; else fail "$desc"; fi
 }
 
-# Stubs. `git clone ... <dir>` creates <dir>/<name>.zsh; both log their arguments.
+# Stubs. `git clone ... <dir>` creates <dir>/<name>.zsh, `brew --prefix` prints
+# $HOME/homebrew; both log their arguments.
 mkdir "$TMP/stubs" "$TMP/stubs-nobrew"
 cat > "$TMP/stubs/git" <<'EOF'
 #!/bin/sh
@@ -30,6 +31,7 @@ EOF
 cat > "$TMP/stubs/brew" <<'EOF'
 #!/bin/sh
 echo "brew $*" >> "$STUB_LOG"
+if [ "$1" = --prefix ]; then echo "$HOME/homebrew"; fi
 EOF
 chmod +x "$TMP/stubs/git" "$TMP/stubs/brew"
 cp "$TMP/stubs/git" "$TMP/stubs-nobrew/git"
@@ -62,6 +64,7 @@ status_is() { # status_is <status> <command...>
   [ "$got" -eq "$want" ]
 }
 empty_dir() { [ -z "$(ls -A "$1")" ]; }
+only_owner_writes() { [ "$(ls -ld "$1" | cut -c6,9)" = -- ]; } # no group or other w
 
 # --- Fresh install ---
 H=$(new_home fresh)
@@ -136,9 +139,12 @@ check "--help: leaves \$HOME untouched" empty_dir "$H"
 
 # --- --tools ---
 H=$(new_home tools)
+mkdir -p "$H/homebrew/share" && chmod 777 "$H/homebrew/share"
 check "tools: exits 0" run_install "$H" --tools
 check "tools: installs the optional tools with brew" \
   grep -qx 'brew install starship fzf zoxide fd eza bat zsh-completions nvm uv gh' "$H.log"
+check "tools: makes Homebrew's share dir writable only by its owner" \
+  only_owner_writes "$H/homebrew/share"
 
 H=$(new_home nobrew)
 BIN="$TMP/stubs-nobrew"

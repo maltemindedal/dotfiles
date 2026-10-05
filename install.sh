@@ -52,6 +52,9 @@ done
 if [ -n "$TOOLS" ]; then
   if command -v brew >/dev/null; then
     brew install starship fzf zoxide fd eza bat zsh-completions nvm uv gh
+    # Homebrew leaves share/ group-writable, and compinit aborts on a group-writable
+    # parent of an fpath entry such as share/zsh-completions.
+    chmod go-w "$(brew --prefix)/share"
   else
     echo "Homebrew not found; skipping --tools. See docs/getting-started.md." >&2
   fi
