@@ -51,7 +51,9 @@ links_ok() { # links_ok <home>: every target is a symlink into the repo
   [ "$(readlink "$1/.zshrc")" = "$REPO/shell/.zshrc" ] &&
     [ "$(readlink "$1/.config/starship.toml")" = "$REPO/shell/starship.toml" ] &&
     [ "$(readlink "$1/.gitconfig")" = "$REPO/git/.gitconfig" ] &&
-    [ "$(readlink "$1/.gitignore_global")" = "$REPO/git/.gitignore_global" ]
+    [ "$(readlink "$1/.gitignore_global")" = "$REPO/git/.gitignore_global" ] &&
+    [ "$(readlink "$1/.agents/AGENTS.md")" = "$REPO/agents/AGENTS.md" ] &&
+    [ "$(readlink "$1/.claude/CLAUDE.md")" = "$REPO/agents/AGENTS.md" ]
 }
 count() { grep -c "$1" "$2" || true; }
 status_is() { # status_is <status> <command...>
@@ -64,13 +66,13 @@ empty_dir() { [ -z "$(ls -A "$1")" ]; }
 # --- Fresh install ---
 H=$(new_home fresh)
 check "fresh: exits 0" run_install "$H"
-check "fresh: links all four files into the repo" links_ok "$H"
+check "fresh: links all six targets into the repo" links_ok "$H"
 check "fresh: clones zsh-autosuggestions" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions $H/.zsh/plugins/zsh-autosuggestions" "$H.log"
 check "fresh: clones zsh-syntax-highlighting" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting $H/.zsh/plugins/zsh-syntax-highlighting" "$H.log"
 check "fresh: does not run brew" [ "$(count '^brew' "$H.log")" -eq 0 ]
-check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 4 ]
+check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 6 ]
 check "fresh: writes nothing to stderr" [ ! -s "$H.err" ]
 
 # --- Re-run is idempotent ---
@@ -89,17 +91,19 @@ check "relink: replaces stale symlinks" links_ok "$H"
 
 # --- Existing files and directories are moved aside, not lost ---
 H=$(new_home existing)
-mkdir -p "$H/.config"
+mkdir -p "$H/.config" "$H/.claude"
 echo 'my zshrc' > "$H/.zshrc"
 echo 'my gitconfig' > "$H/.gitconfig"
 mkdir "$H/.gitignore_global"
 echo 'my file' > "$H/.gitignore_global/inside"
+echo 'my claude.md' > "$H/.claude/CLAUDE.md"
 check "existing: exits 0" run_install "$H"
-check "existing: links all four files into the repo" links_ok "$H"
+check "existing: links all six targets into the repo" links_ok "$H"
 check "existing: keeps the old ~/.zshrc as a backup" grep -qsx 'my zshrc' "$H"/.zshrc.*.bak
 check "existing: keeps the old ~/.gitconfig as a backup" grep -qsx 'my gitconfig' "$H"/.gitconfig.*.bak
 check "existing: moves a directory out of the way intact" test -f "$H"/.gitignore_global.*.bak/inside
-check "existing: reports each backup" [ "$(count 'backed up' "$H.out")" -eq 3 ]
+check "existing: keeps the old ~/.claude/CLAUDE.md as a backup" grep -qsx 'my claude.md' "$H"/.claude/CLAUDE.md.*.bak
+check "existing: reports each backup" [ "$(count 'backed up' "$H.out")" -eq 4 ]
 check "existing: rerun makes no further backups" run_install "$H"
 check "existing: rerun reports no backups" [ "$(count 'backed up' "$H.out")" -eq 0 ]
 
