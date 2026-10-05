@@ -57,21 +57,24 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 | [Decision records](docs/architecture/decisions/) | ADRs for non-obvious choices |
 | [Contributing](CONTRIBUTING.md) | How to change, verify and document the configuration |
 | [Security policy](SECURITY.md) | How to report a vulnerability |
+| [Code of conduct](CODE_OF_CONDUCT.md) | Expected behaviour and how to report a violation |
 
 ## Repository layout
 
 ```
 .
-├── AGENTS.md        Guidelines for AI coding agents working in this repo
-├── CONTRIBUTING.md  How to change, check and document the config
-├── LICENSE          MIT license
-├── SECURITY.md      How to report a vulnerability
-├── install.sh       macOS installer (symlinks, plugins, optional tools)
-├── agents/          Global AGENTS.md, linked as ~/.agents/AGENTS.md and ~/.claude/CLAUDE.md
-├── docs/            Documentation
-├── git/             .gitconfig, Windows overlay, global gitignore
-├── shell/           .zshrc, starship.toml, PowerShell profile
-└── tests/           Tests for install.sh and .zshrc
+├── AGENTS.md           Guidelines for AI coding agents working in this repo
+├── CODE_OF_CONDUCT.md  Contributor Covenant 3.0
+├── CONTRIBUTING.md     How to change, check and document the config
+├── LICENSE             MIT license
+├── SECURITY.md         How to report a vulnerability
+├── install.sh          macOS installer (symlinks, plugins, optional tools)
+├── .github/            Issue forms and pull request template
+├── agents/             Global AGENTS.md, linked as ~/.agents/AGENTS.md and ~/.claude/CLAUDE.md
+├── docs/               Documentation
+├── git/                .gitconfig, Windows overlay, global gitignore
+├── shell/              .zshrc, starship.toml, PowerShell profile
+└── tests/              Tests for install.sh and .zshrc
 ```
 
 ## Contributing

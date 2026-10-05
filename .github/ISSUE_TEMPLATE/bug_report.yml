@@ -1,0 +1,65 @@
+name: Bug report
+description: Something in install.sh, the shell config or the Git config does not work.
+labels: [bug]
+body:
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: Run `git rev-parse --short HEAD` in your clone.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS (zsh)
+        - Windows (PowerShell)
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: Affected file
+      placeholder: install.sh, shell/.zshrc, git/.gitconfig
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: How you installed it
+      description: The command and flags (for example `./install.sh --tools`) or the Windows setup steps you followed. Say whether `~/.zshrc.local` or `~/.gitconfig.local` exists.
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: OS version, `zsh --version` or `$PSVersionTable.PSVersion`, `git --version`, and the version of any optional tool involved (for example `starship --version`).
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Error messages or terminal output.
+      render: shell

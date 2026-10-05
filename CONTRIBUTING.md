@@ -2,6 +2,8 @@
 
 This is a personal configuration, so there is no formal process. These conventions keep the repo coherent.
 
+Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Making a change
 
 1. Edit the file under `shell/` or `git/`. Because `install.sh` symlinks the macOS files, editing the repository also changes the installed configuration.
