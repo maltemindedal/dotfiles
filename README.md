@@ -61,9 +61,10 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 
 ```
 .
-├── AGENTS.md     Guidelines for AI coding agents
+├── AGENTS.md     Guidelines for AI coding agents working in this repo
 ├── LICENSE       MIT license
 ├── install.sh    macOS installer (symlinks, plugins, optional tools)
+├── agents/       Global AGENTS.md, linked as ~/.agents/AGENTS.md and ~/.claude/CLAUDE.md
 ├── docs/         Documentation
 ├── git/          .gitconfig, Windows overlay, global gitignore
 ├── shell/        .zshrc, starship.toml, PowerShell profile

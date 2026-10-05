@@ -30,6 +30,16 @@ New-Item -ItemType Directory -Force $HOME\.config | Out-Null
 Copy-Item $HOME\Developer\dotfiles\shell\starship.toml $HOME\.config\starship.toml
 ```
 
+## AI agent instructions
+
+Copy the global agent instructions to the shared agent directory and to the file Claude Code reads:
+
+```powershell
+New-Item -ItemType Directory -Force $HOME\.agents, $HOME\.claude | Out-Null
+Copy-Item $HOME\Developer\dotfiles\agents\AGENTS.md $HOME\.agents\AGENTS.md
+Copy-Item $HOME\Developer\dotfiles\agents\AGENTS.md $HOME\.claude\CLAUDE.md
+```
+
 ## Git
 
 1. Copy the shared config and global ignore:
