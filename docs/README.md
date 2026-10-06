@@ -35,4 +35,5 @@ All documentation for the dotfiles repository, grouped by purpose.
 | Document | Description | Audience |
 |----------|-------------|----------|
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to change, check and document the config; commit conventions. | Anyone editing the repo |
+| [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Contributor Covenant 3.0 and how to report a violation. | Anyone taking part in the project |
 | [SECURITY.md](../SECURITY.md) | Supported versions, how to report a vulnerability, and what is in scope. | Anyone who finds a security problem |
