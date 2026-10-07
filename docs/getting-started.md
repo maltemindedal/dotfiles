@@ -19,19 +19,16 @@ cd ~/Developer/dotfiles
 
 You can clone the repository anywhere. The rest of this tutorial uses `$PWD`, so the location does not matter.
 
-## 2. Link the shell, Git and agent config
+## 2. Link the shell and Git config
 
 ```sh
 ln -sf "$PWD/shell/.zshrc" ~/.zshrc
 mkdir -p ~/.config && ln -sf "$PWD/shell/starship.toml" ~/.config/starship.toml
 ln -sf "$PWD/git/.gitconfig" ~/.gitconfig
 ln -sf "$PWD/git/.gitignore_global" ~/.gitignore_global
-mkdir -p ~/.agents ~/.claude
-ln -sf "$PWD/agents/AGENTS.md" ~/.agents/AGENTS.md
-ln -sf "$PWD/agents/AGENTS.md" ~/.claude/CLAUDE.md
 ```
 
-`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.gitconfig` or `~/.claude/CLAUDE.md` you want to keep aside first. `install.sh` does this for you.
+`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc` or `~/.gitconfig` you want to keep aside first. `install.sh` does this for you.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
