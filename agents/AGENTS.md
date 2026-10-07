@@ -1,3 +1,12 @@
+## CI out of minutes
+
+When GitHub Actions can't run because the account's minutes or spending limit are used up, run the CI checks locally and treat that run as the CI result, merging included.
+
+1. **Confirm it's billing**: the jobs fail within seconds without running a step, and `gh run view <run-id>` shows an annotation beginning "The job was not started because". A job that started and then failed is a real failure; fix it.
+2. **Run each triggered workflow locally**: for every workflow in `.github/workflows/` that the push or PR triggers, run its `run:` commands as written and in order, plus the same tool for any `uses:` action that checks something (a linter, a type checker). Note each step this machine can't reproduce: another OS in the matrix, secrets, deploys.
+3. **Gate on the local run**: every step green counts as passing CI; any red step blocks just as CI would. If required status checks still make `gh pr merge` refuse, ask me before reaching for `--admin`.
+4. **Report the substitution**: tell me CI didn't run, which steps passed locally, and which went unverified.
+
 ## Merging
 
 Every merge you do ends with the full cleanup below, whatever words I used to ask for it and whether the merge was the whole task or one step of a bigger one. Treat merge and cleanup as one action, so branches and worktrees from parallel agents don't pile up on my machine. Done means: PR merged, branch gone on remote and local, worktree removed, local `main` matching `origin/main`.
