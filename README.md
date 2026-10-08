@@ -73,7 +73,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
 ├── shell/              .zshrc, starship.toml, PowerShell profile
-└── tests/              Tests for install.sh and .zshrc
+└── tests/              Checks for install.sh, .zshrc and the docs
 ```
 
 ## Contributing

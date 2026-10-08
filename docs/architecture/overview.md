@@ -15,7 +15,7 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
-tests/                                tests for install.sh and .zshrc, not dotfiles
+tests/                                checks for install.sh, .zshrc and the docs, not dotfiles
 AGENTS.md                             guidelines for agents working in this repo, not a dotfile
 ```
 

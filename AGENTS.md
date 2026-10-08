@@ -4,20 +4,21 @@ Personal zsh, Git, Starship and PowerShell config. On macOS `install.sh` symlink
 
 ## Commands
 
-There is no CI and `main` has no required checks, so these four commands are the whole gate before every commit and PR. Run them from the repo root:
+There is no CI and `main` has no required checks, so `sh tests/check.sh` is the whole gate before every commit and PR. It runs these checks from the repo root, prints `ok` or `FAIL` for each, shows a failing check's output and exits 1 if any failed:
 
 ```sh
 zsh -n shell/.zshrc
 git config -f git/.gitconfig -l
+git config -f git/.gitconfig.windows -l
 sh tests/install_test.sh          # seconds; temp $HOME, stub git and brew, no network
 sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr/bin:/bin
+sh tests/docs_test.sh             # under a second; the docs mention every name the config defines
 ```
 
-- The suites are linear scripts with no filter, so there is no single-test form.
+- Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
 - The checklist's `reload` is an alias, and agent shells get none of `.zshrc`'s aliases. To start the shell with the real tools instead: `ZDOTDIR="$PWD/shell" TERM=dumb zsh -i -c exit; echo "exit $?"; rm -f shell/.zcompdump`. Expect exit 0; two `can't change option: zle` lines and Starship's `TERM=dumb` error are normal, and the `rm` removes the completion dump zsh writes into `$ZDOTDIR`.
-- No zsh (Linux cloud container): `apt-get install -y zsh`; both suites then pass on Debian.
-- Extra checks for files the four commands miss:
-  - `git/.gitconfig.windows`: `git config -f git/.gitconfig.windows -l`
+- No zsh (Linux cloud container): `apt-get install -y zsh`; the suites then pass on Debian.
+- Extra checks for files the gate misses:
   - `install.sh`, `tests/*.sh` (needs Docker): `docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:stable -S warning install.sh tests/*.sh`. Default severity also reports a pre-existing SC2012 info in `tests/install_test.sh`.
   - `shell/Microsoft.PowerShell_profile.ps1` has no test; parse it (needs Docker, 460 MB amd64 image) and expect `0`: `docker run --rm --platform linux/amd64 -v "$PWD:/repo:ro" mcr.microsoft.com/powershell:latest pwsh -NoProfile -Command '$t=$null;$e=$null;[void][System.Management.Automation.Language.Parser]::ParseFile("/repo/shell/Microsoft.PowerShell_profile.ps1",[ref]$t,[ref]$e);$e.Count'`
 
@@ -31,8 +32,12 @@ sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
+  - A check in `tests/check.sh`: the list under Commands above and step 2 of `CONTRIBUTING.md`.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.
+  - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
+
+  `tests/docs_test.sh` fails when a doc above misses an alias, option, variable, tool, Git key, ignore pattern, link or the `brew install` line. It does not notice a wrong value, a stale entry, a keybinding or prose, so still read the docs you touch.
 - **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. This has broken agent shells four times, from `npm` recursing until FUNCNEST to `gs` shadowing Ghostscript. So:
   - aliases, completion scripts and anything that calls `compdef` go inside `if [[ -o interactive ]]`;
   - a function is self-contained (no helper functions) and unsets itself before loading what it wraps, as `nvm()` does;
