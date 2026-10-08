@@ -10,12 +10,11 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
 2. Check it:
 
    ```sh
-   zsh -n shell/.zshrc             # syntax check
-   git config -f git/.gitconfig -l # parse check; lists every key
-   sh tests/install_test.sh        # installer tests (temp $HOME, stub git and brew)
-   sh tests/zshrc_test.sh          # .zshrc tests (temp $HOME)
-   reload                          # runs exec zsh to reload the live shell
+   sh tests/check.sh   # every check below; prints ok or FAIL for each
+   reload              # runs exec zsh to reload the live shell
    ```
+
+   `tests/check.sh` runs `zsh -n` on `.zshrc`, parses `.gitconfig` and `.gitconfig.windows` with `git config -l`, and runs the installer tests (temp `$HOME`, stub `git` and `brew`) and the `.zshrc` tests (temp `$HOME`). It shows the output of any check that fails. Run a check on its own, such as `sh tests/zshrc_test.sh`, to see every case.
 
 3. Re-run `./install.sh` if you added a new file that needs a symlink. Add the file to the script first.
 4. When you change what `install.sh` or `.zshrc` does, add or update a case in `tests/`.
