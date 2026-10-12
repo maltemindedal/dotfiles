@@ -21,6 +21,7 @@ sh tests/docs_test.sh             # under a second; the docs mention every name 
 - Extra checks for files the gate misses:
   - `install.sh`, `tests/*.sh` (needs Docker): `docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:stable -S warning install.sh tests/*.sh`. Default severity also reports a pre-existing SC2012 info in `tests/install_test.sh`.
   - `shell/Microsoft.PowerShell_profile.ps1` has no test; parse it (needs Docker, 460 MB amd64 image) and expect `0`: `docker run --rm --platform linux/amd64 -v "$PWD:/repo:ro" mcr.microsoft.com/powershell:latest pwsh -NoProfile -Command '$t=$null;$e=$null;[void][System.Management.Automation.Language.Parser]::ParseFile("/repo/shell/Microsoft.PowerShell_profile.ps1",[ref]$t,[ref]$e);$e.Count'`
+- One command for all of the above, with evidence under `/tmp/dotfiles-verify/`: `.agents/skills/verify-dotfiles/scripts/verify.sh all` (see its `SKILL.md`). Project skills live in `.agents/skills/`, never `.cursor/skills/`.
 
 ## Conventions
 
