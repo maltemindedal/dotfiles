@@ -3,7 +3,8 @@
 # Usage: verify.sh <doctor|gate|lint|install|pwsh|cleanup|all>
 set -uo pipefail
 
-ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
+SELF="$(CDPATH="" cd -- "$(dirname -- "$0")" && pwd)/$(basename -- "$0")"
+ROOT="$(git -C "$(dirname "$SELF")" rev-parse --show-toplevel)"
 RUN_ID="${DOTFILES_VERIFY_RUN:-$(date +%Y%m%d-%H%M%S)}"
 ART="${DOTFILES_VERIFY_ARTIFACTS:-/tmp/dotfiles-verify/$RUN_ID}"
 mkdir -p "$ART"
@@ -48,7 +49,7 @@ gate() {
 # The extra check AGENTS.md lists for files the gate misses, run natively instead of in Docker.
 lint() {
   command -v shellcheck >/dev/null || { skip "lint: shellcheck not installed" lint; return; }
-  run lint shellcheck -S warning install.sh tests/*.sh "$0" || FAILED=1
+  run lint shellcheck -S warning install.sh tests/*.sh "$SELF" || FAILED=1
   expect "shellcheck -S warning is clean" "$ART/lint.exit" "^0$"
 }
 
