@@ -13,6 +13,7 @@ git config -f git/.gitconfig.windows -l
 sh tests/install_test.sh          # seconds; temp $HOME, stub git and brew, no network
 sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr/bin:/bin
 sh tests/docs_test.sh             # under a second; the docs mention every name the config defines
+sh tests/cloud_install_test.sh    # under a second; stub apt, no network
 ```
 
 - Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
@@ -64,3 +65,17 @@ sh tests/docs_test.sh             # under a second; the docs mention every name 
 - Before deciding whether a setting belongs in a tracked file or in `~/.zshrc.local` / `~/.gitconfig.local`, read `docs/architecture/decisions/0001-two-layer-configuration.md`.
 - Before changing how files reach `$HOME`, or proposing a dotfile manager, read `docs/architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md`.
 - Before proposing version pins, a CI workflow, a startup-speed tweak or hardening, read PR #2's body (`gh pr view 2 -R maltemindedal/dotfiles`): it holds the open decisions and what was considered and kept.
+
+## Cursor Cloud specific instructions
+
+Cloud agents run `sh .cursor/cloud-install.sh` from the `install` field in `.cursor/environment.json`. The script installs `zsh` and `shellcheck` from Ubuntu's apt repositories. Those commands land in `/usr/bin`, which is already on `PATH`.
+
+`pwsh` is optional. Microsoft publishes the `powershell` apt package for amd64 Ubuntu 22.04 and 24.04 only. On that host the script checks that `ID` in `/etc/os-release` is `ubuntu`, then installs Microsoft's current `powershell` package. On any other host it prints a skip warning and leaves `pwsh` uninstalled. `verify.sh` then skips the PowerShell profile parse. The script does not write a PowerShell version of its own, and it does not edit shell rc files. When every command it can install is already present, it exits without calling apt.
+
+Registering Microsoft's repository can make a later `dotnet` install use Microsoft's packages instead of Ubuntu's. The script registers that repository only on the hosts above. This repo does not install .NET.
+
+There is no `start` command. This repo has no service that must keep running.
+
+The gate is `sh tests/check.sh`. The full check is `.agents/skills/verify-dotfiles/scripts/verify.sh all`. Evidence from that command lands under `/tmp/dotfiles-verify/`. Project skills stay in `.agents/skills/`.
+
+There is no CI workflow and no PowerShell version pin. Do not add one to `.cursor/cloud-install.sh`. The Ubuntu versions in that script are the hosts Microsoft publishes, and `tests/cloud_install_test.sh` fails when a host is classified wrong. `zsh` and `shellcheck` stay on the image's apt packages.

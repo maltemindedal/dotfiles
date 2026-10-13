@@ -14,7 +14,7 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
    reload              # runs exec zsh to reload the live shell
    ```
 
-   `tests/check.sh` runs `zsh -n` on `.zshrc`, parses `.gitconfig` and `.gitconfig.windows` with `git config -l`, and runs the installer tests (temp `$HOME`, stub `git` and `brew`), the `.zshrc` tests (temp `$HOME`) and the docs tests. It shows the output of any check that fails. Run a check on its own, such as `sh tests/zshrc_test.sh`, to see every case.
+   `tests/check.sh` runs `zsh -n` on `.zshrc`, parses `.gitconfig` and `.gitconfig.windows` with `git config -l`, and runs the installer tests (temp `$HOME`, stub `git` and `brew`), the `.zshrc` tests (temp `$HOME`), the docs tests and the cloud-install tests (stub apt, no network). It shows the output of any check that fails. Run a check on its own, such as `sh tests/zshrc_test.sh`, to see every case.
 
 3. Re-run `./install.sh` if you added a new file that needs a symlink. Add the file to the script first.
 4. When you change what `install.sh` or `.zshrc` does, add or update a case in `tests/`.
