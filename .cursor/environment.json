@@ -1,0 +1,4 @@
+{
+  "name": "dotfiles",
+  "install": "sh .cursor/cloud-install.sh"
+}

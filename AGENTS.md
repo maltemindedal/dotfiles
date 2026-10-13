@@ -64,3 +64,15 @@ sh tests/docs_test.sh             # under a second; the docs mention every name 
 - Before deciding whether a setting belongs in a tracked file or in `~/.zshrc.local` / `~/.gitconfig.local`, read `docs/architecture/decisions/0001-two-layer-configuration.md`.
 - Before changing how files reach `$HOME`, or proposing a dotfile manager, read `docs/architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md`.
 - Before proposing version pins, a CI workflow, a startup-speed tweak or hardening, read PR #2's body (`gh pr view 2 -R maltemindedal/dotfiles`): it holds the open decisions and what was considered and kept.
+
+## Cursor Cloud specific instructions
+
+Cloud agents run `sh .cursor/cloud-install.sh` from the `install` field in `.cursor/environment.json`. The script installs `zsh`, `shellcheck`, and `pwsh`. Those commands land in `/usr/bin`, which is already on `PATH`. Ubuntu's apt repositories provide `zsh` and `shellcheck`. Microsoft's apt repository for the image's Ubuntu version provides the `powershell` package, and that package provides `pwsh`. The script reads `VERSION_ID` from `/etc/os-release`. It does not write a PowerShell or Ubuntu version of its own. It does not edit shell rc files. When `zsh`, `shellcheck`, and `pwsh` are already installed, the script exits without calling apt.
+
+Registering Microsoft's repository can make a later `dotnet` install use Microsoft's packages instead of Ubuntu's. This repo does not install .NET.
+
+There is no `start` command. This repo has no service that must keep running.
+
+The gate is `sh tests/check.sh`. The full check is `.agents/skills/verify-dotfiles/scripts/verify.sh all`. Evidence from that command lands under `/tmp/dotfiles-verify/`. Project skills stay in `.agents/skills/`.
+
+There is no CI workflow and no version pin file. Do not add a version number to `.cursor/cloud-install.sh`. Put a future pin in the file that already names that tool, and add a test that fails when the two copies differ. `zsh` and `shellcheck` stay on the image's apt packages, which is the same unpinned install the Commands section already gives for a Linux container. `pwsh` stays on Microsoft's current `powershell` package. Commands already points at that same unpinned latest with `mcr.microsoft.com/powershell:latest`.
