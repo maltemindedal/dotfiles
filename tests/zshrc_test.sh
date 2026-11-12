@@ -61,11 +61,30 @@ check "completion: first start writes ~/.zcompdump" test -s "$H/.zcompdump"
 check "completion: and compiles it to ~/.zcompdump.zwc" test -s "$H/.zcompdump.zwc"
 check "completion: leaves no temporary files" test "$(cd "$H" && echo .zcompdump*)" = ".zcompdump .zcompdump.zwc"
 check "completion: a later start loads completions" test "$(zi "$H" 'print -r -- ${+_comps[git]}')" = 1
+mkdir -p "$H/.zsh/completions" && printf '#compdef fakecmd\n' > "$H/.zsh/completions/_fakecmd"
+check "completion: a start within a day trusts the dump (compinit -C)" \
+  test "$(zi "$H" 'print -r -- ${+_comps[fakecmd]}')" = 0
+touch -t 200001010000 "$H/.zcompdump"
+check "completion: a start after a day rebuilds the dump" \
+  test "$(zi "$H" 'print -r -- ${+_comps[fakecmd]}')" = 1
 
-# --- ~/.zshrc.local ---
+# --- Every variable .zshrc sets ---
+VARS=$(sed -n 's/^[[:space:]]*\(export \)\{0,1\}\([A-Z][A-Z0-9_]*\)=.*/\2/p' "$REPO/shell/.zshrc" | sort -u | tr '\n' ' ')
+check "variables: found the variables .zshrc sets" test -n "$VARS"
+# each_var <home> <zsh test on $v>: print each variable for which the test holds.
+each_var() { (cd "$1" && zi "$1" "for v in $VARS; do $2 && print -r -- \$v; done; true"); }
+
+H=$(new_home basic_vars)
+empty=$(each_var "$H" '(( ${+parameters[$v]} )) && [[ -z ${(P)v} ]]')
+check "variables: none is set empty when its tool is missing (set it inside the tool's guard)${empty:+: $empty}" \
+  test -z "$empty"
+
 H=$(new_home local)
-printf 'LOCAL_MARK=loaded\nalias gs=custom\n' > "$H/.zshrc.local"
-check "local: ~/.zshrc.local is sourced" test "$(zi "$H" 'print -r -- $LOCAL_MARK')" = loaded
+for v in $VARS; do printf '%s=7\n' "$v"; done > "$H/.zshrc.local"
+printf 'alias gs=custom\n' >> "$H/.zshrc.local"
+lost=$(each_var "$H" '[[ ${(P)v} != 7 ]]')
+check "local: ~/.zshrc.local overrides every variable (set it before the local file is sourced)${lost:+: $lost}" \
+  test -z "$lost"
 check "local: ~/.zshrc.local can override aliases" test "$(zi "$H" 'alias gs')" = "gs=custom"
 
 # --- nvm default Node on PATH ---
