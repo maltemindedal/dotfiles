@@ -174,8 +174,8 @@ listed "getting started: runs the same brew install as install.sh" \
 listed "architecture overview: maps every target install.sh links" \
   "$(printf '%s\n' "$LINKS" | while read -r src dst; do printf '→ ~/%s \n' "$dst"; done)" \
   "$(cat docs/architecture/overview.md)"
-listed "architecture overview: lists every file in shell/ and git/" \
-  "$(git ls-files shell git | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
+listed "architecture overview: lists every file in shell/, git/ and claude/" \
+  "$(git ls-files shell git claude | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all docs tests passed"; else echo "$fails docs test(s) failed"; exit 1; fi

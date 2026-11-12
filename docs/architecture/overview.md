@@ -15,7 +15,11 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
-claude/cloud-setup.sh                 Claude Code cloud setup script, not a dotfile
+claude/
+  settings.json                       → ~/.claude/settings.json (macOS)
+  CLAUDE.md                           → ~/.claude/CLAUDE.md     (macOS)
+  pstack-models.md                    → ~/.claude/pstack-models.md (macOS)
+  cloud-setup.sh                      Claude Code cloud setup script, not a dotfile
 tests/                                checks for install.sh, .zshrc and the docs, not dotfiles
 AGENTS.md                             guidelines for agents working in this repo, not a dotfile
 ```

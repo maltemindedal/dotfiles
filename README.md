@@ -24,7 +24,7 @@ cd ~/Developer/dotfiles
 exec zsh
 ```
 
-`install.sh` creates the symlinks, clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`. The equivalent manual steps are in [Getting started](docs/getting-started.md).
+`install.sh` creates the symlinks for the shell, Git and Claude Code config, clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`. The equivalent manual steps are in [Getting started](docs/getting-started.md).
 
 ### Windows
 
@@ -70,7 +70,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── SECURITY.md         How to report a vulnerability
 ├── install.sh          macOS installer (symlinks, plugins, optional tools)
 ├── .github/            Issue forms and pull request template
-├── claude/             Claude Code cloud environment setup script, not linked
+├── claude/             Claude Code settings and instructions, cloud setup script
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
 ├── shell/              .zshrc, starship.toml, PowerShell profile

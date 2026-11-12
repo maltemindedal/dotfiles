@@ -1,6 +1,6 @@
 # Getting started (macOS)
 
-This tutorial sets up zsh, the Starship prompt, and Git on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
+This tutorial sets up zsh, the Starship prompt, Git and the Claude Code config on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
 
 ## Prerequisites
 
@@ -19,16 +19,22 @@ cd ~/Developer/dotfiles
 
 You can clone the repository anywhere. The rest of this tutorial uses `$PWD`, so the location does not matter.
 
-## 2. Link the shell and Git config
+## 2. Link the shell, Git and Claude Code config
 
 ```sh
 ln -sf "$PWD/shell/.zshrc" ~/.zshrc
 mkdir -p ~/.config && ln -sf "$PWD/shell/starship.toml" ~/.config/starship.toml
 ln -sf "$PWD/git/.gitconfig" ~/.gitconfig
 ln -sf "$PWD/git/.gitignore_global" ~/.gitignore_global
+mkdir -p ~/.claude
+ln -sf "$PWD/claude/settings.json" ~/.claude/settings.json
+ln -sf "$PWD/claude/CLAUDE.md" ~/.claude/CLAUDE.md
+ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
 ```
 
-`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc` or `~/.gitconfig` you want to keep aside first. `install.sh` does this for you.
+`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.gitconfig` or `~/.claude/settings.json` you want to keep aside first. `install.sh` does this for you.
+
+`claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off commit and PR attribution. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
