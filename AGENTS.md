@@ -42,7 +42,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **Shell scripts** are POSIX `sh` with `set -eu`, and run under macOS `/bin/sh` (bash 3.2) and Debian's dash. New steps in `install.sh` keep its two guarantees: arguments are checked before any side effect, and a file already at a target is moved to `<name>.<timestamp>.bak`, never deleted.
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.
 - **Check external facts before writing them.** Confirm a tool's flags or behaviour against upstream docs or by running it; three past commits corrected docs that contradicted the config or upstream.
-- **Vendored files stay verbatim:** `shell/starship.toml` is Starship's no-nerd-font preset (`starship preset no-nerd-font | diff - shell/starship.toml` prints nothing), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
+- **Vendored files stay verbatim:** `shell/starship.toml` is Starship's plain-text-symbols preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, followed by a marker line and the `claude_cost` and `claude_model` symbols (`tests/starship_test.sh` fails on any other change; refresh the fixture with `starship preset plain-text-symbols`, then the file), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
 - Record a non-obvious design choice as an ADR in `docs/architecture/decisions/`, in the format of the existing two.
 
 ## Gotchas
