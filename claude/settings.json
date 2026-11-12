@@ -18,7 +18,8 @@
   },
   "attribution": {
     "commit": "",
-    "pr": ""
+    "pr": "",
+    "sessionUrl": false
   },
   "includeCoAuthoredBy": false,
   "feedbackDrafts": "off",

@@ -34,7 +34,7 @@ ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
 
 `ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.gitconfig` or `~/.claude/settings.json` you want to keep aside first. `install.sh` does this for you.
 
-`claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off commit and PR attribution. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
+`claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off all commit and PR attribution, the session link included. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
