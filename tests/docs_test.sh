@@ -98,20 +98,20 @@ ZSH_ROWS=$(rows docs/reference/zsh.md)
 wrong=$(printf '%s\n' "$ZSH_ROWS" | while IFS='|' read -r line kind _ name stated value; do
   at="docs/reference/zsh.md:$line \`$name\`"
   case $kind in
-    Alias) defs=$ALIAS_DEFS what=alias ;;
-    Variable) defs=$VAR_DEFS what=variable ;;
-    Option) defs=$OPTS what=option stated=n ;;
-    Tool)
+    (Alias) defs=$ALIAS_DEFS what=alias ;;
+    (Variable) defs=$VAR_DEFS what=variable ;;
+    (Option) defs=$OPTS what=option stated=n ;;
+    (Tool)
       printf '%s\n' "$ZSHRC_CODE" | grep -qwF -- "$name" ||
         printf '\n  [%s: shell/.zshrc never mentions it; delete the row]' "$at"
       continue ;;
-    Key) continue ;;   # keybindings: escape sequences in .zshrc, symbols in the doc
-    *) printf '\n  [docs/reference/zsh.md:%s: no check for a "%s" table; add one to tests/docs_test.sh]' "$line" "$kind"; continue ;;
+    (Key) continue ;;   # keybindings: escape sequences in .zshrc, symbols in the doc
+    (*) printf '\n  [docs/reference/zsh.md:%s: no check for a "%s" table; add one to tests/docs_test.sh]' "$line" "$kind"; continue ;;
   esac
   rc=0; defined "$defs" "$name" "$stated" "$value" || rc=$?
   case $rc in
-    1) printf '\n  [%s: shell/.zshrc sets no %s %s; delete the row]' "$at" "$what" "$name" ;;
-    2) printf '\n  [%s | `%s`: shell/.zshrc has %s]' "$at" "$value" \
+    (1) printf '\n  [%s: shell/.zshrc sets no %s %s; delete the row]' "$at" "$what" "$name" ;;
+    (2) printf '\n  [%s | `%s`: shell/.zshrc has %s]' "$at" "$value" \
          "$(printf '%s\n' "$defs" | awk -F'|' -v n="$name" '$1 == n { s = s (s ? " or " : "") "`" $2 "`" } END { print s }')" ;;
   esac
 done)
@@ -141,7 +141,7 @@ wrong=$(printf '%s\n' "$GIT_ROWS" | while IFS='|' read -r line kind section name
     printf '\n  [docs/reference/git.md:%s: the heading above names no file in git/]' "$line"; continue
   fi
   case $kind in
-    Key)
+    (Key)
       key=$(printf '%s' "$name" | sed 's/ "\([^"]*\)"\./.\1./')
       if ! have=$(git config -f "$file" --get-all "$key"); then
         printf '\n  [%s: %s does not set it; delete the row]' "$at" "$file"; continue
@@ -151,12 +151,12 @@ wrong=$(printf '%s\n' "$GIT_ROWS" | while IFS='|' read -r line kind section name
       matches "$want" "$have" ||
         printf '\n  [%s | `%s`: %s has `%s`]' "$at" "$(printf '%s\n' "$want" | then_list)" "$file" \
           "$(printf '%s\n' "$have" | then_list)" ;;
-    Group)
+    (Group)
       printf '%s' "$value" | tr "$US" '\n' | while IFS= read -r pattern; do
         grep -qxF -- "$pattern" "$file" ||
           printf '\n  [docs/reference/git.md:%s `%s`: %s does not list it; delete it from the row]' "$line" "$pattern" "$file"
       done ;;
-    *) printf '\n  [docs/reference/git.md:%s: no check for a "%s" table; add one to tests/docs_test.sh]' "$line" "$kind" ;;
+    (*) printf '\n  [docs/reference/git.md:%s: no check for a "%s" table; add one to tests/docs_test.sh]' "$line" "$kind" ;;
   esac
 done)
 if [ -z "$GIT_ROWS" ]; then fail "git reference: every row matches git/: found nothing to compare"
