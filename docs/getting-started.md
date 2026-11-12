@@ -1,6 +1,6 @@
 # Getting started (macOS)
 
-This tutorial sets up zsh, the Starship prompt, Git, and the Claude Code, Codex and Cursor CLI config on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
+This tutorial sets up zsh, the Starship prompt, Git with SSH commit signing, and the Claude Code, Codex and Cursor CLI config on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
 
 ## Prerequisites
 
@@ -32,9 +32,14 @@ ln -sf "$PWD/claude/settings.json" ~/.claude/settings.json
 ln -sf "$PWD/agents/AGENTS.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/agents/AGENTS.md" ~/.codex/AGENTS.md
 ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
+[ -d ~/.ssh ] || mkdir -m 700 ~/.ssh
+chmod go-w "$PWD/ssh/config"
+ln -sf "$PWD/ssh/config" ~/.ssh/config
 ```
 
-`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.zprofile`, `~/.gitconfig` or `~/.claude/settings.json` you want to keep aside first. `install.sh` does this for you.
+`ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.zprofile`, `~/.gitconfig`, `~/.ssh/config` or `~/.claude/settings.json` you want to keep aside first. `install.sh` does this for you.
+
+`ssh/config` makes every SSH connection use `~/.ssh/id_ed25519_git`, add it to the agent on first use and keep its passphrase in the login keychain. ssh refuses a config that group or others can write, hence the `chmod`.
 
 `claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off all commit and PR attribution, the session link included. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
 
@@ -88,9 +93,31 @@ alias gs               # prints gs='git status'
 git config user.name   # prints Malte Mindedal
 ```
 
-## 6. Add machine-specific settings
+## 6. Set up commit signing
 
-Commit signing uses an SSH key. `.gitconfig` sets the public key, but the `allowedSignersFile` (needed for `git log --show-signature`) is host-specific. Put it and other machine-specific settings in `~/.gitconfig.local` and `~/.zshrc.local`. See [Machine-specific overrides](guides/machine-specific-overrides.md).
+`.gitconfig` signs every commit and tag with the SSH key whose public half it holds in `user.signingkey`. `install.sh` does the rest of the setup except the private key:
+
+```sh
+printf '%s namespaces="git" %s\n' "$(git config -f git/.gitconfig user.email)" \
+  "$(git config -f git/.gitconfig user.signingkey | sed 's/^key:://')"
+```
+
+That command prints the signer line. `install.sh` appends it to `~/.ssh/allowed_signers` when that file lacks the identical line, and keeps every other line, so add the line by hand only if you skip the script. `git log --show-signature` reads that file through `gpg.ssh.allowedSignersFile`, which `install.sh` sets in `~/.gitconfig.local` when it is unset:
+
+```sh
+git config --file ~/.gitconfig.local gpg.ssh.allowedSignersFile '~/.ssh/allowed_signers'
+```
+
+The private key is the one step left. Restore it from your backup to `~/.ssh/id_ed25519_git`, then:
+
+```sh
+chmod 600 ~/.ssh/id_ed25519_git
+/usr/bin/ssh-add --apple-use-keychain ~/.ssh/id_ed25519_git
+```
+
+`ssh-add` asks for the passphrase once and stores it in the login keychain, from which `.zshrc` loads the key after each reboot. Until the key is there, `install.sh` prints a notice on stderr and commits fail to sign.
+
+Put other machine-specific settings in `~/.gitconfig.local` and `~/.zshrc.local`. See [Machine-specific overrides](guides/machine-specific-overrides.md).
 
 ## 7. Turn off attribution in the Cursor app
 

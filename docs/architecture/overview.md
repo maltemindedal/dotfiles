@@ -16,6 +16,8 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
+ssh/
+  config                              → ~/.ssh/config           (macOS)
 agents/
   AGENTS.md                           → ~/.claude/CLAUDE.md     (macOS)
                                       → ~/.codex/AGENTS.md      (macOS)
@@ -39,7 +41,7 @@ Four decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-laye
 
 **Linked and merged agent config.** The Claude Code files hold no host state, so `install.sh` links them like the shell files. The Codex app and the Cursor CLI write host paths and their own state into their configs, so `install.sh` merges the keys and tables the repo names into the live file and keeps the rest. TOML is merged by table in `awk`, because the Command Line Tools Python 3.9 has no `tomllib`. JSON is merged by top-level key with `jq`.
 
-**Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
+**Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. On macOS `install.sh` seeds `allowedSignersFile` there when it is unset, and never changes a value already set. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
 
 **One instructions file for every agent.** `agents/AGENTS.md` is the only copy of the global agent instructions. `install.sh` links it to the global path each agent reads, `~/.claude/CLAUDE.md` for Claude Code and `~/.codex/AGENTS.md` for Codex. The repo holds no symlink of its own, because a Windows checkout turns one into a text file.
 
@@ -53,6 +55,8 @@ Four decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-laye
 
 **Global Git ignore rules.** The global ignore file lists only operating system and editor files. Each project excludes its own build artifacts and logs, which prevents the global file from hiding tracked files such as `*.sql` migrations.
 
+**Signing setup without the private key.** `install.sh` appends the signer line built from `git/.gitconfig` to `~/.ssh/allowed_signers` instead of linking that file, because it also holds lines the repo does not track. It never creates or fetches a key; it prints a notice when `~/.ssh/id_ed25519_git` is missing.
+
 ## Git identity and signing flow
 
 ```mermaid
@@ -60,5 +64,6 @@ flowchart LR
     A[~/.gitconfig<br/>tracked] -->|include| B[~/.gitconfig.local<br/>untracked]
     A -->|user.signingkey = literal pubkey| C[ssh-keygen sign]
     B -->|gpg.ssh.allowedSignersFile| D[git log --show-signature]
+    F[~/.ssh/allowed_signers<br/>appended by install.sh] --> D
     A -->|credential.helper| E[gh auth git-credential]
 ```

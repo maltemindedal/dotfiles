@@ -27,13 +27,14 @@ Run `reload`, an alias for `exec zsh`, to apply the changes.
     path = ~/.gitconfig.local
 ```
 
-Keys in the included file override earlier values. Typical contents:
+Keys in the included file override earlier values. On macOS `install.sh` creates the file if needed and sets `gpg.ssh.allowedSignersFile` when it is unset, so after an install it holds:
 
 ```ini
-# macOS example
 [gpg "ssh"]
     allowedSignersFile = ~/.ssh/allowed_signers
 ```
+
+To point Git at another file, change the value; `install.sh` leaves a value that is already set.
 
 On Windows, start from `git/.gitconfig.windows` (see [Windows setup](windows-setup.md)) and append to it.
 

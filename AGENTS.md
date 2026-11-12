@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Personal zsh, Git, Starship, PowerShell, Claude Code, Codex and Cursor CLI config. On macOS `install.sh` symlinks it into `$HOME`, merging the Codex and Cursor CLI files, so this repo is the owner's live shell, Git and agent setup: a change must keep shell startup at exit 0 with none of the optional tools installed, keep Git identity and signing working, and never lose a user file.
+Personal zsh, Git, SSH, Starship, PowerShell, Claude Code, Codex and Cursor CLI config. On macOS `install.sh` symlinks it into `$HOME`, merging the Codex and Cursor CLI files, so this repo is the owner's live shell, Git and agent setup: a change must keep shell startup at exit 0 with none of the optional tools installed, keep Git identity and signing working, and never lose a user file.
 
 ## Commands
 
@@ -12,7 +12,7 @@ zsh -n shell/.zprofile
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
 sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
-sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/, git/, agents/, claude/, codex/ and cursor/
+sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/, git/, ssh/, agents/, claude/, codex/ and cursor/
 ```
 
 - A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Checks run with at most four workers and results print in launch order. Use `DOTFILES_TEST_JOBS=1` for a sequential run (accepted range: 1 to 16). Every suite must keep its fixtures in its own temporary directory.
@@ -54,6 +54,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **The checkout `install.sh` linked is the live system.** `readlink ~/.zshrc` shows it, normally `~/Developer/dotfiles`. Uncommitted edits, `git checkout`, `git stash` and merges there reach the next shell and `git` call at once. Work in a worktree or another clone, so changes go live only when `main` is pulled into that checkout.
 - **Run `./install.sh` only in the live checkout, and ask first.** It links `$HOME` to its own directory, so run from a worktree it repoints `~/.zshrc`, `~/.gitconfig` and `~/.claude/settings.json` there, and they dangle once the worktree is removed. It also rewrites `~/.codex/config.toml` and `~/.cursor/cli-config.json` from the checkout it runs in. `--tools` also runs `brew install` and a `chmod`. To exercise the installer, run `sh tests/install_test.sh`.
 - **Writes to `$HOME` dotfiles land in this repo.** `git config --global` writes into `git/.gitconfig`; put host-specific or secret keys in `~/.gitconfig.local` with `git config --file ~/.gitconfig.local`. Tool installers that append to `~/.zshrc` edit `shell/.zshrc` (the bun installer added a hard-coded `/Users/…` line after Starship), so check `git -C ~/Developer/dotfiles status` after installing a tool. Claude Code writes `/config` and permission changes through `~/.claude/settings.json` into `claude/settings.json` the same way.
+- **`install.sh` writes into `~/.ssh`.** It creates `~/.ssh` mode 700 when missing, removes group and other write from `ssh/config` (ssh refuses such a config) and links it, appends the signer line built from `user.email` and `user.signingkey` in `git/.gitconfig` to `~/.ssh/allowed_signers` when the identical line is missing, and sets `gpg.ssh.allowedSignersFile` in `~/.gitconfig.local` only when it is unset. `allowed_signers` holds lines the repo does not track, so never link, replace or reorder it, and keep every email other than the one in `git/.gitconfig` out of the repo. It never creates or fetches a key; without `~/.ssh/id_ed25519_git` it prints a notice on stderr. Treat a change to these steps as a security change and name it in the PR body.
 - **`claude/settings.json` is the live permissions and sandbox config of every Claude Code agent on this machine**, including the one editing it. A change to it, once merged and pulled into the live checkout, changes what agents may do here (permission mode, sandbox, plugins, attribution). Treat an edit to it as a security change and name it in the PR body.
 - **A tracked Codex or Cursor CLI key changed in the app is reverted by the next `./install.sh`.** The repo owns the keys and tables in `codex/config.toml` and `cursor/cli-config.json`; change them there.
 - **`tests/zshrc_test.sh` failing about six cases on macOS** usually means Homebrew's `share/` is group-writable, so compaudit aborts compinit. Check `ls -ld "$(brew --prefix)/share"` before touching `.zshrc`. The fix, `chmod go-w "$(brew --prefix)/share"`, changes the host, so ask first.
