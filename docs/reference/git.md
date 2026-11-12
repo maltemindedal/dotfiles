@@ -20,7 +20,11 @@ Source of truth: [`git/.gitconfig`](../../git/.gitconfig), [`git/.gitconfig.wind
 | `credential "https://gist.github.com".helper` | `` (reset) then `!gh auth git-credential` | Same, for gists |
 | `include.path` | `~/.gitconfig.local` | Machine-specific overrides (see below) |
 
-This file does not set `gpg.ssh.allowedSignersFile`, which is required for local signature verification. Put it in `~/.gitconfig.local`.
+This file does not set `gpg.ssh.allowedSignersFile`, which is required for local signature verification, because the path is host-specific. On macOS `install.sh` sets it to `~/.ssh/allowed_signers` in `~/.gitconfig.local` when it is unset, and appends the line `<user.email> namespaces="git" <user.signingkey without key::>` to that file when the identical line is missing. It keeps the file's other lines.
+
+## SSH client config (`ssh/config`, installed as `~/.ssh/config`)
+
+One `Host *` block applies to every host. `AddKeysToAgent yes` adds a key to the running ssh-agent on first use, `UseKeychain yes` stores and reads its passphrase in the macOS login keychain, and `IdentityFile ~/.ssh/id_ed25519_git` names the signing key, which also authenticates SSH connections. The repo holds only the public half, in `user.signingkey`.
 
 ## `.gitconfig.windows` (copied to `~/.gitconfig.local` on Windows)
 

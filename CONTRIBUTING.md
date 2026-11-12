@@ -14,7 +14,7 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
    reload              # runs exec zsh to reload the live shell
    ```
 
-   `tests/check.sh` runs `zsh -n` on `.zshrc`, parses `.gitconfig` and `.gitconfig.windows` with `git config -l`, runs every `tests/*_test.sh` suite (each in a temp `$HOME` with stubs and no network), and runs `tests/lint.sh`, which fails on commits made on `main`, checks the commit subjects on your branch and rejects `/Users/` and `/home/` paths under `shell/`, `git/`, `claude/`, `codex/` and `cursor/`. It shows the output of any check that fails. Run a check on its own, such as `sh tests/zshrc_test.sh`, to see every case.
+   `tests/check.sh` runs `zsh -n` on `.zshrc` and `.zprofile`, parses `.gitconfig` and `.gitconfig.windows` with `git config -l`, runs every `tests/*_test.sh` suite (each in a temp `$HOME` with stubs and no network), and runs `tests/lint.sh`, which fails on commits made on `main`, checks the commit subjects on your branch and rejects `/Users/` and `/home/` paths under `shell/`, `git/`, `ssh/`, `agents/`, `claude/`, `codex/` and `cursor/`. It shows the output of any check that fails. Run a check on its own, such as `sh tests/zshrc_test.sh`, to see every case.
 
    The gate runs up to four checks at once and prints their results in the order above. Set `DOTFILES_TEST_JOBS=1 sh tests/check.sh` to run sequentially, or choose a limit from 1 to 16. Each check has its own captured output; all checks finish even when one fails.
 
@@ -28,4 +28,4 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
 - Guard optional tools in `.zshrc` with `command -v …` or a file-existence check so the shell works without them.
 - Commit subjects are `<area>: <imperative, lowercase, no final period>`; `tests/lint.sh` lists the areas and fails on any other subject. Include a body explaining *why* when it isn't obvious. A body that opens with `Bug fix.` needs a regression test under `tests/` in the same commit. See `git log` for examples.
 - `.gitconfig` enables SSH signing for commits.
-- Record non-obvious design choices as an architecture decision record (ADR) in [`docs/architecture/decisions/`](docs/architecture/decisions/).
+- Record a non-obvious design choice in the Design decisions section of [`docs/architecture/overview.md`](docs/architecture/overview.md).

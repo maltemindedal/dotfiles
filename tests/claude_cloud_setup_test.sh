@@ -1,6 +1,6 @@
 #!/bin/sh
 # claude/cloud-setup.sh must write ~/.claude/CLAUDE.md and pstack-models.md,
-# byte-identical to claude/, turn off attribution in settings.json with jq,
+# byte-identical to agents/AGENTS.md and claude/pstack-models.md, turn off attribution in settings.json with jq,
 # and exit 0 whether the claude CLI, apt-get and jq work, fail or are
 # missing. Temp $HOME, stub claude, apt-get and zsh, no network.
 #
@@ -37,8 +37,9 @@ run_setup() { # run_setup <name> <claude exit code, or "missing">
     fail "$name: exits 0"
     sed 's/^/     |/' "$TMP/$name/out"
   fi
-  for f in CLAUDE.md pstack-models.md; do
-    if cmp -s "$REPO/claude/$f" "$home/.claude/$f"; then pass "$name: writes $f identical to claude/$f"; else fail "$name: writes $f identical to claude/$f"; fi
+  for pair in agents/AGENTS.md:CLAUDE.md claude/pstack-models.md:pstack-models.md; do
+    src=${pair%%:*} f=${pair#*:}
+    if cmp -s "$REPO/$src" "$home/.claude/$f"; then pass "$name: writes $f identical to $src"; else fail "$name: writes $f identical to $src"; fi
   done
 }
 

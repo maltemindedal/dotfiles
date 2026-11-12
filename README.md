@@ -24,7 +24,7 @@ cd ~/Developer/dotfiles
 exec zsh
 ```
 
-`install.sh` creates the symlinks for the shell, Git and Claude Code config, merges the Codex and Cursor CLI settings into `~/.codex/config.toml` and `~/.cursor/cli-config.json`, clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`, and so is a Codex or Cursor CLI config before a merge changes it. The Cursor app's attribution switch is a manual step. The equivalent manual steps are in [Getting started](docs/getting-started.md).
+`install.sh` creates the symlinks for the shell, Git and Claude Code config and the global agent instructions, merges the Codex and Cursor CLI settings into `~/.codex/config.toml` and `~/.cursor/cli-config.json`, sets up SSH commit signing (appending the signer to `~/.ssh/allowed_signers` and setting `gpg.ssh.allowedSignersFile` in `~/.gitconfig.local`), clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`, and so is a Codex or Cursor CLI config before a merge changes it. Restoring the private signing key and the Cursor app's attribution switch are manual steps. The equivalent manual steps are in [Getting started](docs/getting-started.md).
 
 ### Windows
 
@@ -54,7 +54,6 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 | [zsh reference](docs/reference/zsh.md) | Aliases, keybindings, options, optional tools |
 | [Git reference](docs/reference/git.md) | Every `.gitconfig` key and the global ignore list |
 | [Architecture overview](docs/architecture/overview.md) | Layout and design rationale |
-| [Decision records](docs/architecture/decisions/) | ADRs for non-obvious choices |
 | [Contributing](CONTRIBUTING.md) | How to change, verify and document the configuration |
 | [Security policy](SECURITY.md) | How to report a vulnerability |
 | [Code of conduct](CODE_OF_CONDUCT.md) | Expected behaviour and how to report a violation |
@@ -70,12 +69,14 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── SECURITY.md         How to report a vulnerability
 ├── install.sh          macOS installer (symlinks, plugins, optional tools)
 ├── .github/            Issue forms and pull request template
-├── claude/             Claude Code settings and instructions, cloud setup script
+├── agents/             Global agent instructions, linked for Claude Code and Codex
+├── claude/             Claude Code settings, cloud setup script
 ├── codex/              Codex settings, merged into ~/.codex/config.toml
 ├── cursor/             Cursor CLI settings, merged into ~/.cursor/cli-config.json
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
-├── shell/              .zshrc, starship.toml, PowerShell profile
+├── shell/              .zshrc, .zprofile, starship.toml, PowerShell profile
+├── ssh/                SSH client config, linked to ~/.ssh/config
 └── tests/              Checks for install.sh, .zshrc and the docs
 ```
 

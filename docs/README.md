@@ -27,9 +27,6 @@ All documentation for the dotfiles repository, grouped by purpose.
 | Document | Description | Audience |
 |----------|-------------|----------|
 | [architecture/overview.md](architecture/overview.md) | Repository layout and the reasons for the installation and load-order choices. | Anyone changing the config |
-| [architecture/decisions/0001-two-layer-configuration.md](architecture/decisions/0001-two-layer-configuration.md) | ADR: why tracked config files include an untracked `~/.*.local` file. | Anyone changing the config |
-| [architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md](architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md) | ADR: why macOS uses symlinks, Windows uses copies, and no dotfile manager. | Anyone changing the install model |
-| [architecture/decisions/0003-link-portable-agent-config-merge-app-written-config.md](architecture/decisions/0003-link-portable-agent-config-merge-app-written-config.md) | ADR: why the Claude Code config is linked and the Codex and Cursor CLI configs are merged. | Anyone changing the agent config |
 
 ## Contributing
 

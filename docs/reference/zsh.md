@@ -1,6 +1,6 @@
 # zsh reference
 
-Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
+Source of truth: [`shell/.zshrc`](../../shell/.zshrc), installed as `~/.zshrc`, and [`shell/.zprofile`](../../shell/.zprofile), installed as `~/.zprofile`.
 
 ## Environment variables and PATH
 
@@ -16,9 +16,18 @@ Source of truth: [`shell/.zshrc`](../../shell/.zshrc). Installed as `~/.zshrc`.
 | `FZF_ALT_C_COMMAND` | `fd --type d --hidden --exclude .git` | Only set when `fd` is installed |
 | `ZSH_AUTOSUGGEST_STRATEGY` | `(history completion)` | Autosuggestion sources |
 
-`shell/.zshrc` prepends `$HOME/.local/bin`, `$BUN_INSTALL/bin`, and `$PNPM_HOME/bin` to `PATH` in that order. It declares `path` and `fpath` with `typeset -U`, which removes duplicates on reload. It expects Homebrew's `shellenv` command in `~/.zprofile` and does not run it here.
+`shell/.zshrc` prepends `$HOME/.local/bin`, `$BUN_INSTALL/bin`, and `$PNPM_HOME/bin` to `PATH` in that order. It declares `path` and `fpath` with `typeset -U`, which removes duplicates on reload. It leaves Homebrew's `shellenv` command to `.zprofile` (see [Login shell](#login-shell)).
 
 It adds `$HOME/.zsh/completions`, `$HOME/.docker/completions`, `/opt/homebrew/share/zsh-completions`, and `/opt/homebrew/share/zsh/site-functions` to `fpath`.
+
+## Login shell
+
+zsh reads `~/.zprofile` once per login shell, before `~/.zshrc`. `shell/.zprofile` does two things, and skips each one when its tool is missing, so a login shell starts with exit 0 on a Mac without Docker or Homebrew:
+
+1. Appends `$HOME/.docker/bin` to `PATH` when that directory exists. The two comment lines around it are the lines Docker Desktop wrote into `~/.zprofile`; they stay verbatim so the section still reads as Docker Desktop's own.
+2. Runs `eval "$(/opt/homebrew/bin/brew shellenv zsh)"` when `/opt/homebrew/bin/brew` exists. This puts Homebrew's `bin` and `sbin` first on `PATH` and sets `HOMEBREW_PREFIX`.
+
+An installer that appends to `~/.zprofile` edits `shell/.zprofile` through the link, so check `git status` after installing a tool.
 
 ## SSH agent
 

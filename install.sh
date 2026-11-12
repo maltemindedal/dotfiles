@@ -1,5 +1,6 @@
 #!/bin/sh
-# Symlink the macOS dotfiles and Claude Code config into $HOME and install the zsh plugins.
+# Symlink the macOS dotfiles, agent and SSH config into $HOME, set up SSH commit
+# signing and install the zsh plugins.
 # Idempotent: safe to re-run after `git pull`. A real file or directory already at a
 # link's location is moved aside to <name>.<timestamp>.bak rather than deleted.
 #
@@ -33,12 +34,47 @@ link() {
 }
 
 link shell/.zshrc           "$HOME/.zshrc"
+link shell/.zprofile        "$HOME/.zprofile"
 link shell/starship.toml    "$HOME/.config/starship.toml"
 link git/.gitconfig         "$HOME/.gitconfig"
 link git/.gitignore_global  "$HOME/.gitignore_global"
 link claude/settings.json   "$HOME/.claude/settings.json"
-link claude/CLAUDE.md       "$HOME/.claude/CLAUDE.md"
+link agents/AGENTS.md       "$HOME/.claude/CLAUDE.md"
+link agents/AGENTS.md       "$HOME/.codex/AGENTS.md"
 link claude/pstack-models.md "$HOME/.claude/pstack-models.md"
+
+# ssh refuses a config that others can write, and the private key belongs in a
+# directory only the owner can open.
+[ -d "$HOME/.ssh" ] || (umask 077 && mkdir "$HOME/.ssh")
+chmod go-w "$REPO/ssh/config"
+link ssh/config             "$HOME/.ssh/config"
+
+# allowed_signers also holds lines this repo does not track, so append the
+# signer from git/.gitconfig and never replace the file.
+SIGNERS="$HOME/.ssh/allowed_signers"
+EMAIL="$(git config -f "$REPO/git/.gitconfig" user.email)"
+KEY="$(git config -f "$REPO/git/.gitconfig" user.signingkey)"
+SIGNER="$EMAIL namespaces=\"git\" ${KEY#key::}"
+if [ -f "$SIGNERS" ] && grep -qxF -- "$SIGNER" "$SIGNERS"; then
+  printf '%-45s <- %s (already there)\n' "$SIGNERS" "$EMAIL"
+else
+  if [ -s "$SIGNERS" ] && [ -n "$(tail -c 1 "$SIGNERS")" ]; then echo >> "$SIGNERS"; fi
+  printf '%s\n' "$SIGNER" >> "$SIGNERS"
+  printf '%-45s <- %s (added)\n' "$SIGNERS" "$EMAIL"
+fi
+
+LOCAL="$HOME/.gitconfig.local"
+if git config -f "$LOCAL" --get gpg.ssh.allowedSignersFile >/dev/null; then
+  printf '%-45s <- gpg.ssh.allowedSignersFile (kept)\n' "$LOCAL"
+else
+  # shellcheck disable=SC2088  # git expands ~/ in this path itself
+  git config -f "$LOCAL" gpg.ssh.allowedSignersFile '~/.ssh/allowed_signers'
+  printf '%-45s <- gpg.ssh.allowedSignersFile (set)\n' "$LOCAL"
+fi
+
+if [ ! -f "$HOME/.ssh/id_ed25519_git" ]; then
+  echo "No signing key at ~/.ssh/id_ed25519_git, so git cannot sign commits. Restore the private key there, then run: chmod 600 ~/.ssh/id_ed25519_git && /usr/bin/ssh-add --apple-use-keychain ~/.ssh/id_ed25519_git" >&2
+fi
 
 # merge_toml <tracked> <live>: print <live> with each top-level key and table of
 # <tracked> in place of the live one of the same name. New keys go after the live
