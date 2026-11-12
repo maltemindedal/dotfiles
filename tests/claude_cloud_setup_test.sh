@@ -1,6 +1,7 @@
 #!/bin/sh
 # claude/cloud-setup.sh must write the three ~/.claude files and exit 0 whether
-# the claude CLI works, fails or is missing. Temp $HOME, stub claude, no network.
+# the claude CLI and apt-get work, fail or are missing. Temp $HOME, stub claude,
+# apt-get and zsh, no network.
 #
 #   sh tests/claude_cloud_setup_test.sh
 set -eu
@@ -16,11 +17,9 @@ fail() { printf 'FAIL %s\n' "$1"; fails=$((fails + 1)); }
 
 BIN="$TMP/bin"
 mkdir "$BIN"
-for tool in cat mkdir tail sed jq; do
+for tool in cat mkdir tail sed; do
   if command -v "$tool" > /dev/null 2>&1; then ln -s "$(command -v "$tool")" "$BIN/$tool"; fi
 done
-have_jq=0
-if command -v jq > /dev/null 2>&1; then have_jq=1; fi
 
 run_setup() { # run_setup <name> <claude exit code, or "missing">
   name="$1"
@@ -67,39 +66,47 @@ cp -R "$TMP/works/home/.claude" "$TMP/first-run"
 HOME="$TMP/works/home" PATH="$BIN" "$BASH_BIN" "$REPO/claude/cloud-setup.sh" > /dev/null 2>&1
 if diff -r "$TMP/first-run" "$TMP/works/home/.claude" > /dev/null; then pass "works: a second run changes nothing"; else fail "works: a second run changes nothing"; fi
 
-if [ "$have_jq" -eq 1 ]; then
-  if [ "$(jq -c .attribution "$TMP/works/home/.claude/settings.json")" = '{"commit":"","pr":"","sessionUrl":false}' ]; then
-    pass "works: turns off commit and PR attribution"
-  else
-    fail "works: turns off commit and PR attribution"
-  fi
-  mkdir -p "$TMP/merge/home/.claude"
-  printf '%s\n' '{"enabledPlugins":{"pstack@pstack-claude":true}}' > "$TMP/merge/home/.claude/settings.json"
-  run_setup merge 0
-  if [ "$(jq -c '[.enabledPlugins["pstack@pstack-claude"], .attribution.commit]' "$TMP/merge/home/.claude/settings.json")" = '[true,""]' ]; then
-    pass "merge: keeps existing settings keys"
-  else
-    fail "merge: keeps existing settings keys"
-  fi
-  mkdir -p "$TMP/bad/home/.claude"
-  printf '%s\n' 'not json' > "$TMP/bad/home/.claude/settings.json"
-  run_setup bad 0
-  if [ "$(cat "$TMP/bad/home/.claude/settings.json")" = 'not json' ]; then
-    pass "bad: leaves an unreadable settings.json untouched"
-  else
-    fail "bad: leaves an unreadable settings.json untouched"
-  fi
-fi
-
 run_setup claude-fails 1
 expect_out claude-fails "plugins: could not install pstack@pstack-claude, skipping:"
 
 run_setup claude-missing missing
 expect_out claude-missing "plugins: claude CLI not on PATH, skipping pstack@pstack-claude"
 
-rm -f "$BIN/jq"
-run_setup no-jq 0
-expect_out no-jq "settings: jq not on PATH, skipping attribution"
+expect_out claude-missing "zsh: apt-get not on PATH, skipping"
+
+stub_apt() { # stub_apt <exit code>
+  printf '%s\n' '#!/bin/sh' "echo \"\${DEBIAN_FRONTEND:-} \$*\" >> \"\$HOME/apt.log\"" "exit $1" > "$BIN/apt-get"
+  chmod +x "$BIN/apt-get"
+}
+
+unset DEBIAN_FRONTEND   # the stub logs it, to show the script sets it for the install
+stub_apt 0
+run_setup zsh-missing 0
+expect_out zsh-missing "zsh: installed"
+if [ "$(cat "$TMP/zsh-missing/home/apt.log")" = " update
+noninteractive -o Dpkg::Options::=--force-confold install -y zsh" ]; then
+  pass "zsh-missing: updates apt, then installs zsh without a conffile prompt"
+else
+  fail "zsh-missing: updates apt, then installs zsh without a conffile prompt"
+fi
+
+stub_apt 1
+run_setup apt-fails 0
+expect_out apt-fails "zsh: could not install, skipping:"
+
+stub_apt 0
+printf '%s\n' '#!/bin/sh' > "$BIN/zsh"
+chmod +x "$BIN/zsh"
+run_setup zsh-present 0
+expect_out zsh-present "zsh: already installed"
+if [ -e "$TMP/zsh-present/home/apt.log" ]; then fail "zsh-present: does not call apt-get"; else pass "zsh-present: does not call apt-get"; fi
+rm -f "$BIN/zsh" "$BIN/apt-get"
+
+if [ -e "$TMP/works/home/.claude/settings.json" ]; then
+  fail "works: leaves settings.json alone"
+else
+  pass "works: leaves settings.json alone"
+fi
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all claude cloud-setup tests passed"; else echo "$fails claude cloud-setup test(s) failed"; exit 1; fi

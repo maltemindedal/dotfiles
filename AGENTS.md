@@ -14,10 +14,10 @@ sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, st
 sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
 ```
 
-- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds, except `tests/zshrc_test.sh` at 10 s to 2 min.
+- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds. `tests/zshrc_test.sh` was the slow one, at 10 s to 2 min on macOS, before its homes shared one completion dump; it has not been timed there since.
 - Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
 - The checklist's `reload` is an alias, and agent shells get none of `.zshrc`'s aliases. To start the shell with the real tools instead: `ZDOTDIR="$PWD/shell" TERM=dumb zsh -i -c exit; echo "exit $?"; rm -f shell/.zcompdump`. Expect exit 0; two `can't change option: zle` lines and Starship's `TERM=dumb` error are normal, and the `rm` removes the completion dump zsh writes into `$ZDOTDIR`.
-- No zsh (Linux cloud container): `apt-get install -y zsh`; the suites then pass on Debian.
+- No zsh (Linux cloud container): `apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::=--force-confold install -y zsh`; the suites then pass on Debian and Ubuntu. Claude Code cloud sessions get zsh from `claude/cloud-setup.sh`.
 - Extra checks for files the gate misses:
   - `install.sh`, `tests/*.sh` (needs Docker): `docker run --rm -v "$PWD:/mnt:ro" -w /mnt koalaman/shellcheck:stable -S warning install.sh tests/*.sh`. Default severity also reports a pre-existing SC2012 info in `tests/install_test.sh`.
   - `shell/Microsoft.PowerShell_profile.ps1` has no test; parse it (needs Docker, 460 MB amd64 image) and expect `0`: `docker run --rm --platform linux/amd64 -v "$PWD:/repo:ro" mcr.microsoft.com/powershell:latest pwsh -NoProfile -Command '$t=$null;$e=$null;[void][System.Management.Automation.Language.Parser]::ParseFile("/repo/shell/Microsoft.PowerShell_profile.ps1",[ref]$t,[ref]$e);$e.Count'`
@@ -63,7 +63,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 
 ## Claude Code cloud specific instructions
 
-`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin, writes `~/.claude/CLAUDE.md`, `pstack-models.md` and `merge-rules.md` (the owner's global agent instructions), and with `jq` merges an `attribution` block into `~/.claude/settings.json` that keeps Claude Code's trailer and link out of commits and PRs. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. `install.sh` does not link `claude/`.
+`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin and, when it is missing, zsh from apt, so the gate runs in a new session. It writes `~/.claude/CLAUDE.md`, `pstack-models.md` and `merge-rules.md` (the owner's global agent instructions). It leaves `~/.claude/settings.json` alone, so commit and PR attribution stay at Claude Code's defaults. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. `install.sh` does not link `claude/`.
 
 It is bash without `set -e` on purpose. A failed step prints a skip line and the script still exits 0, so it never blocks a session from starting. `tests/claude_cloud_setup_test.sh` checks that with the `claude` CLI working, failing and missing. Keep secrets out of it: the environment stores the script in plain text.
 

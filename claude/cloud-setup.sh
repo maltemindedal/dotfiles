@@ -33,23 +33,30 @@ write_file() {
   fi
 }
 
-disable_attribution() {
-  local file="$CLAUDE_DIR/settings.json" merged
-  if ! command -v jq >/dev/null 2>&1; then
-    echo "settings: jq not on PATH, skipping attribution"
+install_zsh() {
+  local log
+  if command -v zsh >/dev/null 2>&1; then
+    echo "zsh: already installed"
     return
   fi
-  mkdir -p "$CLAUDE_DIR" && [ -f "$file" ] || echo '{}' > "$file"
-  if merged=$(jq '.attribution = {commit: "", pr: "", sessionUrl: false}' "$file") &&
-    printf '%s\n' "$merged" > "$file"; then
-    echo "settings: turned off commit and PR attribution in $file"
+  if ! command -v apt-get >/dev/null 2>&1; then
+    echo "zsh: apt-get not on PATH, skipping"
+    return
+  fi
+  # The image ships its own /etc/zsh/zshrc, so dpkg would stop at a conffile prompt.
+  if log=$({
+    cap apt-get update &&
+      DEBIAN_FRONTEND=noninteractive cap apt-get -o Dpkg::Options::=--force-confold install -y zsh
+  } 2>&1); then
+    echo "zsh: installed"
   else
-    echo "settings: could not update $file, skipping attribution"
+    echo "zsh: could not install, skipping:"
+    printf '%s\n' "$log" | tail -n 5 | sed 's/^/  /'
   fi
 }
 
 install_plugin michael-denyer/pstack-claude pstack@pstack-claude
-disable_attribution
+install_zsh
 
 write_file CLAUDE.md <<'EOF'
 @~/.claude/pstack-models.md
