@@ -42,6 +42,26 @@ listed "zsh reference: every variable .zshrc sets" \
 listed "zsh reference: every tool .zshrc looks for" \
   "$(sed -n 's/.*command -v \([^ ]*\) .*/\1/p' shell/.zshrc | ticks)" "$ZSH_DOC"
 
+# --- docs/reference/zsh.md gives each alias the command .zshrc defines ---
+# A `name` | `value` row whose name is an alias in .zshrc must match one of its
+# definitions (ls has one with eza and one without).
+ALIAS_DEFS=$(sed -n "/^[[:space:]]*#/d; s/.*alias \([^= ]*\)=[\"']\(.*\)[\"']\$/\1|\2/p" shell/.zshrc)
+ALIAS_ROWS=$(grep -n '^| `[^`]*` | `[^`]*` |' docs/reference/zsh.md |
+  sed 's/^\([0-9]*\):| `\([^`]*\)` | `\([^`]*\)` |.*/\1|\2|\3/')
+wrong=$(printf '%s\n' "$ALIAS_ROWS" | while IFS='|' read -r line name value; do
+  case "
+$ALIAS_DEFS" in *"
+$name|"*) ;; *) continue ;; esac
+  case "
+$ALIAS_DEFS
+" in *"
+$name|$value
+"*) ;; *) printf ' [docs/reference/zsh.md:%s `%s` | `%s`]' "$line" "$name" "$value" ;; esac
+done)
+if [ -z "$ALIAS_DEFS" ] || [ -z "$ALIAS_ROWS" ]; then fail "zsh reference: alias rows match .zshrc: found nothing to compare"
+elif [ -n "$wrong" ]; then fail "zsh reference: alias rows match .zshrc; fix the row or the alias:$wrong"
+else pass "zsh reference: alias rows match .zshrc"; fi
+
 # --- docs/reference/git.md lists every key and ignore pattern ---
 # git prints keys in lower case as section.subsection.key; the doc may write
 # section "subsection".key, so compare that form in lower case.
