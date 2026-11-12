@@ -14,7 +14,7 @@ sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, st
 sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
 ```
 
-- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds, except `tests/zshrc_test.sh` at 10 s to 2 min.
+- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds. `tests/zshrc_test.sh` was the slow one, at 10 s to 2 min on macOS, before its homes shared one completion dump; it has not been timed there since.
 - Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
 - The checklist's `reload` is an alias, and agent shells get none of `.zshrc`'s aliases. To start the shell with the real tools instead: `ZDOTDIR="$PWD/shell" TERM=dumb zsh -i -c exit; echo "exit $?"; rm -f shell/.zcompdump`. Expect exit 0; two `can't change option: zle` lines and Starship's `TERM=dumb` error are normal, and the `rm` removes the completion dump zsh writes into `$ZDOTDIR`.
 - No zsh (Linux cloud container): `apt-get install -y zsh`; the suites then pass on Debian.

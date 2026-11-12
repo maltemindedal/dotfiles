@@ -20,9 +20,15 @@ check() { # check <description> <command...>
 }
 no_stderr() { [ -z "$("$@" 2>&1 >/dev/null)" ]; }
 
-# new_home <name>: create a home directory with ~/.zshrc linked to the repo copy.
-new_home() {
+# fresh_home <name>: create a home directory with ~/.zshrc linked to the repo copy.
+fresh_home() {
   mkdir "$TMP/$1" && ln -s "$REPO/shell/.zshrc" "$TMP/$1/.zshrc" && printf '%s\n' "$TMP/$1"
+}
+# new_home <name>: a fresh home plus the completion dump the basic home built, so its
+# first start skips the full compinit, which is most of this suite's run time. The
+# compiled dump is copied last because zsh ignores one that is older than the dump.
+new_home() {
+  fresh_home "$1" && cp "$TMP/basic/.zcompdump" "$TMP/$1/" && cp "$TMP/basic/.zcompdump.zwc" "$TMP/$1/"
 }
 # zi <home> <command>: run <command> in an interactive zsh.
 zi() { env -i HOME="$1" PATH=/usr/bin:/bin TERM=dumb zsh -i -c "$2"; }
@@ -42,7 +48,7 @@ nvm_alias() { mkdir -p "$(dirname "$1/.nvm/alias/$2")" && printf '%s\n' "$3" > "
 first_path() { zi "$1" 'print -r -- $path[1]'; }
 
 # --- Startup, aliases, PATH ---
-H=$(new_home basic)
+H=$(fresh_home basic)
 check "startup: writes nothing to stderr" no_stderr zi "$H" true
 check "startup: sourcing ~/.zshrc returns 0" env -i HOME="$H" PATH=/usr/bin:/bin zsh -c 'source ~/.zshrc'
 check "startup: an interactive shell's first status is 0" zi "$H" exit
@@ -54,7 +60,7 @@ check "PATH: reloading does not duplicate entries" \
   test "$(zi "$H" 'source ~/.zshrc; print -r -- ${#${(M)path:#$HOME/.local/bin}}')" = 1
 
 # --- Completion dump ---
-H=$(new_home completion)
+H=$(fresh_home completion)
 echo 'skip_global_compinit=1' > "$H/.zshenv"   # Debian/Ubuntu: skip /etc/zsh/zshrc's compinit, as on macOS
 zi "$H" true
 check "completion: first start writes ~/.zcompdump" test -s "$H/.zcompdump"
