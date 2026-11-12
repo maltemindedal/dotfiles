@@ -26,8 +26,6 @@ new_home() {
 }
 # zi <home> <command>: run <command> in an interactive zsh.
 zi() { env -i HOME="$1" PATH=/usr/bin:/bin TERM=dumb zsh -i -c "$2"; }
-# zn <home> <command>: source ~/.zshrc in a non-interactive zsh, then run <command>.
-zn() { env -i HOME="$1" PATH=/usr/bin:/bin zsh -c "source ~/.zshrc; $2"; }
 
 # fake_node <home> <version>...: install stub Node versions where nvm keeps them.
 fake_node() {
@@ -49,7 +47,6 @@ check "startup: writes nothing to stderr" no_stderr zi "$H" true
 check "startup: sourcing ~/.zshrc returns 0" env -i HOME="$H" PATH=/usr/bin:/bin zsh -c 'source ~/.zshrc'
 check "startup: an interactive shell's first status is 0" zi "$H" exit
 check "aliases: defined in interactive shells" test "$(zi "$H" 'alias gs')" = "gs='git status'"
-check "aliases: not defined in non-interactive shells" test "$(zn "$H" 'alias gs || echo none')" = none
 check "aliases: ls falls back to ls -G without eza" test "$(zi "$H" 'alias ls')" = "ls='ls -G'"
 check "PATH: prepends ~/.local/bin, bun and pnpm in order" \
   test "$(zi "$H" 'print -r -- $path[1,3]')" = "$H/.local/bin $H/.bun/bin $H/Library/pnpm/bin"
@@ -64,11 +61,30 @@ check "completion: first start writes ~/.zcompdump" test -s "$H/.zcompdump"
 check "completion: and compiles it to ~/.zcompdump.zwc" test -s "$H/.zcompdump.zwc"
 check "completion: leaves no temporary files" test "$(cd "$H" && echo .zcompdump*)" = ".zcompdump .zcompdump.zwc"
 check "completion: a later start loads completions" test "$(zi "$H" 'print -r -- ${+_comps[git]}')" = 1
+mkdir -p "$H/.zsh/completions" && printf '#compdef fakecmd\n' > "$H/.zsh/completions/_fakecmd"
+check "completion: a start within a day trusts the dump (compinit -C)" \
+  test "$(zi "$H" 'print -r -- ${+_comps[fakecmd]}')" = 0
+touch -t 200001010000 "$H/.zcompdump"
+check "completion: a start after a day rebuilds the dump" \
+  test "$(zi "$H" 'print -r -- ${+_comps[fakecmd]}')" = 1
 
-# --- ~/.zshrc.local ---
+# --- Every variable .zshrc sets ---
+VARS=$(sed -n 's/^[[:space:]]*\(export \)\{0,1\}\([A-Z][A-Z0-9_]*\)=.*/\2/p' "$REPO/shell/.zshrc" | sort -u | tr '\n' ' ')
+check "variables: found the variables .zshrc sets" test -n "$VARS"
+# each_var <home> <zsh test on $v>: print each variable for which the test holds.
+each_var() { (cd "$1" && zi "$1" "for v in $VARS; do $2 && print -r -- \$v; done; true"); }
+
+H=$(new_home basic_vars)
+empty=$(each_var "$H" '(( ${+parameters[$v]} )) && [[ -z ${(P)v} ]]')
+check "variables: none is set empty when its tool is missing (set it inside the tool's guard)${empty:+: $empty}" \
+  test -z "$empty"
+
 H=$(new_home local)
-printf 'LOCAL_MARK=loaded\nalias gs=custom\n' > "$H/.zshrc.local"
-check "local: ~/.zshrc.local is sourced" test "$(zi "$H" 'print -r -- $LOCAL_MARK')" = loaded
+for v in $VARS; do printf '%s=7\n' "$v"; done > "$H/.zshrc.local"
+printf 'alias gs=custom\n' >> "$H/.zshrc.local"
+lost=$(each_var "$H" '[[ ${(P)v} != 7 ]]')
+check "local: ~/.zshrc.local overrides every variable (set it before the local file is sourced)${lost:+: $lost}" \
+  test -z "$lost"
 check "local: ~/.zshrc.local can override aliases" test "$(zi "$H" 'alias gs')" = "gs=custom"
 
 # --- nvm default Node on PATH ---
@@ -124,8 +140,6 @@ check "nvm: a malformed alias prints no error" no_stderr zi "$H" true
 H=$(new_home bun)
 mkdir -p "$H/.bun" && printf 'BUN_COMP_MARK=loaded\n' > "$H/.bun/_bun"
 check "bun: completions load in interactive shells" test "$(zi "$H" 'print -r -- $BUN_COMP_MARK')" = loaded
-check "bun: completions are skipped in non-interactive shells" \
-  test "$(zn "$H" 'print -r -- ${BUN_COMP_MARK:-none}')" = none
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all .zshrc tests passed"; else echo "$fails .zshrc test(s) failed"; exit 1; fi

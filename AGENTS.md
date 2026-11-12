@@ -10,13 +10,11 @@ There is no CI and `main` has no required checks, so `sh tests/check.sh` is the 
 zsh -n shell/.zshrc
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
-sh tests/install_test.sh          # seconds; temp $HOME, stub git and brew, no network
-sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr/bin:/bin
-sh tests/docs_test.sh             # under a second; the docs mention every name the config defines
-sh tests/cloud_install_test.sh    # under a second; stub apt, no network
-sh tests/claude_cloud_setup_test.sh  # under a second; temp $HOME, stub claude, no network
+sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
+sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
 ```
 
+- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds, except `tests/zshrc_test.sh` at 10 s to 2 min.
 - Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
 - The checklist's `reload` is an alias, and agent shells get none of `.zshrc`'s aliases. To start the shell with the real tools instead: `ZDOTDIR="$PWD/shell" TERM=dumb zsh -i -c exit; echo "exit $?"; rm -f shell/.zcompdump`. Expect exit 0; two `can't change option: zle` lines and Starship's `TERM=dumb` error are normal, and the `rm` removes the completion dump zsh writes into `$ZDOTDIR`.
 - No zsh (Linux cloud container): `apt-get install -y zsh`; the suites then pass on Debian.
@@ -27,29 +25,24 @@ sh tests/claude_cloud_setup_test.sh  # under a second; temp $HOME, stub claude, 
 
 ## Conventions
 
-- **Commits:** subject `<area>: <imperative, lowercase, no final period>` with area `shell`, `git`, `install.sh`, `test`, `docs` or `agents`. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
-- **PRs:** title in commit-subject form, merged with squash (the convention since #3). Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
+- **Commits:** subject `<area>: <imperative, lowercase, no final period>` with an area from `AREAS` in `tests/lint.sh`, which fails the gate on any other subject. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
+- **PRs:** title in commit-subject form. Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
 - **A behaviour change ships in one commit with its test and its docs.** These change together:
-  - `shell/.zshrc`: a case in `tests/zshrc_test.sh` and `docs/reference/zsh.md`, which lists every alias, keybinding, option, env var and optional tool; `docs/architecture/overview.md` too when the rationale or startup cost changes.
-  - Any file in `git/`: `docs/reference/git.md`, which lists every key and ignore pattern.
+  - `shell/.zshrc`: a case in `tests/zshrc_test.sh`, the keybinding table in `docs/reference/zsh.md`, and `docs/architecture/overview.md` when the rationale or startup cost changes.
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
   - `claude/cloud-setup.sh`: `tests/claude_cloud_setup_test.sh` and the Claude Code cloud section below.
-  - A check in `tests/check.sh`: the list under Commands above and step 2 of `CONTRIBUTING.md`.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.
   - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
 
-  `tests/docs_test.sh` fails when a doc above misses an alias, option, variable, tool, Git key, ignore pattern, link or the `brew install` line. It does not notice a wrong value, a stale entry, a keybinding or prose, so still read the docs you touch.
-- **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. This has broken agent shells four times, from `npm` recursing until FUNCNEST to `gs` shadowing Ghostscript. So:
-  - aliases, completion scripts and anything that calls `compdef` go inside `if [[ -o interactive ]]`;
-  - a function is self-contained (no helper functions) and unsets itself before loading what it wraps, as `nvm()` does;
-  - every optional tool or file is guarded with `command -v X >/dev/null` or `[ -f … ]`.
+  The reference docs' tables are in the gate: `tests/docs_test.sh` fails, naming the doc line, on a missing, stale or wrong alias, variable, option, tool, Git key or ignore pattern. It reads no keybinding or prose.
+- **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. `tests/snapshot_test.sh` replays it with every optional file present and fails on an alias, a completion or stderr outside `if [[ -o interactive ]]`, and on a copied function that needs a helper or `compdef`. Guard every optional tool or file with `command -v X >/dev/null` or `[ -f … ]`.
 - **Shell scripts** are POSIX `sh` with `set -eu`, and run under macOS `/bin/sh` (bash 3.2) and Debian's dash. New steps in `install.sh` keep its two guarantees: arguments are checked before any side effect, and a file already at a target is moved to `<name>.<timestamp>.bak`, never deleted.
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.
 - **Check external facts before writing them.** Confirm a tool's flags or behaviour against upstream docs or by running it; three past commits corrected docs that contradicted the config or upstream.
-- **Vendored files stay verbatim:** `shell/starship.toml` is Starship's no-nerd-font preset (`starship preset no-nerd-font | diff - shell/starship.toml` prints nothing), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
+- **Vendored files stay verbatim:** `shell/starship.toml` is Starship's plain-text-symbols preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, followed by a marker line and the `claude_cost` and `claude_model` symbols (`tests/starship_test.sh` fails on any other change; refresh the fixture with `starship preset plain-text-symbols`, then the file), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
 - Record a non-obvious design choice as an ADR in `docs/architecture/decisions/`, in the format of the existing two.
 
 ## Gotchas

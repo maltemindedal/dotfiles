@@ -34,7 +34,7 @@ Two decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer
 
 **Load order.** Plugins wrap ZLE widgets, so they load after `compinit`, fzf, and zoxide. Autosuggestions load before syntax highlighting, and Starship loads last. `~/.zshrc.local` loads before the plugins.
 
-**Starship without a Nerd Font.** `starship.toml` contains five symbol overrides from the "no-nerd-font" preset, so the prompt renders with any monospace font.
+**Starship without a Nerd Font.** `starship.toml` is Starship's "plain-text-symbols" preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, so the prompt renders with any monospace font. Below a marker line it adds text symbols for the `claude_cost` and `claude_model` modules, which the preset does not cover and which default to emoji. `tests/starship_test.sh` rejects any other change.
 
 **Global Git ignore rules.** The global ignore file lists only operating system and editor files. Each project excludes its own build artifacts and logs, which prevents the global file from hiding tracked files such as `*.sql` migrations.
 

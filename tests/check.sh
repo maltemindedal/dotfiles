@@ -1,7 +1,8 @@
 #!/bin/sh
-# Run the whole gate: the syntax and parse checks, then every test suite. Prints
-# ok or FAIL for each check, shows what a failing check printed (less its passing
-# cases), and exits 1 if any check failed. Runs from any directory.
+# Run the whole gate: the syntax and parse checks, every tests/*_test.sh suite and
+# tests/lint.sh. Prints ok or FAIL for each check, shows what a failing check
+# printed (less its passing cases), and exits 1 if any check failed. Runs from any
+# directory.
 #
 #   sh tests/check.sh
 set -eu
@@ -24,11 +25,8 @@ run() { # run <command...>
 run zsh -n shell/.zshrc
 run git config -f git/.gitconfig -l
 run git config -f git/.gitconfig.windows -l
-run sh tests/install_test.sh
-run sh tests/zshrc_test.sh
-run sh tests/docs_test.sh
-run sh tests/cloud_install_test.sh
-run sh tests/claude_cloud_setup_test.sh
+for t in tests/*_test.sh; do run sh "$t"; done
+run sh tests/lint.sh
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all checks passed"; else echo "$fails check(s) failed"; exit 1; fi

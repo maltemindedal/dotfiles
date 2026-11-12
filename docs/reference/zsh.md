@@ -151,4 +151,4 @@ Near the end of the file, `.zshrc` sources these plugins from `~/.zsh/plugins/` 
 
 ## Starship configuration
 
-`shell/starship.toml` overrides five module symbols so the prompt works without a Nerd Font: `azure`, `battery`, `erlang`, `nodejs` and `pulumi`. Everything else uses Starship's default.
+`shell/starship.toml` is Starship's `plain-text-symbols` preset, so the prompt works without a Nerd Font. Below a marker line it sets text symbols for the `claude_cost` and `claude_model` modules. `tests/starship_test.sh` checks that the preset text matches `tests/fixtures/starship-plain-text-symbols.toml` and that nothing else follows the marker.
