@@ -1,6 +1,7 @@
 #!/bin/sh
 # claude/cloud-setup.sh must write the three ~/.claude files and exit 0 whether
-# the claude CLI works, fails or is missing. Temp $HOME, stub claude, no network.
+# the claude CLI and apt-get work, fail or are missing. Temp $HOME, stub claude,
+# apt-get and zsh, no network.
 #
 #   sh tests/claude_cloud_setup_test.sh
 set -eu
@@ -96,6 +97,36 @@ expect_out claude-fails "plugins: could not install pstack@pstack-claude, skippi
 
 run_setup claude-missing missing
 expect_out claude-missing "plugins: claude CLI not on PATH, skipping pstack@pstack-claude"
+
+expect_out claude-missing "zsh: apt-get not on PATH, skipping"
+
+stub_apt() { # stub_apt <exit code>
+  printf '%s\n' '#!/bin/sh' "echo \"\${DEBIAN_FRONTEND:-} \$*\" >> \"\$HOME/apt.log\"" "exit $1" > "$BIN/apt-get"
+  chmod +x "$BIN/apt-get"
+}
+
+unset DEBIAN_FRONTEND   # the stub logs it, to show the script sets it for the install
+stub_apt 0
+run_setup zsh-missing 0
+expect_out zsh-missing "zsh: installed"
+if [ "$(cat "$TMP/zsh-missing/home/apt.log")" = " update
+noninteractive -o Dpkg::Options::=--force-confold install -y zsh" ]; then
+  pass "zsh-missing: updates apt, then installs zsh without a conffile prompt"
+else
+  fail "zsh-missing: updates apt, then installs zsh without a conffile prompt"
+fi
+
+stub_apt 1
+run_setup apt-fails 0
+expect_out apt-fails "zsh: could not install, skipping:"
+
+stub_apt 0
+printf '%s\n' '#!/bin/sh' > "$BIN/zsh"
+chmod +x "$BIN/zsh"
+run_setup zsh-present 0
+expect_out zsh-present "zsh: already installed"
+if [ -e "$TMP/zsh-present/home/apt.log" ]; then fail "zsh-present: does not call apt-get"; else pass "zsh-present: does not call apt-get"; fi
+rm -f "$BIN/zsh" "$BIN/apt-get"
 
 rm -f "$BIN/jq"
 run_setup no-jq 0
