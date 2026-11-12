@@ -41,7 +41,7 @@ ln -sf "$PWD/ssh/config" ~/.ssh/config
 
 `ssh/config` makes every SSH connection use `~/.ssh/id_ed25519_git`, add it to the agent on first use and keep its passphrase in the login keychain. ssh refuses a config that group or others can write, hence the `chmod`.
 
-`claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off all commit and PR attribution, the session link included. Its `PreToolUse` hook stops a Claude Code agent in T3 Code from creating a worktree with the `isolation` option of its `Agent` tool, so every worktree there comes from T3 and gets the branch name T3 is set to give it. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
+`claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off all commit and PR attribution, the session link included. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
 
 `agents/AGENTS.md` holds the global agent instructions. Claude Code reads it as `~/.claude/CLAUDE.md` and Codex as `~/.codex/AGENTS.md`, so both agents get the same text.
 
