@@ -4,6 +4,10 @@
 
 Closes #
 
+## Merge method
+
+<!-- Merge commit when another open PR builds on this branch, rebase when every commit passes the gate alone and has a message worth keeping, squash otherwise. Say which and why. -->
+
 ## Checks
 
 From [CONTRIBUTING.md](https://github.com/maltemindedal/dotfiles/blob/main/CONTRIBUTING.md#making-a-change):

@@ -26,7 +26,12 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 ## Conventions
 
 - **Commits:** subject `<area>: <imperative, lowercase, no final period>` with an area from `AREAS` in `tests/lint.sh`, which fails the gate on any other subject. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
-- **PRs:** title in commit-subject form, merged with squash (the convention since #3). Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
+- **PRs:** title in commit-subject form. The author picks the merge method for the task:
+  - merge commit when another open PR builds on the branch;
+  - rebase when every commit passes the gate alone and has a message worth keeping (`git rebase -x 'sh tests/check.sh' origin/main` proves it);
+  - squash otherwise.
+
+  State the method and the reason under `## Merge method` in the PR body. Agents merge with the GitHub MCP tool's `merge_method` (`squash`, `merge` or `rebase`), as `gh` is absent in the cloud container. Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
 - **A behaviour change ships in one commit with its test and its docs.** These change together:
   - `shell/.zshrc`: a case in `tests/zshrc_test.sh` and `docs/reference/zsh.md`, which lists every alias, keybinding, option, env var and optional tool; `docs/architecture/overview.md` too when the rationale or startup cost changes.
   - Any file in `git/`: `docs/reference/git.md`, which lists every key and ignore pattern.
