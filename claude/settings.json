@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "enabledPlugins": {
+    "pstack@pstack-claude": true
+  },
+  "extraKnownMarketplaces": {
+    "pstack-claude": {
+      "source": {
+        "source": "github",
+        "repo": "michael-denyer/pstack-claude"
+      }
+    }
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "includeCoAuthoredBy": false,
+  "feedbackDrafts": "off",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "skipWorkflowUsageWarning": true,
+  "theme": "auto",
+  "autoCompactEnabled": true,
+  "switchModelsOnFlag": true,
+  "model": "opus",
+  "sandbox": {
+    "enabled": false
+  }
+}

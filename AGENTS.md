@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Personal zsh, Git, Starship and PowerShell config. On macOS `install.sh` symlinks it into `$HOME`, so this repo is the owner's live shell and Git setup: a change must keep shell startup at exit 0 with none of the optional tools installed, keep Git identity and signing working, and never lose a user file.
+Personal zsh, Git, Starship, PowerShell, Claude Code, Codex and Cursor CLI config. On macOS `install.sh` symlinks it into `$HOME`, merging the Codex and Cursor CLI files, so this repo is the owner's live shell, Git and agent setup: a change must keep shell startup at exit 0 with none of the optional tools installed, keep Git identity and signing working, and never lose a user file.
 
 ## Commands
 
@@ -11,7 +11,7 @@ zsh -n shell/.zshrc
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
 sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
-sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
+sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/, git/, claude/, codex/ and cursor/
 ```
 
 - A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Checks run with at most four workers and results print in launch order. Use `DOTFILES_TEST_JOBS=1` for a sequential run (accepted range: 1 to 16). Every suite must keep its fixtures in its own temporary directory.
@@ -31,8 +31,10 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
   - `shell/.zshrc`: a case in `tests/zshrc_test.sh`, the keybinding table in `docs/reference/zsh.md`, and `docs/architecture/overview.md` when the rationale or startup cost changes.
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
+  - A merged file in `install.sh` (`merge toml|json`): the merge cases in `tests/install_test.sh`, the `cp -n` line in step 2 of `docs/getting-started.md`, the `merged into` line in `docs/architecture/overview.md` and the `README.md` layout. Track only keys the user sets; leave out keys and tables the app writes itself.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
   - `claude/cloud-setup.sh`: `tests/claude_cloud_setup_test.sh` and the Claude Code cloud section below.
+  - `claude/CLAUDE.md` or `claude/pstack-models.md`: the matching heredoc in `claude/cloud-setup.sh`, which `tests/claude_cloud_setup_test.sh` compares byte for byte. Then paste the script into the cloud environment again.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.
   - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
@@ -43,13 +45,15 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.
 - **Check external facts before writing them.** Confirm a tool's flags or behaviour against upstream docs or by running it; three past commits corrected docs that contradicted the config or upstream.
 - **Vendored files stay verbatim:** `shell/starship.toml` is Starship's plain-text-symbols preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, followed by a marker line and the `claude_cost` and `claude_model` symbols (`tests/starship_test.sh` fails on any other change; refresh the fixture with `starship preset plain-text-symbols`, then the file), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
-- Record a non-obvious design choice as an ADR in `docs/architecture/decisions/`, in the format of the existing two.
+- Record a non-obvious design choice as an ADR in `docs/architecture/decisions/`, in the format of the existing ones.
 
 ## Gotchas
 
 - **The checkout `install.sh` linked is the live system.** `readlink ~/.zshrc` shows it, normally `~/Developer/dotfiles`. Uncommitted edits, `git checkout`, `git stash` and merges there reach the next shell and `git` call at once. Work in a worktree or another clone, so changes go live only when `main` is pulled into that checkout.
-- **Run `./install.sh` only in the live checkout, and ask first.** It links `$HOME` to its own directory, so run from a worktree it repoints `~/.zshrc` and `~/.gitconfig` there, and they dangle once the worktree is removed. `--tools` also runs `brew install` and a `chmod`. To exercise the installer, run `sh tests/install_test.sh`.
-- **Writes to `$HOME` dotfiles land in this repo.** `git config --global` writes into `git/.gitconfig`; put host-specific or secret keys in `~/.gitconfig.local` with `git config --file ~/.gitconfig.local`. Tool installers that append to `~/.zshrc` edit `shell/.zshrc` (the bun installer added a hard-coded `/Users/…` line after Starship), so check `git -C ~/Developer/dotfiles status` after installing a tool.
+- **Run `./install.sh` only in the live checkout, and ask first.** It links `$HOME` to its own directory, so run from a worktree it repoints `~/.zshrc`, `~/.gitconfig` and `~/.claude/settings.json` there, and they dangle once the worktree is removed. It also rewrites `~/.codex/config.toml` and `~/.cursor/cli-config.json` from the checkout it runs in. `--tools` also runs `brew install` and a `chmod`. To exercise the installer, run `sh tests/install_test.sh`.
+- **Writes to `$HOME` dotfiles land in this repo.** `git config --global` writes into `git/.gitconfig`; put host-specific or secret keys in `~/.gitconfig.local` with `git config --file ~/.gitconfig.local`. Tool installers that append to `~/.zshrc` edit `shell/.zshrc` (the bun installer added a hard-coded `/Users/…` line after Starship), so check `git -C ~/Developer/dotfiles status` after installing a tool. Claude Code writes `/config` and permission changes through `~/.claude/settings.json` into `claude/settings.json` the same way.
+- **`claude/settings.json` is the live permissions and sandbox config of every Claude Code agent on this machine**, including the one editing it. A change to it, once merged and pulled into the live checkout, changes what agents may do here (permission mode, sandbox, plugins, attribution). Treat an edit to it as a security change and name it in the PR body.
+- **A tracked Codex or Cursor CLI key changed in the app is reverted by the next `./install.sh`.** The repo owns the keys and tables in `codex/config.toml` and `cursor/cli-config.json`; change them there.
 - **`tests/zshrc_test.sh` failing about six cases on macOS** usually means Homebrew's `share/` is group-writable, so compaudit aborts compinit. Check `ls -ld "$(brew --prefix)/share"` before touching `.zshrc`. The fix, `chmod go-w "$(brew --prefix)/share"`, changes the host, so ask first.
 - **The repo has no `.gitignore`**, so stray outputs show up in `git status`; remove the ones you created. Keep `git/.gitignore_global` to OS and editor files: it is the global ignore for every repo, and a build pattern there would hide tracked files such as `*.sql` everywhere.
 - **Deliberate choices that PR #2 reviewed and kept:** hard-coded macOS paths (`/opt/homebrew/…`, `/usr/bin/ssh-add --apple-load-keychain`, `$HOME/Library/pnpm`; Linux support was dropped), `$PNPM_HOME/bin` on `PATH` (the pnpm 11+ layout), user directories first on `PATH`, `compinit -C` skipping compaudit for 24 hours, `eval "$(tool init zsh)"`, and `Invoke-Expression` in the PowerShell profile.
@@ -58,14 +62,14 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 
 - Before changing load order, startup cost or how files are installed, read `docs/architecture/overview.md`.
 - Before deciding whether a setting belongs in a tracked file or in `~/.zshrc.local` / `~/.gitconfig.local`, read `docs/architecture/decisions/0001-two-layer-configuration.md`.
-- Before changing how files reach `$HOME`, or proposing a dotfile manager, read `docs/architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md`.
+- Before changing how files reach `$HOME`, or proposing a dotfile manager, read `docs/architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md`, and for the agent config `docs/architecture/decisions/0003-link-portable-agent-config-merge-app-written-config.md`.
 - Before proposing version pins, a CI workflow, a startup-speed tweak or hardening, read PR #2's body (`gh pr view 2 -R maltemindedal/dotfiles`): it holds the open decisions and what was considered and kept.
 
 ## Claude Code cloud specific instructions
 
-`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin and, when it is missing, zsh from apt, so the gate runs in a new session. It writes `~/.claude/CLAUDE.md`, `pstack-models.md` and `merge-rules.md` (the owner's global agent instructions). It leaves `~/.claude/settings.json` alone, so commit and PR attribution stay at Claude Code's defaults. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. `install.sh` does not link `claude/`.
+`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin and, when it is missing, zsh from apt, so the gate runs in a new session. It writes `~/.claude/CLAUDE.md` and `pstack-models.md` (the owner's global agent instructions) from heredocs whose content is byte-identical to `claude/CLAUDE.md` and `claude/pstack-models.md`. `tests/claude_cloud_setup_test.sh` compares each written file with its `claude/` copy, so cloud and macOS sessions get the same instructions. With `jq` it merges the `attribution` and `includeCoAuthoredBy` values of `claude/settings.json` into `~/.claude/settings.json`, creating the file when it is missing and keeping its other keys, so cloud commits and PRs carry no attribution or session link either. After an edit to those values in `claude/settings.json`, update the jq filter in `disable_attribution` too. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. On macOS `install.sh` links `claude/settings.json`, `claude/CLAUDE.md` and `claude/pstack-models.md` into `~/.claude/`; the cloud script does not read those files, because the environment runs only the pasted script. After an edit to `claude/CLAUDE.md` or `claude/pstack-models.md`, update the matching heredoc and paste the script again.
 
-It is bash without `set -e` on purpose. A failed step prints a skip line and the script still exits 0, so it never blocks a session from starting. `tests/claude_cloud_setup_test.sh` checks that with the `claude` CLI working, failing and missing. Keep secrets out of it: the environment stores the script in plain text.
+It is bash without `set -e` on purpose. A failed step prints a skip line and the script still exits 0, so it never blocks a session from starting. `tests/claude_cloud_setup_test.sh` checks that with the `claude` CLI working, failing and missing, and with `jq` missing or `settings.json` unreadable. Keep secrets out of it: the environment stores the script in plain text.
 
 ## Cursor Cloud specific instructions
 

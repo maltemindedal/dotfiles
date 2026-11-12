@@ -2,7 +2,7 @@
 
 ## What this is
 
-The repository stores configuration files for zsh, PowerShell, Starship, and Git. It has no build step or package manager. [`install.sh`](../../install.sh) wraps the macOS `ln -sfn` commands, while the [Windows setup](../guides/windows-setup.md) uses `Copy-Item`. [Getting started](../getting-started.md) documents the macOS setup.
+The repository stores configuration files for zsh, PowerShell, Starship, Git, and the Claude Code, Codex and Cursor CLI agents. It has no build step or package manager. [`install.sh`](../../install.sh) wraps the macOS `ln -sfn` commands and merges the two agent configs that their apps also write, while the [Windows setup](../guides/windows-setup.md) uses `Copy-Item`. [Getting started](../getting-started.md) documents the macOS setup.
 
 ## Layout
 
@@ -15,16 +15,26 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
-claude/cloud-setup.sh                 Claude Code cloud setup script, not a dotfile
+claude/
+  settings.json                       → ~/.claude/settings.json (macOS)
+  CLAUDE.md                           → ~/.claude/CLAUDE.md     (macOS)
+  pstack-models.md                    → ~/.claude/pstack-models.md (macOS)
+  cloud-setup.sh                      Claude Code cloud setup script, not a dotfile
+codex/
+  config.toml                         merged into ~/.codex/config.toml (macOS)
+cursor/
+  cli-config.json                     merged into ~/.cursor/cli-config.json (macOS)
 tests/                                checks for install.sh, .zshrc and the docs, not dotfiles
 AGENTS.md                             guidelines for agents working in this repo, not a dotfile
 ```
 
 ## Design decisions
 
-Two decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md) and [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md). The sections below summarize those ADRs and the remaining design choices.
+Three decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md), [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md) and [0003 linked and merged agent config](decisions/0003-link-portable-agent-config-merge-app-written-config.md). The sections below summarize those ADRs and the remaining design choices.
 
 **Symlinks on macOS, copies on Windows.** `git pull` updates symlinked files. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there.
+
+**Linked and merged agent config.** The Claude Code files hold no host state, so `install.sh` links them like the shell files. The Codex app and the Cursor CLI write host paths and their own state into their configs, so `install.sh` merges the keys and tables the repo names into the live file and keeps the rest. TOML is merged by table in `awk`, because the Command Line Tools Python 3.9 has no `tomllib`. JSON is merged by top-level key with `jq`.
 
 **Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
 
