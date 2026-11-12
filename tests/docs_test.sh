@@ -129,6 +129,40 @@ listed "git reference: every key in .gitconfig and .gitconfig.windows" \
 listed "git reference: every pattern in .gitignore_global" \
   "$(sed '/^#/d; /^$/d' git/.gitignore_global | ticks)" "$(grep '^|' docs/reference/git.md)"
 
+# --- Every row in docs/reference/git.md matches git/ ---
+# A Key row names a key in the git/ file its ## heading names, and gives all its
+# values in order (credential helpers have two: `` then the gh helper). A Group
+# row lists patterns from .gitignore_global.
+then_list() { awk 'NR > 1 { printf "` then `" } { printf "%s", $0 }'; }
+GIT_ROWS=$(rows docs/reference/git.md)
+wrong=$(printf '%s\n' "$GIT_ROWS" | while IFS='|' read -r line kind section name stated value; do
+  at="docs/reference/git.md:$line \`$name\`" file="git/$section"
+  if [ ! -f "$file" ]; then
+    printf '\n  [docs/reference/git.md:%s: the heading above names no file in git/]' "$line"; continue
+  fi
+  case $kind in
+    Key)
+      key=$(printf '%s' "$name" | sed 's/ "\([^"]*\)"\./.\1./')
+      if ! have=$(git config -f "$file" --get-all "$key"); then
+        printf '\n  [%s: %s does not set it; delete the row]' "$at" "$file"; continue
+      fi
+      [ "$stated" = y ] || continue
+      want=$(printf '%s' "$value" | tr "$US" '\n')
+      matches "$want" "$have" ||
+        printf '\n  [%s | `%s`: %s has `%s`]' "$at" "$(printf '%s\n' "$want" | then_list)" "$file" \
+          "$(printf '%s\n' "$have" | then_list)" ;;
+    Group)
+      printf '%s' "$value" | tr "$US" '\n' | while IFS= read -r pattern; do
+        grep -qxF -- "$pattern" "$file" ||
+          printf '\n  [docs/reference/git.md:%s `%s`: %s does not list it; delete it from the row]' "$line" "$pattern" "$file"
+      done ;;
+    *) printf '\n  [docs/reference/git.md:%s: no check for a "%s" table; add one to tests/docs_test.sh]' "$line" "$kind" ;;
+  esac
+done)
+if [ -z "$GIT_ROWS" ]; then fail "git reference: every row matches git/: found nothing to compare"
+elif [ -n "$wrong" ]; then fail "git reference: every row matches git/; fix the row or the file:$wrong"
+else pass "git reference: every row matches git/"; fi
+
 # --- The manual steps and the layout match install.sh ---
 LINKS=$(sed -n 's/^link \([^ ]*\)  *"\$HOME\/\([^"]*\)"$/\1 \2/p' install.sh)   # <source> <target under ~>
 listed "getting started: links every file install.sh links" \
