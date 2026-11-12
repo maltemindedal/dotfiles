@@ -11,7 +11,7 @@ zsh -n shell/.zshrc
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
 sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
-sh tests/lint.sh          # commit subjects since origin/main, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
+sh tests/lint.sh          # no commits on main ahead of origin/main, commit subjects, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
 ```
 
 - A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds, except `tests/zshrc_test.sh` at 10 s to 2 min.

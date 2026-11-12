@@ -1,8 +1,8 @@
 #!/bin/sh
 # Lints the conventions in AGENTS.md that a test suite cannot see: the commits on
-# this branch and host-specific paths in the tracked config. The commit checks
-# cover origin/main..HEAD and pass with a note when there is no origin/main.
-# Needs git.
+# this branch, commits made on main, and host-specific paths in the tracked
+# config. The commit checks cover origin/main..HEAD and pass with a note when
+# there is no origin/main. Needs git.
 #
 #   sh tests/lint.sh
 set -eu
@@ -31,6 +31,11 @@ fi
 if ! git rev-parse --verify -q origin/main >/dev/null; then
   pass "commits: skipped, no origin/main"
 else
+  if [ "$(git rev-parse --abbrev-ref HEAD)" = main ] && [ -n "$(git rev-list -1 origin/main..HEAD)" ]; then
+    fail "commits: commit on a branch, not on main (main is ahead of origin/main; move the commits to a branch and open a PR)"
+  else
+    pass "commits: not ahead of origin/main on main"
+  fi
   RANGE="$(git merge-base origin/main HEAD)..HEAD"
   area_re=$(printf '%s' "$AREAS" | sed 's/\./\\./g; s/ /|/g')
   bad_subjects=
