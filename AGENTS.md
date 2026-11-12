@@ -10,13 +10,11 @@ There is no CI and `main` has no required checks, so `sh tests/check.sh` is the 
 zsh -n shell/.zshrc
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
-sh tests/install_test.sh          # seconds; temp $HOME, stub git and brew, no network
-sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr/bin:/bin
-sh tests/snapshot_test.sh         # under a second; replays Claude Code's shell snapshot of .zshrc
-sh tests/docs_test.sh             # under a second; the docs mention every name the config defines
-sh tests/cloud_install_test.sh    # under a second; stub apt, no network
+sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
+sh tests/lint.sh          # commit subjects since origin/main, Bug fix commits touch tests/, no /Users/ or /home/ in shell/ and git/
 ```
 
+- A new `tests/<name>_test.sh` runs in the gate with no edit to `check.sh`. Each suite takes seconds, except `tests/zshrc_test.sh` at 10 s to 2 min.
 - Run one check on its own to see all its output. The suites are linear scripts with no filter, so there is no single-test form.
 - The checklist's `reload` is an alias, and agent shells get none of `.zshrc`'s aliases. To start the shell with the real tools instead: `ZDOTDIR="$PWD/shell" TERM=dumb zsh -i -c exit; echo "exit $?"; rm -f shell/.zcompdump`. Expect exit 0; two `can't change option: zle` lines and Starship's `TERM=dumb` error are normal, and the `rm` removes the completion dump zsh writes into `$ZDOTDIR`.
 - No zsh (Linux cloud container): `apt-get install -y zsh`; the suites then pass on Debian.
@@ -27,7 +25,7 @@ sh tests/cloud_install_test.sh    # under a second; stub apt, no network
 
 ## Conventions
 
-- **Commits:** subject `<area>: <imperative, lowercase, no final period>` with area `shell`, `git`, `install.sh`, `test`, `docs` or `agents`. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
+- **Commits:** subject `<area>: <imperative, lowercase, no final period>` with an area from `AREAS` in `tests/lint.sh`, which fails the gate on any other subject. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
 - **PRs:** title in commit-subject form, merged with squash (the convention since #3). Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
 - **A behaviour change ships in one commit with its test and its docs.** These change together:
   - `shell/.zshrc`: a case in `tests/zshrc_test.sh` and `docs/reference/zsh.md`, which lists every alias, keybinding, option, env var and optional tool; `docs/architecture/overview.md` too when the rationale or startup cost changes.
@@ -35,7 +33,6 @@ sh tests/cloud_install_test.sh    # under a second; stub apt, no network
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
-  - A check in `tests/check.sh`: the list under Commands above and step 2 of `CONTRIBUTING.md`.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.
   - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
