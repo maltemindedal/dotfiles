@@ -34,6 +34,6 @@
   "switchModelsOnFlag": true,
   "model": "opus",
   "sandbox": {
-    "enabled": true
+    "enabled": false
   }
 }
