@@ -26,8 +26,6 @@ new_home() {
 }
 # zi <home> <command>: run <command> in an interactive zsh.
 zi() { env -i HOME="$1" PATH=/usr/bin:/bin TERM=dumb zsh -i -c "$2"; }
-# zn <home> <command>: source ~/.zshrc in a non-interactive zsh, then run <command>.
-zn() { env -i HOME="$1" PATH=/usr/bin:/bin zsh -c "source ~/.zshrc; $2"; }
 
 # fake_node <home> <version>...: install stub Node versions where nvm keeps them.
 fake_node() {
@@ -49,7 +47,6 @@ check "startup: writes nothing to stderr" no_stderr zi "$H" true
 check "startup: sourcing ~/.zshrc returns 0" env -i HOME="$H" PATH=/usr/bin:/bin zsh -c 'source ~/.zshrc'
 check "startup: an interactive shell's first status is 0" zi "$H" exit
 check "aliases: defined in interactive shells" test "$(zi "$H" 'alias gs')" = "gs='git status'"
-check "aliases: not defined in non-interactive shells" test "$(zn "$H" 'alias gs || echo none')" = none
 check "aliases: ls falls back to ls -G without eza" test "$(zi "$H" 'alias ls')" = "ls='ls -G'"
 check "PATH: prepends ~/.local/bin, bun and pnpm in order" \
   test "$(zi "$H" 'print -r -- $path[1,3]')" = "$H/.local/bin $H/.bun/bin $H/Library/pnpm/bin"
@@ -124,8 +121,6 @@ check "nvm: a malformed alias prints no error" no_stderr zi "$H" true
 H=$(new_home bun)
 mkdir -p "$H/.bun" && printf 'BUN_COMP_MARK=loaded\n' > "$H/.bun/_bun"
 check "bun: completions load in interactive shells" test "$(zi "$H" 'print -r -- $BUN_COMP_MARK')" = loaded
-check "bun: completions are skipped in non-interactive shells" \
-  test "$(zn "$H" 'print -r -- ${BUN_COMP_MARK:-none}')" = none
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all .zshrc tests passed"; else echo "$fails .zshrc test(s) failed"; exit 1; fi

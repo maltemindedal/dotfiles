@@ -12,6 +12,7 @@ git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
 sh tests/install_test.sh          # seconds; temp $HOME, stub git and brew, no network
 sh tests/zshrc_test.sh            # 10 s to 2 min; temp $HOME, env -i, PATH=/usr/bin:/bin
+sh tests/snapshot_test.sh         # under a second; replays Claude Code's shell snapshot of .zshrc
 sh tests/docs_test.sh             # under a second; the docs mention every name the config defines
 sh tests/cloud_install_test.sh    # under a second; stub apt, no network
 ```
@@ -40,10 +41,7 @@ sh tests/cloud_install_test.sh    # under a second; stub apt, no network
   - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
 
   `tests/docs_test.sh` fails when a doc above misses an alias, option, variable, tool, Git key, ignore pattern, link or the `brew install` line. It does not notice a wrong value, a stale entry, a keybinding or prose, so still read the docs you touch.
-- **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. This has broken agent shells four times, from `npm` recursing until FUNCNEST to `gs` shadowing Ghostscript. So:
-  - aliases, completion scripts and anything that calls `compdef` go inside `if [[ -o interactive ]]`;
-  - a function is self-contained (no helper functions) and unsets itself before loading what it wraps, as `nvm()` does;
-  - every optional tool or file is guarded with `command -v X >/dev/null` or `[ -f … ]`.
+- **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. `tests/snapshot_test.sh` replays it with every optional file present and fails on an alias, a completion or stderr outside `if [[ -o interactive ]]`, and on a copied function that needs a helper or `compdef`. Guard every optional tool or file with `command -v X >/dev/null` or `[ -f … ]`.
 - **Shell scripts** are POSIX `sh` with `set -eu`, and run under macOS `/bin/sh` (bash 3.2) and Debian's dash. New steps in `install.sh` keep its two guarantees: arguments are checked before any side effect, and a file already at a target is moved to `<name>.<timestamp>.bak`, never deleted.
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.
 - **Check external facts before writing them.** Confirm a tool's flags or behaviour against upstream docs or by running it; three past commits corrected docs that contradicted the config or upstream.

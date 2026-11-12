@@ -26,6 +26,7 @@ run git config -f git/.gitconfig -l
 run git config -f git/.gitconfig.windows -l
 run sh tests/install_test.sh
 run sh tests/zshrc_test.sh
+run sh tests/snapshot_test.sh
 run sh tests/docs_test.sh
 run sh tests/cloud_install_test.sh
 
