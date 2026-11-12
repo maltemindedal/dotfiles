@@ -12,7 +12,7 @@ One `./install.sh` on a new Mac should reproduce the agent setup for Claude Code
 
 ## Decision
 
-- **Link the Claude Code files.** `install.sh` symlinks `claude/settings.json`, `claude/CLAUDE.md` and `claude/pstack-models.md` into `~/.claude/` with the same `link` helper as the shell files.
+- **Link the Claude Code files.** `install.sh` symlinks `claude/settings.json`, `claude/CLAUDE.md` and `claude/pstack-models.md` into `~/.claude/` with the same `link` helper as the shell files. [ADR 0004](0004-one-agent-instructions-file.md) later moved `claude/CLAUDE.md` to `agents/AGENTS.md`.
 - **Merge the Codex and Cursor CLI files.** The repo tracks only the user preferences: in `codex/config.toml`, `model`, `model_reasoning_effort`, `commit_attribution` and the `[desktop]` table; in `cursor/cli-config.json`, every user preference including `attribution`. `install.sh` puts each tracked top-level key and table in place of the live one of the same name and keeps everything else. When there is no live file, it copies the tracked one. It writes only when the result differs, and moves the old file to `<name>.<timestamp>.bak` first.
 - **No Python.** The TOML merge is table-granular `awk`, because the Python 3.9 in the Command Line Tools has no `tomllib`. The JSON merge is a shallow `jq` merge. Without `jq`, `install.sh` skips an existing Cursor file with a warning, as it does for `--tools` without Homebrew.
 - **Not tracked:** `~/.claude/settings.local.json`, `~/.cursor/mcp.json`, `~/.agents/skills` and the Cursor app's settings. The Cursor app keeps its attribution switch in its own storage, so [Getting started](../../getting-started.md) has a manual step for it.

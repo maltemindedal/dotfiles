@@ -181,8 +181,8 @@ listed "getting started: copies every file install.sh merges" \
 listed "architecture overview: maps every file install.sh merges" \
   "$(printf '%s\n' "$MERGES" | while read -r src dst; do printf 'merged into ~/%s \n' "$dst"; done)" \
   "$(cat docs/architecture/overview.md)"
-listed "architecture overview: lists every file in shell/, git/, claude/, codex/ and cursor/" \
-  "$(git ls-files shell git claude codex cursor | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
+listed "architecture overview: lists every file in shell/, git/, agents/, claude/, codex/ and cursor/" \
+  "$(git ls-files shell git agents claude codex cursor | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all docs tests passed"; else echo "$fails docs test(s) failed"; exit 1; fi

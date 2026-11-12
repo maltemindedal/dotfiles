@@ -1,5 +1,5 @@
 #!/bin/sh
-# Symlink the macOS dotfiles and Claude Code config into $HOME and install the zsh plugins.
+# Symlink the macOS dotfiles and agent config into $HOME and install the zsh plugins.
 # Idempotent: safe to re-run after `git pull`. A real file or directory already at a
 # link's location is moved aside to <name>.<timestamp>.bak rather than deleted.
 #
@@ -37,7 +37,8 @@ link shell/starship.toml    "$HOME/.config/starship.toml"
 link git/.gitconfig         "$HOME/.gitconfig"
 link git/.gitignore_global  "$HOME/.gitignore_global"
 link claude/settings.json   "$HOME/.claude/settings.json"
-link claude/CLAUDE.md       "$HOME/.claude/CLAUDE.md"
+link agents/AGENTS.md       "$HOME/.claude/CLAUDE.md"
+link agents/AGENTS.md       "$HOME/.codex/AGENTS.md"
 link claude/pstack-models.md "$HOME/.claude/pstack-models.md"
 
 # merge_toml <tracked> <live>: print <live> with each top-level key and table of

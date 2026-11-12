@@ -15,9 +15,11 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
+agents/
+  AGENTS.md                           → ~/.claude/CLAUDE.md     (macOS)
+                                      → ~/.codex/AGENTS.md      (macOS)
 claude/
   settings.json                       → ~/.claude/settings.json (macOS)
-  CLAUDE.md                           → ~/.claude/CLAUDE.md     (macOS)
   pstack-models.md                    → ~/.claude/pstack-models.md (macOS)
   cloud-setup.sh                      Claude Code cloud setup script, not a dotfile
 codex/
@@ -30,13 +32,15 @@ AGENTS.md                             guidelines for agents working in this repo
 
 ## Design decisions
 
-Three decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md), [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md) and [0003 linked and merged agent config](decisions/0003-link-portable-agent-config-merge-app-written-config.md). The sections below summarize those ADRs and the remaining design choices.
+Four decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md), [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md), [0003 linked and merged agent config](decisions/0003-link-portable-agent-config-merge-app-written-config.md) and [0004 one instructions file for every agent](decisions/0004-one-agent-instructions-file.md). The sections below summarize those ADRs and the remaining design choices.
 
 **Symlinks on macOS, copies on Windows.** `git pull` updates symlinked files. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there.
 
 **Linked and merged agent config.** The Claude Code files hold no host state, so `install.sh` links them like the shell files. The Codex app and the Cursor CLI write host paths and their own state into their configs, so `install.sh` merges the keys and tables the repo names into the live file and keeps the rest. TOML is merged by table in `awk`, because the Command Line Tools Python 3.9 has no `tomllib`. JSON is merged by top-level key with `jq`.
 
 **Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
+
+**One instructions file for every agent.** `agents/AGENTS.md` is the only copy of the global agent instructions. `install.sh` links it to the global path each agent reads, `~/.claude/CLAUDE.md` for Claude Code and `~/.codex/AGENTS.md` for Codex. The repo holds no symlink of its own, because a Windows checkout turns one into a text file.
 
 **Optional dependencies.** `.zshrc` checks for optional tools before it runs their setup code, and it checks for plugin files with `[ -f … ]`. The shell works on macOS without those tools. It exports the `FZF_*_COMMAND` variables only when `fd` exists because empty values disable the fzf widgets.
 

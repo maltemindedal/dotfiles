@@ -26,15 +26,18 @@ ln -sf "$PWD/shell/.zshrc" ~/.zshrc
 mkdir -p ~/.config && ln -sf "$PWD/shell/starship.toml" ~/.config/starship.toml
 ln -sf "$PWD/git/.gitconfig" ~/.gitconfig
 ln -sf "$PWD/git/.gitignore_global" ~/.gitignore_global
-mkdir -p ~/.claude
+mkdir -p ~/.claude ~/.codex
 ln -sf "$PWD/claude/settings.json" ~/.claude/settings.json
-ln -sf "$PWD/claude/CLAUDE.md" ~/.claude/CLAUDE.md
+ln -sf "$PWD/agents/AGENTS.md" ~/.claude/CLAUDE.md
+ln -sf "$PWD/agents/AGENTS.md" ~/.codex/AGENTS.md
 ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
 ```
 
 `ln -sf` deletes a file already at the link's location, so move any existing `~/.zshrc`, `~/.gitconfig` or `~/.claude/settings.json` you want to keep aside first. `install.sh` does this for you.
 
 `claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off all commit and PR attribution, the session link included. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
+
+`agents/AGENTS.md` holds the global agent instructions. Claude Code reads it as `~/.claude/CLAUDE.md` and Codex as `~/.codex/AGENTS.md`, so both agents get the same text.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
 
