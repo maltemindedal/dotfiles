@@ -35,7 +35,6 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - A merged file in `install.sh` (`merge toml|json`): the merge cases in `tests/install_test.sh`, the `cp -n` line in step 2 of `docs/getting-started.md`, the `merged into` line in `docs/architecture/overview.md` and the `README.md` layout. Track only keys the user sets; leave out keys and tables the app writes itself.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
-  - A hook in `claude/settings.json`: `tests/claude_hooks_test.sh` and the `claude/settings.json` paragraph in `docs/getting-started.md`.
   - `claude/cloud-setup.sh`: `tests/claude_cloud_setup_test.sh` and the Claude Code cloud section below.
   - `agents/AGENTS.md` or `claude/pstack-models.md`: the matching heredoc in `claude/cloud-setup.sh`, which `tests/claude_cloud_setup_test.sh` compares byte for byte. Then paste the script into the cloud environment again.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.

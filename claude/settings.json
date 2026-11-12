@@ -35,18 +35,5 @@
   "model": "opus",
   "sandbox": {
     "enabled": false
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Agent|Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ \"${CLAUDE_CODE_ENTRYPOINT:-}\" != t3-code ] || ! jq -e '.tool_input.isolation == \"worktree\"' >/dev/null 2>&1 || { echo \"In T3 Code, give a subagent its own worktree with the t3-code delegate_task tool and its isolation worktree option, not with the isolation option of the Agent tool, so the branch follows the worktree naming set in T3.\" >&2; exit 2; }"
-          }
-        ]
-      }
-    ]
   }
 }
