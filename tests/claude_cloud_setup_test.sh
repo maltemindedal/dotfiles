@@ -1,6 +1,7 @@
 #!/bin/sh
-# claude/cloud-setup.sh must write the three ~/.claude files and exit 0 whether
-# the claude CLI and apt-get work, fail or are missing. Temp $HOME, stub claude,
+# claude/cloud-setup.sh must write ~/.claude/CLAUDE.md and pstack-models.md,
+# byte-identical to claude/, and exit 0 whether the claude CLI and apt-get
+# work, fail or are missing. Temp $HOME, stub claude,
 # apt-get and zsh, no network.
 #
 #   sh tests/claude_cloud_setup_test.sh
@@ -36,8 +37,8 @@ run_setup() { # run_setup <name> <claude exit code, or "missing">
     fail "$name: exits 0"
     sed 's/^/     |/' "$TMP/$name/out"
   fi
-  for f in CLAUDE.md pstack-models.md merge-rules.md; do
-    if [ -s "$home/.claude/$f" ]; then pass "$name: writes $f"; else fail "$name: writes $f"; fi
+  for f in CLAUDE.md pstack-models.md; do
+    if cmp -s "$REPO/claude/$f" "$home/.claude/$f"; then pass "$name: writes $f identical to claude/$f"; else fail "$name: writes $f identical to claude/$f"; fi
   done
 }
 
