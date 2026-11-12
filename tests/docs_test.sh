@@ -174,8 +174,15 @@ listed "getting started: runs the same brew install as install.sh" \
 listed "architecture overview: maps every target install.sh links" \
   "$(printf '%s\n' "$LINKS" | while read -r src dst; do printf '→ ~/%s \n' "$dst"; done)" \
   "$(cat docs/architecture/overview.md)"
-listed "architecture overview: lists every file in shell/, git/ and claude/" \
-  "$(git ls-files shell git claude | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
+MERGES=$(sed -n 's/^merge [a-z]* \([^ ]*\)  *"\$HOME\/\([^"]*\)"$/\1 \2/p' install.sh)  # <source> <target under ~>
+listed "getting started: copies every file install.sh merges" \
+  "$(printf '%s\n' "$MERGES" | while read -r src dst; do printf 'cp -n "$PWD/%s" ~/%s\n' "$src" "$dst"; done)" \
+  "$(cat docs/getting-started.md)"
+listed "architecture overview: maps every file install.sh merges" \
+  "$(printf '%s\n' "$MERGES" | while read -r src dst; do printf 'merged into ~/%s \n' "$dst"; done)" \
+  "$(cat docs/architecture/overview.md)"
+listed "architecture overview: lists every file in shell/, git/, claude/, codex/ and cursor/" \
+  "$(git ls-files shell git claude codex cursor | sed 's|.*/|  |; s/$/ /')" "$(cat docs/architecture/overview.md)"
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all docs tests passed"; else echo "$fails docs test(s) failed"; exit 1; fi

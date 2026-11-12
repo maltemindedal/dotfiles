@@ -1,0 +1,11 @@
+# Merged into ~/.codex/config.toml by install.sh, not linked. The keys and tables
+# here replace the same-named ones in the live file; everything else the Codex app
+# writes there (notify, projects, plugins, MCP servers) stays.
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+commit_attribution = ""
+
+[desktop]
+followUpQueueMode = "steer"
+conversationDetailMode = "STEPS_PROSE"
+git-branch-prefix = "codex/"

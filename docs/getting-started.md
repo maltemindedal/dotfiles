@@ -1,6 +1,6 @@
 # Getting started (macOS)
 
-This tutorial sets up zsh, the Starship prompt, Git and the Claude Code config on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
+This tutorial sets up zsh, the Starship prompt, Git, and the Claude Code, Codex and Cursor CLI config on a fresh macOS machine. It takes about 10 to 15 minutes, most of it waiting for Homebrew.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ cd ~/Developer/dotfiles
 
 You can clone the repository anywhere. The rest of this tutorial uses `$PWD`, so the location does not matter.
 
-## 2. Link the shell, Git and Claude Code config
+## 2. Link the shell, Git and agent config
 
 ```sh
 ln -sf "$PWD/shell/.zshrc" ~/.zshrc
@@ -37,6 +37,16 @@ ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
 `claude/settings.json` holds Claude Code's permissions, sandbox and plugin settings, and turns off commit and PR attribution. Claude Code writes changes you make in `/config` through the link, so they show up in `git status`. The repo does not track `~/.claude/settings.local.json`.
 
 `git pull` in the repo updates your live config through the symlinks. There is no sync step.
+
+The Codex and Cursor CLI configs are not linked, because the Codex app and the Cursor CLI write their own state and host paths into them. On a new Mac, copy them into place:
+
+```sh
+mkdir -p ~/.codex ~/.cursor
+cp -n "$PWD/codex/config.toml" ~/.codex/config.toml
+cp -n "$PWD/cursor/cli-config.json" ~/.cursor/cli-config.json
+```
+
+`cp -n` leaves an existing file alone. `install.sh` merges into an existing file instead: the keys and tables the repo file names replace the live ones, and the rest of the live file stays. It backs up the old file to `<name>.<timestamp>.bak` first, and writes nothing when the result is already the live file. The Cursor merge needs `jq`, which recent macOS versions ship in `/usr/bin`; without it, `install.sh` warns and leaves an existing file alone. Both files turn off agent attribution in commits and PRs. A change you make to one of those keys in the app is undone by the next `./install.sh`, so make it in the repo file too.
 
 ## 3. Install the zsh plugins
 
@@ -77,6 +87,12 @@ git config user.name   # prints Malte Mindedal
 ## 6. Add machine-specific settings
 
 Commit signing uses an SSH key. `.gitconfig` sets the public key, but the `allowedSignersFile` (needed for `git log --show-signature`) is host-specific. Put it and other machine-specific settings in `~/.gitconfig.local` and `~/.zshrc.local`. See [Machine-specific overrides](guides/machine-specific-overrides.md).
+
+## 7. Turn off attribution in the Cursor app
+
+The Cursor app keeps its attribution setting in its own storage, not in a file this repo can install. In the Cursor app, open **Settings**, then **Agents**, and turn off **Attribution**.
+
+The repo does not track the Cursor app's other settings, `~/.cursor/mcp.json` or `~/.agents/skills`.
 
 ## Next steps
 

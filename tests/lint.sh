@@ -17,14 +17,14 @@ fail() { printf 'FAIL %s\n' "$1"; fails=$((fails + 1)); }
 AREAS='shell git install.sh test docs agents'
 
 # --- Host paths: the tracked config runs on every machine ---
-hosts=$(git ls-files shell git | while IFS= read -r f; do
+hosts=$(git ls-files shell git claude codex cursor | while IFS= read -r f; do
   [ -f "$f" ] && grep -nH -e /Users/ -e /home/ "$f" || true
 done)
 if [ -n "$hosts" ]; then
-  fail "no /Users/ or /home/ paths under shell/ and git/ (use \$HOME, or ~/.zshrc.local and ~/.gitconfig.local):
+  fail "no /Users/ or /home/ paths under shell/, git/, claude/, codex/ and cursor/ (use \$HOME, or ~/.zshrc.local and ~/.gitconfig.local):
 $hosts"
 else
-  pass "no /Users/ or /home/ paths under shell/ and git/"
+  pass "no /Users/ or /home/ paths under shell/, git/, claude/, codex/ and cursor/"
 fi
 
 # --- Commits on this branch ---

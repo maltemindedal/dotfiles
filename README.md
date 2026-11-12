@@ -1,6 +1,6 @@
 # Dotfiles
 
-Shell and Git configuration for macOS (zsh) and Windows (PowerShell).
+Shell and Git configuration for macOS (zsh) and Windows (PowerShell), and agent configuration for Claude Code, Codex and the Cursor CLI on macOS.
 
 ## Overview
 
@@ -24,7 +24,7 @@ cd ~/Developer/dotfiles
 exec zsh
 ```
 
-`install.sh` creates the symlinks for the shell, Git and Claude Code config, clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`. The equivalent manual steps are in [Getting started](docs/getting-started.md).
+`install.sh` creates the symlinks for the shell, Git and Claude Code config, merges the Codex and Cursor CLI settings into `~/.codex/config.toml` and `~/.cursor/cli-config.json`, clones the zsh plugins and, with `--tools`, installs the optional tools via Homebrew. It is idempotent and can be re-run after `git pull`. A real file already at a link's location, such as an existing `~/.zshrc`, is moved aside to `<name>.<timestamp>.bak`, and so is a Codex or Cursor CLI config before a merge changes it. The Cursor app's attribution switch is a manual step. The equivalent manual steps are in [Getting started](docs/getting-started.md).
 
 ### Windows
 
@@ -71,6 +71,8 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── install.sh          macOS installer (symlinks, plugins, optional tools)
 ├── .github/            Issue forms and pull request template
 ├── claude/             Claude Code settings and instructions, cloud setup script
+├── codex/              Codex settings, merged into ~/.codex/config.toml
+├── cursor/             Cursor CLI settings, merged into ~/.cursor/cli-config.json
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
 ├── shell/              .zshrc, starship.toml, PowerShell profile
