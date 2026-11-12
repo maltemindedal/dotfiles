@@ -35,9 +35,7 @@ AGENTS.md                             guidelines for agents working in this repo
 
 ## Design decisions
 
-Four decisions have ADRs: [0001 two-layer configuration](decisions/0001-two-layer-configuration.md), [0002 symlinks versus copies](decisions/0002-symlinks-on-macos-copies-on-windows.md), [0003 linked and merged agent config](decisions/0003-link-portable-agent-config-merge-app-written-config.md) and [0004 one instructions file for every agent](decisions/0004-one-agent-instructions-file.md). The sections below summarize those ADRs and the remaining design choices.
-
-**Symlinks on macOS, copies on Windows.** `git pull` updates symlinked files. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there.
+**Symlinks on macOS, copies on Windows.** `git pull` updates symlinked files. Windows symlinks need elevated privileges or Developer Mode, so the docs use copies there. There is no dotfile manager: each file has one target, so a manager would add a dependency without saving any setup work.
 
 **Linked and merged agent config.** The Claude Code files hold no host state, so `install.sh` links them like the shell files. The Codex app and the Cursor CLI write host paths and their own state into their configs, so `install.sh` merges the keys and tables the repo names into the live file and keeps the rest. TOML is merged by table in `awk`, because the Command Line Tools Python 3.9 has no `tomllib`. JSON is merged by top-level key with `jq`.
 

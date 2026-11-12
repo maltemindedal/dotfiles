@@ -28,4 +28,4 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
 - Guard optional tools in `.zshrc` with `command -v …` or a file-existence check so the shell works without them.
 - Commit subjects are `<area>: <imperative, lowercase, no final period>`; `tests/lint.sh` lists the areas and fails on any other subject. Include a body explaining *why* when it isn't obvious. A body that opens with `Bug fix.` needs a regression test under `tests/` in the same commit. See `git log` for examples.
 - `.gitconfig` enables SSH signing for commits.
-- Record non-obvious design choices as an architecture decision record (ADR) in [`docs/architecture/decisions/`](docs/architecture/decisions/).
+- Record a non-obvious design choice in the Design decisions section of [`docs/architecture/overview.md`](docs/architecture/overview.md).

@@ -47,7 +47,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.
 - **Check external facts before writing them.** Confirm a tool's flags or behaviour against upstream docs or by running it; three past commits corrected docs that contradicted the config or upstream.
 - **Vendored files stay verbatim:** `shell/starship.toml` is Starship's plain-text-symbols preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, followed by a marker line and the `claude_cost` and `claude_model` symbols (`tests/starship_test.sh` fails on any other change; refresh the fixture with `starship preset plain-text-symbols`, then the file), and `CODE_OF_CONDUCT.md` is Contributor Covenant 3.0 with only the reporting contact filled in.
-- Record a non-obvious design choice as an ADR in `docs/architecture/decisions/`, in the format of the existing ones.
+- Record a non-obvious design choice in the Design decisions section of `docs/architecture/overview.md`.
 
 ## Gotchas
 
@@ -63,9 +63,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 
 ## Docs
 
-- Before changing load order, startup cost or how files are installed, read `docs/architecture/overview.md`.
-- Before deciding whether a setting belongs in a tracked file or in `~/.zshrc.local` / `~/.gitconfig.local`, read `docs/architecture/decisions/0001-two-layer-configuration.md`.
-- Before changing how files reach `$HOME`, or proposing a dotfile manager, read `docs/architecture/decisions/0002-symlinks-on-macos-copies-on-windows.md`, and for the agent config `docs/architecture/decisions/0003-link-portable-agent-config-merge-app-written-config.md`.
+- Before changing load order, startup cost or how files reach `$HOME`, deciding whether a setting belongs in a tracked file or in `~/.zshrc.local` / `~/.gitconfig.local`, or proposing a dotfile manager, read the Design decisions in `docs/architecture/overview.md`.
 - Before proposing version pins, a CI workflow, a startup-speed tweak or hardening, read PR #2's body (`gh pr view 2 -R maltemindedal/dotfiles`): it holds the open decisions and what was considered and kept.
 
 ## Claude Code cloud specific instructions

@@ -54,7 +54,6 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 | [zsh reference](docs/reference/zsh.md) | Aliases, keybindings, options, optional tools |
 | [Git reference](docs/reference/git.md) | Every `.gitconfig` key and the global ignore list |
 | [Architecture overview](docs/architecture/overview.md) | Layout and design rationale |
-| [Decision records](docs/architecture/decisions/) | ADRs for non-obvious choices |
 | [Contributing](CONTRIBUTING.md) | How to change, verify and document the configuration |
 | [Security policy](SECURITY.md) | How to report a vulnerability |
 | [Code of conduct](CODE_OF_CONDUCT.md) | Expected behaviour and how to report a violation |

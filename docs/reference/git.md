@@ -20,7 +20,7 @@ Source of truth: [`git/.gitconfig`](../../git/.gitconfig), [`git/.gitconfig.wind
 | `credential "https://gist.github.com".helper` | `` (reset) then `!gh auth git-credential` | Same, for gists |
 | `include.path` | `~/.gitconfig.local` | Machine-specific overrides (see below) |
 
-This file does not set `gpg.ssh.allowedSignersFile`, which is required for local signature verification, because ADR 0001 keeps it host-specific. On macOS `install.sh` sets it to `~/.ssh/allowed_signers` in `~/.gitconfig.local` when it is unset, and appends the line `<user.email> namespaces="git" <user.signingkey without key::>` to that file when the identical line is missing. It keeps the file's other lines.
+This file does not set `gpg.ssh.allowedSignersFile`, which is required for local signature verification, because the path is host-specific. On macOS `install.sh` sets it to `~/.ssh/allowed_signers` in `~/.gitconfig.local` when it is unset, and appends the line `<user.email> namespaces="git" <user.signingkey without key::>` to that file when the identical line is missing. It keeps the file's other lines.
 
 ## SSH client config (`ssh/config`, installed as `~/.ssh/config`)
 
