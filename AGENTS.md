@@ -28,8 +28,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **Commits:** subject `<area>: <imperative, lowercase, no final period>` with an area from `AREAS` in `tests/lint.sh`, which fails the gate on any other subject. The body says why. A bug fix adds a regression test, its body opens with `Bug fix.` (or `Bug fix (docs).`, `Bug fix (data loss).`) and ends with `The new regression tests fail without this change.` One logical change per commit, each passing the gate.
 - **PRs:** title in commit-subject form. Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
 - **A behaviour change ships in one commit with its test and its docs.** These change together:
-  - `shell/.zshrc`: a case in `tests/zshrc_test.sh` and `docs/reference/zsh.md`, which lists every alias, keybinding, option, env var and optional tool; `docs/architecture/overview.md` too when the rationale or startup cost changes.
-  - Any file in `git/`: `docs/reference/git.md`, which lists every key and ignore pattern.
+  - `shell/.zshrc`: a case in `tests/zshrc_test.sh`, the keybinding table in `docs/reference/zsh.md`, and `docs/architecture/overview.md` when the rationale or startup cost changes.
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
@@ -37,7 +36,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.
   - The table layout of `docs/reference/*.md`, steps 2 and 4 of `docs/getting-started.md` or the layout in `docs/architecture/overview.md`: the parsing in `tests/docs_test.sh`.
 
-  `tests/docs_test.sh` fails when a doc above misses an alias, option, variable, tool, Git key, ignore pattern, link or the `brew install` line. It also fails when an alias row in `docs/reference/zsh.md` gives a command `.zshrc` does not define. It does not notice any other wrong value, a stale entry, a keybinding or prose, so still read the docs you touch.
+  The reference docs' tables are in the gate: `tests/docs_test.sh` fails, naming the doc line, on a missing, stale or wrong alias, variable, option, tool, Git key or ignore pattern. It reads no keybinding or prose.
 - **`.zshrc` must survive Claude Code's shell snapshot**, which sources `~/.zshrc` non-interactively and copies its aliases and functions one by one into agent shells. `tests/snapshot_test.sh` replays it with every optional file present and fails on an alias, a completion or stderr outside `if [[ -o interactive ]]`, and on a copied function that needs a helper or `compdef`. Guard every optional tool or file with `command -v X >/dev/null` or `[ -f … ]`.
 - **Shell scripts** are POSIX `sh` with `set -eu`, and run under macOS `/bin/sh` (bash 3.2) and Debian's dash. New steps in `install.sh` keep its two guarantees: arguments are checked before any side effect, and a file already at a target is moved to `<name>.<timestamp>.bak`, never deleted.
 - **Prose** is British English (behaviour, initialise, colour; US spelling only in code identifiers such as `list-colors`), in short active sentences, with no em dashes.

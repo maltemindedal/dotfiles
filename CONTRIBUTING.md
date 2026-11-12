@@ -18,7 +18,7 @@ Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT
 
 3. Re-run `./install.sh` if you added a new file that needs a symlink. Add the file to the script first.
 4. When you change what `install.sh` or `.zshrc` does, add or update a case in `tests/`.
-5. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](docs/reference/zsh.md) or [`docs/reference/git.md`](docs/reference/git.md). Also update [`docs/README.md`](docs/README.md) if you added a document. The docs tests fail when a reference doc, the getting started steps or the architecture layout misses a name the config defines, such as a new alias, Git key or link. They also fail when an alias row gives a different command from `.zshrc`. They do not check that a description is right.
+5. Update the docs that describe what you changed. Use [`docs/reference/zsh.md`](docs/reference/zsh.md) or [`docs/reference/git.md`](docs/reference/git.md). Also update [`docs/README.md`](docs/README.md) if you added a document. The docs tests fail when a reference doc, the getting started steps or the architecture layout misses a name the config defines, such as a new alias, Git key or link. They also fail when a reference table row names something the config no longer defines, or states a different value from it. They do not check that a description is right.
 
 ## Conventions
 
