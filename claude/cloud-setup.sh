@@ -33,6 +33,21 @@ write_file() {
   fi
 }
 
+disable_attribution() {
+  local file="$CLAUDE_DIR/settings.json" merged
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "settings: jq not on PATH, skipping attribution"
+    return
+  fi
+  mkdir -p "$CLAUDE_DIR" && [ -f "$file" ] || echo '{}' > "$file"
+  if merged=$(jq '.attribution = {commit: "", pr: "", sessionUrl: false} | .includeCoAuthoredBy = false' "$file") &&
+    printf '%s\n' "$merged" > "$file"; then
+    echo "settings: turned off commit and PR attribution in $file"
+  else
+    echo "settings: could not update $file, skipping attribution"
+  fi
+}
+
 install_zsh() {
   local log
   if command -v zsh >/dev/null 2>&1; then
@@ -57,6 +72,7 @@ install_zsh() {
 
 install_plugin michael-denyer/pstack-claude pstack@pstack-claude
 install_zsh
+disable_attribution
 
 write_file CLAUDE.md <<'EOF'
 @~/.claude/pstack-models.md

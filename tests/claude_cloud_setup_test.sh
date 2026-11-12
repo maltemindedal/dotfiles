@@ -1,8 +1,8 @@
 #!/bin/sh
 # claude/cloud-setup.sh must write ~/.claude/CLAUDE.md and pstack-models.md,
-# byte-identical to claude/, and exit 0 whether the claude CLI and apt-get
-# work, fail or are missing. Temp $HOME, stub claude,
-# apt-get and zsh, no network.
+# byte-identical to claude/, turn off attribution in settings.json with jq,
+# and exit 0 whether the claude CLI, apt-get and jq work, fail or are
+# missing. Temp $HOME, stub claude, apt-get and zsh, no network.
 #
 #   sh tests/claude_cloud_setup_test.sh
 set -eu
@@ -18,7 +18,7 @@ fail() { printf 'FAIL %s\n' "$1"; fails=$((fails + 1)); }
 
 BIN="$TMP/bin"
 mkdir "$BIN"
-for tool in cat mkdir tail sed; do
+for tool in cat mkdir tail sed jq; do
   if command -v "$tool" > /dev/null 2>&1; then ln -s "$(command -v "$tool")" "$BIN/$tool"; fi
 done
 
@@ -103,11 +103,50 @@ expect_out zsh-present "zsh: already installed"
 if [ -e "$TMP/zsh-present/home/apt.log" ]; then fail "zsh-present: does not call apt-get"; else pass "zsh-present: does not call apt-get"; fi
 rm -f "$BIN/zsh" "$BIN/apt-get"
 
-if [ -e "$TMP/works/home/.claude/settings.json" ]; then
-  fail "works: leaves settings.json alone"
+expect_settings() { # expect_settings <name> <exact settings.json content>
+  if [ "$(cat "$TMP/$1/home/.claude/settings.json" 2>/dev/null)" = "$2" ]; then pass "$1: settings.json is as expected"; else
+    fail "$1: settings.json is as expected"
+    sed 's/^/     |/' "$TMP/$1/home/.claude/settings.json" 2>/dev/null || true
+  fi
+}
+
+if [ -x "$BIN/jq" ]; then
+  expect_out works "settings: turned off commit and PR attribution in $TMP/works/home/.claude/settings.json"
+  expect_settings works '{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "includeCoAuthoredBy": false
+}'
+
+  mkdir -p "$TMP/merge/home/.claude"
+  printf '%s\n' '{"model": "opus", "attribution": {"commit": "x"}, "includeCoAuthoredBy": true}' > "$TMP/merge/home/.claude/settings.json"
+  run_setup merge 0
+  expect_settings merge '{
+  "model": "opus",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "includeCoAuthoredBy": false
+}'
+
+  mkdir -p "$TMP/bad/home/.claude"
+  printf '%s\n' 'not json' > "$TMP/bad/home/.claude/settings.json"
+  run_setup bad 0
+  expect_out bad "settings: could not update $TMP/bad/home/.claude/settings.json, skipping attribution"
+  expect_settings bad 'not json'
 else
-  pass "works: leaves settings.json alone"
+  echo "skip jq not on PATH, attribution merge not tested"
 fi
+
+rm -f "$BIN/jq"
+run_setup no-jq 0
+expect_out no-jq "settings: jq not on PATH, skipping attribution"
+if [ -e "$TMP/no-jq/home/.claude/settings.json" ]; then fail "no-jq: does not create settings.json"; else pass "no-jq: does not create settings.json"; fi
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all claude cloud-setup tests passed"; else echo "$fails claude cloud-setup test(s) failed"; exit 1; fi
