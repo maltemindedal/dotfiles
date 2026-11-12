@@ -28,6 +28,7 @@ run sh tests/install_test.sh
 run sh tests/zshrc_test.sh
 run sh tests/docs_test.sh
 run sh tests/cloud_install_test.sh
+run sh tests/claude_cloud_setup_test.sh
 
 echo
 if [ "$fails" -eq 0 ]; then echo "all checks passed"; else echo "$fails check(s) failed"; exit 1; fi
