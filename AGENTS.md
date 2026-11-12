@@ -63,7 +63,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 
 ## Claude Code cloud specific instructions
 
-`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin and, when it is missing, zsh from apt, so the gate runs in a new session. It writes `~/.claude/CLAUDE.md`, `pstack-models.md` and `merge-rules.md` (the owner's global agent instructions), and with `jq` merges an `attribution` block into `~/.claude/settings.json` that keeps Claude Code's trailer and link out of commits and PRs. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. `install.sh` does not link `claude/`.
+`claude/cloud-setup.sh` is the setup script of the owner's Claude Code cloud environment. It installs the pstack plugin and, when it is missing, zsh from apt, so the gate runs in a new session. It writes `~/.claude/CLAUDE.md`, `pstack-models.md` and `merge-rules.md` (the owner's global agent instructions). It leaves `~/.claude/settings.json` alone, so commit and PR attribution stay at Claude Code's defaults. The repo copy is the source of truth: after an edit, paste it into the environment's setup script again. `install.sh` does not link `claude/`.
 
 It is bash without `set -e` on purpose. A failed step prints a skip line and the script still exits 0, so it never blocks a session from starting. `tests/claude_cloud_setup_test.sh` checks that with the `claude` CLI working, failing and missing. Keep secrets out of it: the environment stores the script in plain text.
 
