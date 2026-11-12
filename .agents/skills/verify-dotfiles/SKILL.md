@@ -12,7 +12,7 @@ Surface: shell config a user installs with `./install.sh` and then lives in. The
 `.agents/skills/verify-dotfiles/scripts/verify.sh <doctor|gate|lint|install|pwsh|cleanup|all>`, from anywhere in the repo. Evidence: `<name>.cmd/.stdout/.stderr/.exit` under `/tmp/dotfiles-verify/<run-id>/`. The last line is `RESULT: PASS (<step>)` only when every check passed, `RESULT: PASS with SKIP (...)` when a tool was missing, `RESULT: FAIL (...)` with exit 1 otherwise.
 
 - `doctor` (read-only): `sh`, `zsh`, `git` present (needed); shellcheck optional.
-- `gate`: `sh tests/check.sh` (zsh -n, both gitconfigs, every `tests/*_test.sh` suite, `tests/lint.sh`). Needs exit 0, `all checks passed`, no `FAIL` line. Takes 10 s to 2 min.
+- `gate`: `sh tests/check.sh` (zsh -n on `.zshrc` and `.zprofile`, both gitconfigs, every `tests/*_test.sh` suite, `tests/lint.sh`). Needs exit 0, `all checks passed`, no `FAIL` line. Takes 10 s to 2 min.
 - `lint`: `shellcheck -S warning install.sh tests/*.sh` and this helper. SKIP without shellcheck (`apt-get install shellcheck` or `brew install shellcheck`; AGENTS.md has a Docker form).
 - `install`: `install.sh --help` exits 0 with usage, an unknown flag exits 2 with usage on stderr. It never runs a real install: that would link into your `$HOME`.
 - `pwsh`: parses `shell/Microsoft.PowerShell_profile.ps1`, expects `0` errors. SKIP without `pwsh`.

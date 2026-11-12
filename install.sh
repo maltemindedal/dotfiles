@@ -33,6 +33,7 @@ link() {
 }
 
 link shell/.zshrc           "$HOME/.zshrc"
+link shell/.zprofile        "$HOME/.zprofile"
 link shell/starship.toml    "$HOME/.config/starship.toml"
 link git/.gitconfig         "$HOME/.gitconfig"
 link git/.gitignore_global  "$HOME/.gitignore_global"

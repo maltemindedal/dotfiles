@@ -8,6 +8,7 @@ There is no CI and `main` has no required checks, so `sh tests/check.sh` is the 
 
 ```sh
 zsh -n shell/.zshrc
+zsh -n shell/.zprofile
 git config -f git/.gitconfig -l
 git config -f git/.gitconfig.windows -l
 sh tests/<name>_test.sh   # every suite in tests/, found by glob; temp $HOME, stubs, no network
@@ -29,6 +30,7 @@ sh tests/lint.sh          # no commits on main ahead of origin/main, commit subj
 - **PRs:** title in commit-subject form. Nobody reviews and nothing runs in CI, so the PR body is the only record of verification: list each check you ran and its result.
 - **A behaviour change ships in one commit with its test and its docs.** These change together:
   - `shell/.zshrc`: a case in `tests/zshrc_test.sh`, the keybinding table in `docs/reference/zsh.md`, and `docs/architecture/overview.md` when the rationale or startup cost changes.
+  - `shell/.zprofile`: a case in `tests/zprofile_test.sh` and the login shell section of `docs/reference/zsh.md`.
   - `install.sh`: `tests/install_test.sh`, `docs/getting-started.md` and the installation text in `README.md`.
   - A link target in `install.sh`: `links_ok` and the link and backup counts in `tests/install_test.sh`, step 2 of `docs/getting-started.md`, the layouts in `docs/architecture/overview.md` and `README.md`, and `docs/guides/windows-setup.md` for files Windows also uses.
   - A merged file in `install.sh` (`merge toml|json`): the merge cases in `tests/install_test.sh`, the `cp -n` line in step 2 of `docs/getting-started.md`, the `merged into` line in `docs/architecture/overview.md` and the `README.md` layout. Track only keys the user sets; leave out keys and tables the app writes itself.

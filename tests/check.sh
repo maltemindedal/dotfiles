@@ -45,6 +45,7 @@ run() { # run <command...>
 }
 
 run zsh -n shell/.zshrc
+run zsh -n shell/.zprofile
 run git config -f git/.gitconfig -l
 run git config -f git/.gitconfig.windows -l
 for t in tests/*_test.sh; do run sh "$t"; done

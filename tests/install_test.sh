@@ -51,6 +51,7 @@ run_install() {
 
 links_ok() { # links_ok <home>: every target is a symlink into the repo
   [ "$(readlink "$1/.zshrc")" = "$REPO/shell/.zshrc" ] &&
+    [ "$(readlink "$1/.zprofile")" = "$REPO/shell/.zprofile" ] &&
     [ "$(readlink "$1/.config/starship.toml")" = "$REPO/shell/starship.toml" ] &&
     [ "$(readlink "$1/.gitconfig")" = "$REPO/git/.gitconfig" ] &&
     [ "$(readlink "$1/.gitignore_global")" = "$REPO/git/.gitignore_global" ] &&
@@ -73,13 +74,13 @@ only_owner_writes() { [ "$(ls -ld "$1" | cut -c6,9)" = -- ]; } # no group or oth
 # --- Fresh install ---
 H=$(new_home fresh)
 check "fresh: exits 0" run_install "$H"
-check "fresh: links all eight targets into the repo" links_ok "$H"
+check "fresh: links all nine targets into the repo" links_ok "$H"
 check "fresh: clones zsh-autosuggestions" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions $H/.zsh/plugins/zsh-autosuggestions" "$H.log"
 check "fresh: clones zsh-syntax-highlighting" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting $H/.zsh/plugins/zsh-syntax-highlighting" "$H.log"
 check "fresh: does not run brew" [ "$(count '^brew' "$H.log")" -eq 0 ]
-check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 8 ]
+check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 9 ]
 check "fresh: writes nothing to stderr" [ ! -s "$H.err" ]
 check "fresh: copies the Codex config" cmp -s "$H/.codex/config.toml" "$REPO/codex/config.toml"
 check "fresh: turns off Codex commit attribution" grep -qx 'commit_attribution = ""' "$H/.codex/config.toml"
@@ -237,18 +238,20 @@ check "relink: replaces stale symlinks" links_ok "$H"
 H=$(new_home existing)
 mkdir -p "$H/.config" "$H/.claude"
 echo 'my zshrc' > "$H/.zshrc"
+echo 'my zprofile' > "$H/.zprofile"
 echo 'my gitconfig' > "$H/.gitconfig"
 mkdir "$H/.gitignore_global"
 echo 'my file' > "$H/.gitignore_global/inside"
 echo '{"theme": "dark"}' > "$H/.claude/settings.json"
 check "existing: exits 0" run_install "$H"
-check "existing: links all eight targets into the repo" links_ok "$H"
+check "existing: links all nine targets into the repo" links_ok "$H"
 check "existing: keeps the old ~/.zshrc as a backup" grep -qsx 'my zshrc' "$H"/.zshrc.*.bak
+check "existing: keeps the old ~/.zprofile as a backup" grep -qsx 'my zprofile' "$H"/.zprofile.*.bak
 check "existing: keeps the old ~/.gitconfig as a backup" grep -qsx 'my gitconfig' "$H"/.gitconfig.*.bak
 check "existing: moves a directory out of the way intact" test -f "$H"/.gitignore_global.*.bak/inside
 check "existing: keeps the old ~/.claude/settings.json as a backup" \
   grep -qsx '{"theme": "dark"}' "$H"/.claude/settings.json.*.bak
-check "existing: reports each backup" [ "$(count 'backed up' "$H.out")" -eq 4 ]
+check "existing: reports each backup" [ "$(count 'backed up' "$H.out")" -eq 5 ]
 check "existing: rerun makes no further backups" run_install "$H"
 check "existing: rerun reports no backups" [ "$(count 'backed up' "$H.out")" -eq 0 ]
 

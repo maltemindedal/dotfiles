@@ -76,7 +76,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── cursor/             Cursor CLI settings, merged into ~/.cursor/cli-config.json
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
-├── shell/              .zshrc, starship.toml, PowerShell profile
+├── shell/              .zshrc, .zprofile, starship.toml, PowerShell profile
 └── tests/              Checks for install.sh, .zshrc and the docs
 ```
 
