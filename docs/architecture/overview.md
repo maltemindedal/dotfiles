@@ -15,6 +15,7 @@ git/
   .gitconfig                          → ~/.gitconfig            (both)
   .gitconfig.windows                  → ~/.gitconfig.local      (Windows)
   .gitignore_global                   → ~/.gitignore_global     (both)
+claude/cloud-setup.sh                 Claude Code cloud setup script, not a dotfile
 tests/                                checks for install.sh, .zshrc and the docs, not dotfiles
 AGENTS.md                             guidelines for agents working in this repo, not a dotfile
 ```

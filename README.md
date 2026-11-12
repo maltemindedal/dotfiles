@@ -70,6 +70,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── SECURITY.md         How to report a vulnerability
 ├── install.sh          macOS installer (symlinks, plugins, optional tools)
 ├── .github/            Issue forms and pull request template
+├── claude/             Claude Code cloud environment setup script, not linked
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
 ├── shell/              .zshrc, starship.toml, PowerShell profile
