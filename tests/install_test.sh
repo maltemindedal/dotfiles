@@ -62,6 +62,8 @@ status_is() { # status_is <status> <command...>
   [ "$got" -eq "$want" ]
 }
 empty_dir() { [ -z "$(ls -A "$1")" ]; }
+tree() { (cd "$1" && ls -lAR . && find . -type f -exec cksum {} + | sort); } # names, modes, links, bytes
+real_git() { h=$1; shift; env -i HOME="$h" PATH=/usr/bin:/bin git "$@"; }       # no stub, as after install
 only_owner_writes() { [ "$(ls -ld "$1" | cut -c6,9)" = -- ]; } # no group or other w
 
 # --- Fresh install ---
@@ -75,6 +77,12 @@ check "fresh: clones zsh-syntax-highlighting" \
 check "fresh: does not run brew" [ "$(count '^brew' "$H.log")" -eq 0 ]
 check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 4 ]
 check "fresh: writes nothing to stderr" [ ! -s "$H.err" ]
+real_git "$H" init -q "$H/repo"
+check "installed: a new repo ignores .DS_Store through the global ignore" \
+  real_git "$H" -C "$H/repo" check-ignore -q .DS_Store
+check "installed: git has a user.email" test -n "$(real_git "$H" config --global user.email)"
+check "installed: git signs with ssh" test "$(real_git "$H" config --global gpg.format)" = ssh
+rm -rf "$H/repo"
 
 # --- Re-run is idempotent ---
 check "rerun: exits 0" run_install "$H"
@@ -119,15 +127,20 @@ check "cdpath: exits 0" cdpath_install
 check "cdpath: links point into the repo" links_ok "$H"
 
 # --- Arguments are checked before anything changes ---
-for arg in --tool foo; do
-  H=$(new_home "badarg$arg")
-  check "bad argument $arg: exits 2" status_is 2 run_install "$H" "$arg"
-  check "bad argument $arg: prints usage on stderr" grep -q '^usage:' "$H.err"
-  check "bad argument $arg: leaves \$HOME untouched" empty_dir "$H"
+# A home with a file, a stale link and a directory at link targets, so a stray link,
+# backup or edit changes its tree.
+H=$(new_home badarg)
+mkdir -p "$H/.config" "$H/.gitignore_global"
+echo 'my zshrc' > "$H/.zshrc"
+ln -s /nonexistent "$H/.gitconfig"
+BEFORE=$(tree "$H")
+for args in --tool foo -x --TOOLS '' '--tools extra' 'foo --tools'; do
+  # shellcheck disable=SC2086  # split on purpose: '--tools extra' is two arguments
+  [ -n "$args" ] && set -- $args || set -- ''
+  check "bad arguments [$args]: exits 2" status_is 2 run_install "$H" "$@"
+  check "bad arguments [$args]: prints usage on stderr" grep -q '^usage:' "$H.err"
+  check "bad arguments [$args]: leaves \$HOME byte-identical" test "$(tree "$H")" = "$BEFORE"
 done
-H=$(new_home badarg-extra)
-check "extra argument after --tools: exits 2" status_is 2 run_install "$H" --tools extra
-check "extra argument after --tools: leaves \$HOME untouched" empty_dir "$H"
 H=$(new_home help)
 check "--help: exits 0" run_install "$H" --help
 check "--help: prints usage" grep -q '^usage:' "$H.out"
