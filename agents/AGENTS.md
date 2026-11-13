@@ -19,3 +19,19 @@ Merge only after you have checked that every CI check is green.
 - Merge commit when the PR's commits are separate changes, or when a doc cites one of them by hash. It is the only method that keeps those hashes, so use it when unsure.
 - Squash when the commits are fix-ups of one change. Write the combined commit message yourself, in the repo's commit format.
 - Rebase for a single commit whose message already follows that format, such as a Dependabot bump.
+
+When you create a Git branch, give it a semantic name in the form `<type>/<short-kebab-case-description>`.
+Use one of these types:
+
+- `feat/` for a new feature
+- `fix/` for a bug fix
+- `docs/` for a documentation change
+- `refactor/` for restructured code
+- `perf/` for a performance improvement
+- `test/` for tests
+- `chore/` for maintenance and tooling
+- `ci/` for a CI/CD change
+
+Write the name in lowercase kebab case, and keep it short and descriptive.
+Never start it with a model or harness name, and never put an agent name or a timestamp in it.
+Follow these rules whenever you create or rename a branch, and rename an existing branch only when I ask.
