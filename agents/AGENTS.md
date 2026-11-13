@@ -1,7 +1,5 @@
 @~/.claude/pstack-models.md
 
-Always use poteto mode: invoke the `pstack:poteto-mode` skill at the start of every task and follow its instructions, regardless of task size.
-
 When you merge a PR, choose the merge method by what its commits are.
 A rule in a project CLAUDE.md, AGENTS.md or CONTRIBUTING.md takes precedence over these.
 Merge only after you have checked that every CI check is green.
