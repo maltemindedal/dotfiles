@@ -97,7 +97,7 @@ Use one of these types:
 - `chore/` for maintenance and tooling
 - `ci/` for a CI/CD change
 
-Write the name in lowercase kebab case, and keep it short and descriptive.
+Write the name in lowercase.
 Never start it with a model or harness name, and never put an agent name or a timestamp in it.
 Rename an existing branch only when I ask, with one exception.
 Before you first push a branch the app or CLI named when the session started, such as `claude/<name>`, `codex/<name>` or `worktree-<name>`, rename it to the semantic form with `git branch -m`.
