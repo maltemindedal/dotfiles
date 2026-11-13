@@ -101,9 +101,8 @@ Use one of these types:
 
 Write the name in lowercase kebab case, and keep it short and descriptive.
 Never start it with a model or harness name, and never put an agent name or a timestamp in it.
-Follow these rules whenever you create or rename a branch, and rename an existing branch only when I ask.
-The one exception is a branch the app or CLI named when the session started, such as `claude/<name>`, `codex/<name>` or `worktree-<name>`.
-While that branch is not on the remote, rename it to the semantic form with `git branch -m` before you push it.
+Rename an existing branch only when I ask, with one exception.
+Before you first push a branch the app or CLI named when the session started, such as `claude/<name>`, `codex/<name>` or `worktree-<name>`, rename it to the semantic form with `git branch -m`.
 EOF
 
 write_file pstack-models.md <<'EOF'
