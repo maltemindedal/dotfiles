@@ -59,7 +59,8 @@ links_ok() { # links_ok <home>: every target is a symlink into the repo
     [ "$(readlink "$1/.claude/settings.json")" = "$REPO/claude/settings.json" ] &&
     [ "$(readlink "$1/.claude/CLAUDE.md")" = "$REPO/agents/AGENTS.md" ] &&
     [ "$(readlink "$1/.codex/AGENTS.md")" = "$REPO/agents/AGENTS.md" ] &&
-    [ "$(readlink "$1/.claude/pstack-models.md")" = "$REPO/claude/pstack-models.md" ] &&
+    [ "$(readlink "$1/.claude/rules/pstack-models.md")" = "$REPO/claude/rules/pstack-models.md" ] &&
+    [ "$(readlink "$1/.claude/rules/poteto-mode.md")" = "$REPO/claude/rules/poteto-mode.md" ] &&
     [ "$(readlink "$1/.ssh/config")" = "$REPO/ssh/config" ]
 }
 count() { grep -c "$1" "$2" || true; }
@@ -82,13 +83,13 @@ NO_KEY='No signing key at ~/.ssh/id_ed25519_git, so git cannot sign commits. Res
 # --- Fresh install ---
 H=$(new_home fresh)
 check "fresh: exits 0" run_install "$H"
-check "fresh: links all ten targets into the repo" links_ok "$H"
+check "fresh: links all eleven targets into the repo" links_ok "$H"
 check "fresh: clones zsh-autosuggestions" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions $H/.zsh/plugins/zsh-autosuggestions" "$H.log"
 check "fresh: clones zsh-syntax-highlighting" \
   grep -qx "git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting $H/.zsh/plugins/zsh-syntax-highlighting" "$H.log"
 check "fresh: does not run brew" [ "$(count '^brew' "$H.log")" -eq 0 ]
-check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 10 ]
+check "fresh: prints one line per link" [ "$(count ' -> ' "$H.out")" -eq 11 ]
 check "fresh: on stderr, only the missing signing key notice" [ "$(cat "$H.err")" = "$NO_KEY" ]
 check "fresh: creates ~/.ssh readable only by its owner" test "$(ls -ld "$H/.ssh" | cut -c1-10)" = drwx------
 check "fresh: writes allowed_signers with the signer from git/.gitconfig" [ "$(cat "$H/.ssh/allowed_signers")" = "$SIGNER" ]
@@ -280,7 +281,7 @@ mkdir "$H/.gitignore_global"
 echo 'my file' > "$H/.gitignore_global/inside"
 echo '{"theme": "dark"}' > "$H/.claude/settings.json"
 check "existing: exits 0" run_install "$H"
-check "existing: links all ten targets into the repo" links_ok "$H"
+check "existing: links all eleven targets into the repo" links_ok "$H"
 check "existing: keeps the old ~/.zshrc as a backup" grep -qsx 'my zshrc' "$H"/.zshrc.*.bak
 check "existing: keeps the old ~/.zprofile as a backup" grep -qsx 'my zprofile' "$H"/.zprofile.*.bak
 check "existing: keeps the old ~/.gitconfig as a backup" grep -qsx 'my gitconfig' "$H"/.gitconfig.*.bak

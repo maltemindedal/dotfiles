@@ -27,7 +27,7 @@ There is no CI. `sh tests/check.sh` is the whole gate before every commit and PR
   - A merged file in `install.sh` (`merge toml|json`): the merge cases in `tests/install_test.sh`, the `cp -n` line in step 2 of `docs/getting-started.md`, the `merged into` line in `docs/architecture/overview.md` and the `README.md` layout. Track only keys the user sets, not keys the app writes itself.
   - The `brew install` list: the identical string in `tests/install_test.sh` and `docs/getting-started.md`, plus the optional-tool lists in `README.md` and `docs/reference/zsh.md`.
   - `claude/cloud-setup.sh`: `tests/claude_cloud_setup_test.sh`.
-  - `agents/AGENTS.md` or `claude/pstack-models.md`: the matching heredoc in `claude/cloud-setup.sh` (the test compares them byte for byte).
+  - `agents/AGENTS.md` or a file in `claude/rules/`: the matching heredoc in `claude/cloud-setup.sh` (the test compares them byte for byte).
   - The `attribution` or `includeCoAuthoredBy` values in `claude/settings.json`: the jq filter in `disable_attribution` in `claude/cloud-setup.sh`.
   - The check list in `CONTRIBUTING.md`: `.github/pull_request_template.md`.
   - A new doc: its Diátaxis section in `docs/README.md` and the Documentation table in `README.md`.

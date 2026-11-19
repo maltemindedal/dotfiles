@@ -70,7 +70,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── install.sh          macOS installer (symlinks, plugins, optional tools)
 ├── .github/            Issue forms and pull request template
 ├── agents/             Global agent instructions, linked for Claude Code and Codex
-├── claude/             Claude Code settings, cloud setup script
+├── claude/             Claude Code settings and pstack rules, cloud setup script
 ├── codex/              Codex settings, merged into ~/.codex/config.toml
 ├── cursor/             Cursor CLI settings, merged into ~/.cursor/cli-config.json
 ├── docs/               Documentation

@@ -41,7 +41,8 @@ link git/.gitignore_global  "$HOME/.gitignore_global"
 link claude/settings.json   "$HOME/.claude/settings.json"
 link agents/AGENTS.md       "$HOME/.claude/CLAUDE.md"
 link agents/AGENTS.md       "$HOME/.codex/AGENTS.md"
-link claude/pstack-models.md "$HOME/.claude/pstack-models.md"
+link claude/rules/pstack-models.md "$HOME/.claude/rules/pstack-models.md"
+link claude/rules/poteto-mode.md   "$HOME/.claude/rules/poteto-mode.md"
 
 # ssh refuses a config that others can write, and the private key belongs in a
 # directory only the owner can open.

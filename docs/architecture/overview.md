@@ -23,7 +23,9 @@ agents/
                                       → ~/.codex/AGENTS.md      (macOS)
 claude/
   settings.json                       → ~/.claude/settings.json (macOS)
-  pstack-models.md                    → ~/.claude/pstack-models.md (macOS)
+  rules/
+    pstack-models.md                  → ~/.claude/rules/pstack-models.md (macOS)
+    poteto-mode.md                    → ~/.claude/rules/poteto-mode.md (macOS)
   cloud-setup.sh                      Claude Code cloud setup script, not a dotfile
 codex/
   config.toml                         merged into ~/.codex/config.toml (macOS)
@@ -42,6 +44,8 @@ AGENTS.md                             guidelines for agents working in this repo
 **Tracked configuration with local overrides.** Both `.zshrc` and `.gitconfig` load an untracked local file. Secrets, absolute paths, and host-specific keys such as `allowedSignersFile` and Windows `ssh.exe` paths go in `~/.zshrc.local` or `~/.gitconfig.local`. On macOS `install.sh` seeds `allowedSignersFile` there when it is unset, and never changes a value already set. The tracked file stays identical on every machine. `.gitconfig` stores the signing key as a literal public key for the same reason.
 
 **One instructions file for every agent.** `agents/AGENTS.md` is the only copy of the global agent instructions. `install.sh` links it to the global path each agent reads, `~/.claude/CLAUDE.md` for Claude Code and `~/.codex/AGENTS.md` for Codex. The repo holds no symlink of its own, because a Windows checkout turns one into a text file.
+
+**pstack rules for Claude Code.** pstack comes from the official `cursor/plugins` marketplace. Claude Code loads every file in `~/.claude/rules/` into each session, so the pstack model choices live there instead of behind an `@` import in `agents/AGENTS.md`, which Codex also reads. That plugin has no SessionStart hook, so `claude/rules/poteto-mode.md` says when to use poteto mode. It keeps the hook's criteria: multi-file, design, unknown-cause bug and performance work use it, and small tasks do not.
 
 **Optional dependencies.** `.zshrc` checks for optional tools before it runs their setup code, and it checks for plugin files with `[ -f … ]`. The shell works on macOS without those tools. It exports the `FZF_*_COMMAND` variables only when `fd` exists because empty values disable the fzf widgets.
 
