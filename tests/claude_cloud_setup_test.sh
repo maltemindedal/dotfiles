@@ -1,6 +1,6 @@
 #!/bin/sh
-# claude/cloud-setup.sh must write ~/.claude/CLAUDE.md and pstack-models.md,
-# byte-identical to agents/AGENTS.md and claude/pstack-models.md, turn off attribution in settings.json with jq,
+# claude/cloud-setup.sh must write ~/.claude/CLAUDE.md and the two rules/ files,
+# byte-identical to agents/AGENTS.md and claude/rules/, turn off attribution in settings.json with jq,
 # and exit 0 whether the claude CLI, apt-get and jq work, fail or are
 # missing. Temp $HOME, stub claude, apt-get and zsh, no network.
 #
@@ -37,7 +37,7 @@ run_setup() { # run_setup <name> <claude exit code, or "missing">
     fail "$name: exits 0"
     sed 's/^/     |/' "$TMP/$name/out"
   fi
-  for pair in agents/AGENTS.md:CLAUDE.md claude/pstack-models.md:pstack-models.md; do
+  for pair in agents/AGENTS.md:CLAUDE.md claude/rules/pstack-models.md:rules/pstack-models.md claude/rules/poteto-mode.md:rules/poteto-mode.md; do
     src=${pair%%:*} f=${pair#*:}
     if cmp -s "$REPO/$src" "$home/.claude/$f"; then pass "$name: writes $f identical to $src"; else fail "$name: writes $f identical to $src"; fi
   done
@@ -51,8 +51,8 @@ expect_out() { # expect_out <name> <line>
 }
 
 run_setup works 0
-expect_out works "plugins: installed pstack@pstack-claude"
-if grep -qxF "plugin install pstack@pstack-claude --scope user" "$TMP/works/home/claude.log"; then
+expect_out works "plugins: installed pstack@cursor-plugins"
+if grep -qxF "plugin install pstack@cursor-plugins --scope user" "$TMP/works/home/claude.log"; then
   pass "works: installs pstack at user scope"
 else
   fail "works: installs pstack at user scope"
@@ -69,10 +69,10 @@ HOME="$TMP/works/home" PATH="$BIN" "$BASH_BIN" "$REPO/claude/cloud-setup.sh" > /
 if diff -r "$TMP/first-run" "$TMP/works/home/.claude" > /dev/null; then pass "works: a second run changes nothing"; else fail "works: a second run changes nothing"; fi
 
 run_setup claude-fails 1
-expect_out claude-fails "plugins: could not install pstack@pstack-claude, skipping:"
+expect_out claude-fails "plugins: could not install pstack@cursor-plugins, skipping:"
 
 run_setup claude-missing missing
-expect_out claude-missing "plugins: claude CLI not on PATH, skipping pstack@pstack-claude"
+expect_out claude-missing "plugins: claude CLI not on PATH, skipping pstack@cursor-plugins"
 
 expect_out claude-missing "zsh: apt-get not on PATH, skipping"
 

@@ -26,7 +26,7 @@ install_plugin() {
 
 write_file() {
   local file="$CLAUDE_DIR/$1"
-  if mkdir -p "$CLAUDE_DIR" && cat > "$file"; then
+  if mkdir -p "${file%/*}" && cat > "$file"; then
     echo "setup: wrote $file"
   else
     echo "setup: could not write $file, skipping"
@@ -70,13 +70,11 @@ install_zsh() {
   fi
 }
 
-install_plugin michael-denyer/pstack-claude pstack@pstack-claude
+install_plugin cursor/plugins pstack@cursor-plugins
 install_zsh
 disable_attribution
 
 write_file CLAUDE.md <<'EOF'
-@~/.claude/pstack-models.md
-
 When you merge a PR, choose the merge method by what its commits are.
 A rule in a project CLAUDE.md, AGENTS.md or CONTRIBUTING.md takes precedence over these.
 Merge only after you have checked that every CI check is green.
@@ -103,31 +101,32 @@ Rename an existing branch only when I ask, with one exception.
 Before you first push a branch the app or CLI named when the session started, such as `claude/<name>`, `codex/<name>` or `worktree-<name>`, rename it to the semantic form with `git branch -m`.
 EOF
 
-write_file pstack-models.md <<'EOF'
-# pstack model configuration
+write_file rules/pstack-models.md <<'EOF'
+# pstack model configuration. One line per role. Delete a line to fall back to the skill default.
+# `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Agent `model`). Alias entries in a panel list still count toward its fan-out.
+# defaults: 3
+# budget: large (xhigh)
+feature, refactoring: opus xhigh
+bug-fix: opus xhigh
+perf-issue: opus xhigh
+hillclimb: opus xhigh
+judgment and prose: opus xhigh
+arena runners: fable high, opus high, inherit-parent
+arena cross-judge pool: opus high, inherit-parent
+swarm workers: opus high
+interrogate reviewers: fable high, opus high, inherit-parent
+EOF
 
-Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; the values here override those defaults. Delete a line to fall back to the skill default. A value of `inherit-parent` or `auto` runs that role on the parent session's model (the `Agent` call omits `model`); an alias entry in a panel list still counts toward that panel's fan-out. A model may carry a reasoning effort, as in `opus @xhigh` (levels: low, medium, high, xhigh, max); the role then runs through the pstack effort agent of that level, each entry of a panel list on its own. `default effort` sets the level for a value without one; `session` keeps the parent session's effort. `session hook: off` stops the Claude Code or Codex SessionStart hook, or the pstack Pi extension, from injecting the poteto-mode mandate; any other value, or no line, leaves it on.
+write_file rules/poteto-mode.md <<'EOF'
+Invoke the `pstack:poteto-mode` skill and follow its instructions when a task meets any of these:
 
-feature, refactoring: opus
-bug-fix: fable
-perf-issue: fable
-hillclimb: fable
-judgment and prose: opus
-strongest judgment: fable
-how explorer: opus
-how explainer: opus
-why investigators: opus
-why synthesizer: opus
-reflect tooling: opus
-reflect judgment, divergent, synthesizer: opus
-arena runners: opus, fable, sonnet, haiku
-arena cross-judge pool: opus, fable, sonnet, haiku
-swarm workers: opus
-architect runners: opus, fable, sonnet, haiku
-interrogate reviewers: opus, fable, sonnet, haiku
+- it touches more than one file, or changes a signature other files call
+- it involves a design or architecture choice
+- it is a bug whose cause is not yet known, or a performance issue
 
-default effort: session
-session hook: on
+For smaller tasks, such as a contained change to one file with an obvious test, a question, or a one-line edit, work directly and verify on the real artifact.
+
+When the intent is already specific, enter that skill directly: `pstack:tdd`, `pstack:architect`, `pstack:how`, `pstack:why`, `pstack:arena`, `pstack:interrogate`.
 EOF
 
 exit 0

@@ -31,7 +31,9 @@ mkdir -p ~/.claude ~/.codex
 ln -sf "$PWD/claude/settings.json" ~/.claude/settings.json
 ln -sf "$PWD/agents/AGENTS.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/agents/AGENTS.md" ~/.codex/AGENTS.md
-ln -sf "$PWD/claude/pstack-models.md" ~/.claude/pstack-models.md
+mkdir -p ~/.claude/rules
+ln -sf "$PWD/claude/rules/pstack-models.md" ~/.claude/rules/pstack-models.md
+ln -sf "$PWD/claude/rules/poteto-mode.md" ~/.claude/rules/poteto-mode.md
 [ -d ~/.ssh ] || mkdir -m 700 ~/.ssh
 chmod go-w "$PWD/ssh/config"
 ln -sf "$PWD/ssh/config" ~/.ssh/config

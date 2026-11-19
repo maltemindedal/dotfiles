@@ -6,13 +6,13 @@
     "baseRef": "fresh"
   },
   "enabledPlugins": {
-    "pstack@pstack-claude": true
+    "pstack@cursor-plugins": true
   },
   "extraKnownMarketplaces": {
-    "pstack-claude": {
+    "cursor-plugins": {
       "source": {
         "source": "github",
-        "repo": "michael-denyer/pstack-claude"
+        "repo": "cursor/plugins"
       }
     }
   },

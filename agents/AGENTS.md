@@ -1,5 +1,3 @@
-@~/.claude/pstack-models.md
-
 When you merge a PR, choose the merge method by what its commits are.
 A rule in a project CLAUDE.md, AGENTS.md or CONTRIBUTING.md takes precedence over these.
 Merge only after you have checked that every CI check is green.
