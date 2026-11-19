@@ -25,5 +25,8 @@ desktop.ini
 *.swo
 *~
 
+# Coding agents
+**/.claude/.cc-writes/
+
 # Local env / secrets
 .env.local

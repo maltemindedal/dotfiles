@@ -35,11 +35,12 @@ One `Host *` block applies to every host. `AddKeysToAgent yes` adds a key to the
 
 ## `.gitignore_global` (installed as `~/.gitignore_global`)
 
-`core.excludesfile` in `.gitconfig` activates it. The file contains only operating system and editor files. Put project artifacts in each project's `.gitignore` file.
+`core.excludesfile` in `.gitconfig` activates it. The file contains only operating system, editor and coding agent files. Put project artifacts in each project's `.gitignore` file.
 
 | Group | Patterns |
 |-------|----------|
 | macOS | `.DS_Store`, `.AppleDouble`, `.LSOverride`, `._*`, `.Spotlight-V100`, `.Trashes` |
 | Windows | `Thumbs.db`, `ehthumbs.db`, `desktop.ini` |
 | Editors / IDEs | `.vscode/`, `.idea/`, `*.iml`, `*.sublime-workspace`, `*.swp`, `*.swo`, `*~` |
+| Coding agents | `**/.claude/.cc-writes/` |
 | Local env / secrets | `.env.local` |
