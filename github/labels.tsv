@@ -1,0 +1,14 @@
+# The labels every repo carries, kept in sync by github/sync-labels.sh.
+# One label per line: name, colour (six hex digits, no #) and description,
+# separated by single tabs. Lines starting with # are comments.
+needs-triage	d93f0b	Maintainer needs to evaluate this issue
+needs-info	fbca04	Waiting on reporter for more information
+ready-for-agent	0e8a16	Fully specified, ready for an AFK agent
+ready-for-human	c2e0c6	Requires human implementation
+wontfix	ffffff	This will not be worked on
+blocked	5319e7	Waiting on another issue or an external dependency
+needs-decision	bfd4f2	Needs a maintainer decision before work can start
+priority: high	b60205	Do this before other work
+priority: medium	e99695	Normal priority
+priority: low	c5def5	Low priority; do not jump ahead of in-flight work
+security	ee0701	Security vulnerability or hardening

@@ -14,6 +14,7 @@ All documentation for the dotfiles repository, grouped by purpose.
 |----------|-------------|----------|
 | [guides/windows-setup.md](guides/windows-setup.md) | Install the PowerShell profile and Git config on Windows. | Windows users |
 | [guides/machine-specific-overrides.md](guides/machine-specific-overrides.md) | Add per-machine zsh and Git settings without touching the repo. | Anyone with secrets or host-specific paths |
+| [guides/github-labels.md](guides/github-labels.md) | Give every GitHub repo the same issue labels, and add or change a label. | Anyone creating a repo or changing the labels |
 
 ## Reference (lookup)
 
