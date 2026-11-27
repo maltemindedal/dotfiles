@@ -51,6 +51,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 | [Getting started](docs/getting-started.md) | Step-by-step macOS setup |
 | [Windows setup](docs/guides/windows-setup.md) | PowerShell profile and Git on Windows |
 | [Machine-specific overrides](docs/guides/machine-specific-overrides.md) | Using `~/.zshrc.local` and `~/.gitconfig.local` |
+| [GitHub labels](docs/guides/github-labels.md) | Keeping the same issue labels in every repo |
 | [zsh reference](docs/reference/zsh.md) | Aliases, keybindings, options, optional tools |
 | [Git reference](docs/reference/git.md) | Every `.gitconfig` key and the global ignore list |
 | [Architecture overview](docs/architecture/overview.md) | Layout and design rationale |
@@ -75,6 +76,7 @@ The complete list of aliases, keybindings and options is in the [zsh reference](
 ├── cursor/             Cursor CLI settings, merged into ~/.cursor/cli-config.json
 ├── docs/               Documentation
 ├── git/                .gitconfig, Windows overlay, global gitignore
+├── github/             Shared GitHub issue labels and the script that applies them
 ├── shell/              .zshrc, .zprofile, starship.toml, PowerShell profile
 ├── ssh/                SSH client config, linked to ~/.ssh/config
 └── tests/              Checks for install.sh, .zshrc and the docs

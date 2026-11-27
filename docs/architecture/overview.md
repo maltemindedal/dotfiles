@@ -31,6 +31,9 @@ codex/
   config.toml                         merged into ~/.codex/config.toml (macOS)
 cursor/
   cli-config.json                     merged into ~/.cursor/cli-config.json (macOS)
+github/
+  labels.tsv                          labels every GitHub repo carries, not a dotfile
+  sync-labels.sh                      applies labels.tsv to the repos, not a dotfile
 tests/                                checks for install.sh, .zshrc and the docs, not dotfiles
 AGENTS.md                             guidelines for agents working in this repo, not a dotfile
 ```
@@ -56,6 +59,8 @@ AGENTS.md                             guidelines for agents working in this repo
 **Starship without a Nerd Font.** `starship.toml` is Starship's "plain-text-symbols" preset, pinned at `tests/fixtures/starship-plain-text-symbols.toml`, so the prompt renders with any monospace font. Below a marker line it adds text symbols for the `claude_cost` and `claude_model` modules, which the preset does not cover and which default to emoji. `tests/starship_test.sh` rejects any other change.
 
 **Global Git ignore rules.** The global ignore file lists only operating system, editor and coding agent files. Each project excludes its own build artifacts and logs, which prevents the global file from hiding tracked files such as `*.sql` migrations.
+
+**One label set for every GitHub repo.** Coding agents pick up and triage issues by label, so `github/labels.tsv` lists the labels every repo carries and `github/sync-labels.sh` applies it with `gh`. The script only creates labels and corrects their colour and description. It never deletes or renames one, because GitHub removes a deleted label from every issue that had it, and some labels, such as Dependabot's ecosystem labels, belong to one repo only. GitHub offers default labels for new repos only to organisations, so a new personal repo gets the set when the script runs again.
 
 **Signing setup without the private key.** `install.sh` appends the signer line built from `git/.gitconfig` to `~/.ssh/allowed_signers` instead of linking that file, because it also holds lines the repo does not track. It never creates or fetches a key; it prints a notice when `~/.ssh/id_ed25519_git` is missing.
 
